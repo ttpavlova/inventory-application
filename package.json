@@ -1,8 +1,0 @@
-{
-  "name": "inventory-application",
-  "private": true,
-  "workspaces": [
-    "client",
-    "server"
-  ]
-}
