@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
+    "outDir": "dist",
+    "paths": {
+      "~/*": ["./src/*"]
+    },
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "es2016",
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true
+  },
+  "exclude": ["node_modules", "dist"],
+  "include": ["src/**/*"]
+}

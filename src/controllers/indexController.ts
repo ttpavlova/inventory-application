@@ -4,4 +4,4 @@ function itemsListGet(req, res) {
   });
 }
 
-module.exports = { itemsListGet };
+export { itemsListGet };
