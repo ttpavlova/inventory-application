@@ -1,6 +1,12 @@
 #! /usr/bin/env node
 import dotenv from "dotenv";
-import { role_name, role_password, db_name, db_port, db_host } from "./const";
+import {
+  role_name,
+  role_password,
+  db_name,
+  db_port,
+  db_host,
+} from "./const.js";
 import { Client } from "pg";
 
 dotenv.config();

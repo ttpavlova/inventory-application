@@ -1,4 +1,10 @@
-import { role_name, role_password, db_name, db_port, db_host } from "./const";
+import {
+  role_name,
+  role_password,
+  db_name,
+  db_port,
+  db_host,
+} from "./const.js";
 import { Pool } from "pg";
 
 module.exports = new Pool({
