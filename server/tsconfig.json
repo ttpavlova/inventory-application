@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "lib": ["ESNext"],
     "module": "nodenext",
+    "target": "ES2022",
     "moduleResolution": "nodenext",
     "forceConsistentCasingInFileNames": true,
     "noImplicitOverride": true,
@@ -14,7 +14,6 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "target": "es2016",
     "verbatimModuleSyntax": true,
     "noEmit": true,
     "allowImportingTsExtensions": true
