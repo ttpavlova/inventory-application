@@ -1,40 +1,39 @@
 #! /usr/bin/env node
 import dotenv from "dotenv";
+dotenv.config();
 import {
-  role_name,
-  role_password,
-  db_name,
-  db_port,
-  db_host,
+  getRoleName,
+  getRolePassword,
+  getDbName,
+  getDbPort,
+  getDbHost,
 } from "./const.js";
 import { Client } from "pg";
 
-dotenv.config();
-
 const SQL = `
-CREATE TABLE IF NOT EXISTS brands (
-  id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  name VARCHAR (50) NOT NULL UNIQUE,
-);
-
 CREATE TABLE IF NOT EXISTS categories (
   id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  name VARCHAR (50) NOT NULL UNIQUE,
+  name VARCHAR (50) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS brands (
+  id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  name VARCHAR (50) NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS materials (
   id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  name VARCHAR (30) NOT NULL UNIQUE,
+  name VARCHAR (30) NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS colors (
   id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  name VARCHAR (30) NOT NULL UNIQUE,
+  name VARCHAR (30) NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS countries (
   id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  name VARCHAR (30) NOT NULL UNIQUE,
+  name VARCHAR (30) NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS shoes (
@@ -46,12 +45,12 @@ CREATE TABLE IF NOT EXISTS shoes (
   brand_id INT NOT NULL REFERENCES brands(id),
   material_id INT NOT NULL REFERENCES materials(id),
   color_id INT NOT NULL REFERENCES colors(id),
-  country_id INT NOT NULL REFERENCES countries(id);
+  country_id INT NOT NULL REFERENCES countries(id)
 );
 
 CREATE TABLE IF NOT EXISTS sizes (
   id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  eu_size DECIMAL (3,1) NOT NULL UNIQUE,
+  eu_size DECIMAL (3,1) NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS quantity_in_stock (
@@ -63,7 +62,7 @@ CREATE TABLE IF NOT EXISTS quantity_in_stock (
   ON DELETE CASCADE,
   size_id INT NOT NULL REFERENCES sizes(id)
   ON UPDATE CASCADE
-  ON DELETE CASCADE;
+  ON DELETE CASCADE
 );
 
 INSERT INTO categories (name) 
@@ -81,7 +80,7 @@ VALUES
 INSERT INTO materials (name) 
 VALUES
   ('Leather'),
-  ('Suede'),
+  ('Suede');
 
 INSERT INTO colors (name) 
 VALUES
@@ -146,12 +145,24 @@ LEFT JOIN brands b ON s.brand_id = b.id
 LEFT JOIN materials m ON s.material_id = m.id
 LEFT JOIN colors col ON s.color_id = col.id
 LEFT JOIN countries co ON s.country_id = co.id;
+
+CREATE OR REPLACE VIEW view_quantity_in_stock AS
+SELECT 
+    q.id,
+    q.quantity,
+    shoes.id AS shoe_id,
+    sizes.eu_size AS eu_size
+FROM quantity_in_stock q
+LEFT JOIN shoes ON q.shoe_id = shoes.id
+LEFT JOIN sizes ON q.size_id = sizes.id;
 `;
 
 async function main() {
+  console.log(getRoleName(), getDbName());
+  console.log(process.env.DB_NAME, "name!");
   console.log("seeding...");
   const client = new Client({
-    connectionString: `postgresql://${role_name}:${role_password}@${db_host}:${db_port}/${db_name}`,
+    connectionString: `postgresql://${getRoleName()}:${getRolePassword()}@${getDbHost()}:${getDbPort()}/${getDbName()}`,
   });
   await client.connect();
   await client.query(SQL);
