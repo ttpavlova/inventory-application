@@ -14,9 +14,7 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "verbatimModuleSyntax": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true
+    "verbatimModuleSyntax": true
   },
   "exclude": ["node_modules", "dist"],
   "include": ["src/**/*"]
