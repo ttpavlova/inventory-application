@@ -1,7 +1,11 @@
 import { Router } from "express";
-import { itemsListGet } from "../controllers/indexController.js";
+import {
+  getGreetingPage,
+  shoesListGet,
+} from "../controllers/indexController.js";
 const indexRouter = Router();
 
-indexRouter.get("/", itemsListGet);
+indexRouter.get("/api/shoes", shoesListGet);
+indexRouter.get("/", getGreetingPage);
 
 export { indexRouter };

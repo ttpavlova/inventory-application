@@ -1,9 +1,16 @@
 import type { Request, Response } from "express";
+import { getAllShoes } from "../db/queries.js";
 
-function itemsListGet(req: Request, res: Response) {
+async function shoesListGet(req: Request, res: Response) {
+  const shoes = await getAllShoes();
+
+  res.json(shoes);
+}
+
+function getGreetingPage(req: Request, res: Response) {
   res.render("index", {
-    title: "Items list",
+    title: "Index page",
   });
 }
 
-export { itemsListGet };
+export { shoesListGet, getGreetingPage };

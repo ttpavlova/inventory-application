@@ -1,13 +1,7 @@
 #! /usr/bin/env node
 import dotenv from "dotenv";
 dotenv.config();
-import {
-  getRoleName,
-  getRolePassword,
-  getDbName,
-  getDbPort,
-  getDbHost,
-} from "./const.js";
+import config from "../config/config.js";
 import { Client } from "pg";
 
 const SQL = `
@@ -157,12 +151,12 @@ LEFT JOIN shoes ON q.shoe_id = shoes.id
 LEFT JOIN sizes ON q.size_id = sizes.id;
 `;
 
+const { roleName, rolePassword, dbHost, dbPort, dbName } = config.db;
+
 async function main() {
-  console.log(getRoleName(), getDbName());
-  console.log(process.env.DB_NAME, "name!");
   console.log("seeding...");
   const client = new Client({
-    connectionString: `postgresql://${getRoleName()}:${getRolePassword()}@${getDbHost()}:${getDbPort()}/${getDbName()}`,
+    connectionString: `postgresql://${roleName}:${rolePassword}@${dbHost}:${dbPort}/${dbName}`,
   });
   await client.connect();
   await client.query(SQL);

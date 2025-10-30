@@ -1,12 +1,10 @@
-import {
-  getRoleName,
-  getRolePassword,
-  getDbName,
-  getDbPort,
-  getDbHost,
-} from "./const.js";
 import { Pool } from "pg";
+import config from "../config/config.js";
 
-module.exports = new Pool({
-  connectionString: `postgresql://${getRoleName()}:${getRolePassword()}@${getDbHost()}:${getDbPort()}/${getDbName()}`,
+const { roleName, rolePassword, dbHost, dbPort, dbName } = config.db;
+
+const pool = new Pool({
+  connectionString: `postgresql://${roleName}:${rolePassword}@${dbHost}:${dbPort}/${dbName}`,
 });
+
+export { pool };
