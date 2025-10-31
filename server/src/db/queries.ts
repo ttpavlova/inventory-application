@@ -1,5 +1,5 @@
+import type { ShoeParams } from "../types/types.js";
 import { pool } from "./pool.js";
-import type { Shoe } from "./queries.interface.js";
 
 async function getAllShoes() {
   const { rows } = await pool.query("SELECT * FROM view_shoes");
@@ -15,21 +15,32 @@ async function getShoeById(id: string) {
   return rows[0] || null;
 }
 
-async function createShoe({
+async function insertShoe({
   gender,
   season,
-  category_id,
-  brand_id,
-  material_id,
-  color_id,
-  country_id,
-}: Shoe) {
-  await pool.query(
+  category,
+  brand,
+  material,
+  color,
+  country,
+}: ShoeParams) {
+  const { rows } = await pool.query(
     `INSERT INTO shoes (gender, season, category_id, brand_id, material_id, color_id, country_id) 
 VALUES
-  ($1, $2, $3, $4, $5, $6, $7);`,
-    [gender, season, category_id, brand_id, material_id, color_id, country_id]
+  (
+    $1,
+    $2,
+    (SELECT id FROM categories WHERE name = $3),
+    (SELECT id FROM brands WHERE name = $4),
+    (SELECT id FROM materials WHERE name = $5),
+    (SELECT id FROM colors WHERE name = $6),
+    (SELECT id FROM countries WHERE name = $7)
+  )
+  RETURNING *;`,
+    [gender, season, category, brand, material, color, country]
   );
+
+  return rows[0];
 }
 
-export { getAllShoes, getShoeById, createShoe };
+export { getAllShoes, getShoeById, insertShoe };

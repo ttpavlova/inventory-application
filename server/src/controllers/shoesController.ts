@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { getAllShoes, getShoeById } from "../db/queries.js";
-import type { ShoeParams } from "./shoesController.interface.js";
+import { getAllShoes, getShoeById, insertShoe } from "../db/queries.js";
+import type { ShoeParams } from "../types/types.js";
 
 async function getShoeList(req: Request, res: Response) {
   const shoes = await getAllShoes();
@@ -29,16 +29,22 @@ async function getShoeDetail(req: Request, res: Response) {
 }
 
 async function createShoe(req: Request, res: Response) {
-  const {
-    gender,
-    season,
-    category,
-    brand,
-    material,
-    color,
-    country,
-  }: ShoeParams = req.body;
-  res.json({ category });
+  const { ...shoeData }: ShoeParams = req.body;
+
+  try {
+    const newShoe = await insertShoe(shoeData);
+
+    res.status(201).json({
+      success: true,
+      data: newShoe,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Database error: failed to create a shoe",
+      error: error instanceof Error ? error.message : error,
+    });
+  }
 }
 
 async function updateShoe(req: Request, res: Response) {}
