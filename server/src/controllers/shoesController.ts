@@ -5,7 +5,7 @@ import {
   createShoeQuery,
   updateShoeQuery,
   deleteShoeQuery,
-} from "../db/queries.js";
+} from "../db/shoesQueries.js";
 import type { ShoeParams } from "../types/types.js";
 
 async function getAllShoes(req: Request, res: Response) {

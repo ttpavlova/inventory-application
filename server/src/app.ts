@@ -3,6 +3,7 @@ import cors from "cors";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { shoesRouter } from "./routes/shoesRouter.js";
+import { categoriesRouter } from "./routes/categoriesRouter.js";
 import { indexRouter } from "./routes/indexRouter.js";
 
 const app = express();
@@ -21,6 +22,7 @@ app.set("view engine", "ejs");
 app.use(express.json());
 
 app.use("/api/shoes", shoesRouter);
+app.use("/api/categories", categoriesRouter);
 app.use("/", indexRouter);
 
 // Здесь мы настраиваем API роуты
