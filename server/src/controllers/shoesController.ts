@@ -1,5 +1,10 @@
 import type { Request, Response } from "express";
-import { getAllShoes, getShoeById, insertShoe } from "../db/queries.js";
+import {
+  editShoe,
+  getAllShoes,
+  getShoeById,
+  insertShoe,
+} from "../db/queries.js";
 import type { ShoeParams } from "../types/types.js";
 
 async function getShoeList(req: Request, res: Response) {
@@ -18,7 +23,7 @@ async function getShoeDetail(req: Request, res: Response) {
   try {
     const shoe = await getShoeById(id);
 
-    if (shoe === null) {
+    if (!shoe) {
       return res.status(404).json({ error: "Shoe not found" });
     }
 
@@ -47,7 +52,29 @@ async function createShoe(req: Request, res: Response) {
   }
 }
 
-async function updateShoe(req: Request, res: Response) {}
+async function updateShoe(req: Request, res: Response) {
+  const { id } = req.params;
+  const { ...shoeData }: ShoeParams = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: "Shoe ID is required" });
+  }
+
+  try {
+    const newShoe = await editShoe(id, shoeData);
+
+    res.status(201).json({
+      success: true,
+      data: newShoe,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Database error: failed to update a shoe",
+      error: error instanceof Error ? error.message : error,
+    });
+  }
+}
 
 async function deleteShoe(req: Request, res: Response) {}
 

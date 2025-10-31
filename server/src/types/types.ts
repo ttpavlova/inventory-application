@@ -7,3 +7,5 @@ export interface ShoeParams {
   color: string;
   country: string;
 }
+
+export type shoeId = string;
