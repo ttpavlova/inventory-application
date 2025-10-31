@@ -1,13 +1,13 @@
 import type { shoeId, ShoeParams } from "../types/types.js";
 import { pool } from "./pool.js";
 
-async function getAllShoes() {
+async function getAllShoesQuery() {
   const { rows } = await pool.query("SELECT * FROM view_shoes");
 
   return rows;
 }
 
-async function getShoeById(id: shoeId) {
+async function getShoeByIdQuery(id: shoeId) {
   const { rows } = await pool.query(`SELECT * FROM view_shoes WHERE id = $1`, [
     id,
   ]);
@@ -15,7 +15,7 @@ async function getShoeById(id: shoeId) {
   return rows[0];
 }
 
-async function insertShoe({
+async function createShoeQuery({
   gender,
   season,
   category,
@@ -43,7 +43,7 @@ async function insertShoe({
   return rows[0];
 }
 
-async function editShoe(id: shoeId, shoeData: ShoeParams) {
+async function updateShoeQuery(id: shoeId, shoeData: ShoeParams) {
   const { gender, season, category, brand, material, color, country } =
     shoeData;
   const { rows } = await pool.query(
@@ -64,4 +64,19 @@ async function editShoe(id: shoeId, shoeData: ShoeParams) {
   return rows[0];
 }
 
-export { getAllShoes, getShoeById, insertShoe, editShoe };
+async function deleteShoeQuery(id: shoeId) {
+  const { rows } = await pool.query(
+    `DELETE FROM shoes WHERE id = $1 RETURNING *`,
+    [id]
+  );
+
+  return rows[0];
+}
+
+export {
+  getAllShoesQuery,
+  getShoeByIdQuery,
+  createShoeQuery,
+  updateShoeQuery,
+  deleteShoeQuery,
+};

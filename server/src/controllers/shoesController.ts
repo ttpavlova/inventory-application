@@ -1,19 +1,20 @@
 import type { Request, Response } from "express";
 import {
-  editShoe,
-  getAllShoes,
-  getShoeById,
-  insertShoe,
+  getAllShoesQuery,
+  getShoeByIdQuery,
+  createShoeQuery,
+  updateShoeQuery,
+  deleteShoeQuery,
 } from "../db/queries.js";
 import type { ShoeParams } from "../types/types.js";
 
-async function getShoeList(req: Request, res: Response) {
-  const shoes = await getAllShoes();
+async function getAllShoes(req: Request, res: Response) {
+  const shoes = await getAllShoesQuery();
 
   res.json({ shoes });
 }
 
-async function getShoeDetail(req: Request, res: Response) {
+async function getShoeById(req: Request, res: Response) {
   const { id } = req.params;
 
   if (!id) {
@@ -21,7 +22,7 @@ async function getShoeDetail(req: Request, res: Response) {
   }
 
   try {
-    const shoe = await getShoeById(id);
+    const shoe = await getShoeByIdQuery(id);
 
     if (!shoe) {
       return res.status(404).json({ error: "Shoe not found" });
@@ -37,7 +38,7 @@ async function createShoe(req: Request, res: Response) {
   const { ...shoeData }: ShoeParams = req.body;
 
   try {
-    const newShoe = await insertShoe(shoeData);
+    const newShoe = await createShoeQuery(shoeData);
 
     res.status(201).json({
       success: true,
@@ -61,9 +62,13 @@ async function updateShoe(req: Request, res: Response) {
   }
 
   try {
-    const newShoe = await editShoe(id, shoeData);
+    const newShoe = await updateShoeQuery(id, shoeData);
 
-    res.status(201).json({
+    if (!newShoe) {
+      return res.status(404).json({ error: "Shoe not found" });
+    }
+
+    res.status(200).json({
       success: true,
       data: newShoe,
     });
@@ -76,6 +81,31 @@ async function updateShoe(req: Request, res: Response) {
   }
 }
 
-async function deleteShoe(req: Request, res: Response) {}
+async function deleteShoe(req: Request, res: Response) {
+  const { id } = req.params;
 
-export { getShoeList, getShoeDetail, createShoe, updateShoe, deleteShoe };
+  if (!id) {
+    return res.status(400).json({ error: "Shoe ID is required" });
+  }
+
+  try {
+    const deletedShoe = await deleteShoeQuery(id);
+
+    if (!deletedShoe) {
+      return res.status(404).json({ error: "Shoe not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: deletedShoe,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Database error: failed to delete a shoe",
+      error: error instanceof Error ? error.message : error,
+    });
+  }
+}
+
+export { getAllShoes, getShoeById, createShoe, updateShoe, deleteShoe };
