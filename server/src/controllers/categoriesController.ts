@@ -29,7 +29,7 @@ async function getAllCategories(
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Database error: failed to get a list of shoes",
+      message: "Database error: failed to get a list of categories",
       error: error instanceof Error ? error.message : error,
     });
   }
