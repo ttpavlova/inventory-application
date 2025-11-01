@@ -1,4 +1,8 @@
 export interface ShoeParams {
+  id: string;
+}
+
+export interface ShoeBody {
   gender: string;
   season: string;
   category: string;
@@ -8,7 +12,7 @@ export interface ShoeParams {
   country: string;
 }
 
-export type ShoeId = string;
+export type ShoeId = ShoeParams["id"];
 
 export interface CategoryParams {
   id: string;
@@ -23,3 +27,5 @@ export interface CategoryFilterByName extends CategoryBody {}
 export type CategoryId = CategoryParams["id"];
 
 export type CategoryName = CategoryBody["name"];
+
+export type NoParams = Record<string, never>;

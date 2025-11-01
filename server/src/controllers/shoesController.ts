@@ -6,7 +6,7 @@ import {
   updateShoeQuery,
   deleteShoeQuery,
 } from "../db/shoesQueries.js";
-import type { ShoeParams } from "../types/types.js";
+import type { NoParams, ShoeBody, ShoeParams } from "../types/types.js";
 
 async function getAllShoes(req: Request, res: Response) {
   const shoes = await getAllShoesQuery();
@@ -14,12 +14,8 @@ async function getAllShoes(req: Request, res: Response) {
   res.json({ shoes });
 }
 
-async function getShoeById(req: Request, res: Response) {
+async function getShoeById(req: Request<ShoeParams>, res: Response) {
   const { id } = req.params;
-
-  if (!id) {
-    return res.status(400).json({ error: "Shoe ID is required" });
-  }
 
   try {
     const shoe = await getShoeByIdQuery(id);
@@ -34,8 +30,11 @@ async function getShoeById(req: Request, res: Response) {
   }
 }
 
-async function createShoe(req: Request, res: Response) {
-  const { ...shoeData }: ShoeParams = req.body;
+async function createShoe(
+  req: Request<NoParams, any, ShoeBody>,
+  res: Response
+) {
+  const { ...shoeData } = req.body;
 
   try {
     const newShoe = await createShoeQuery(shoeData);
@@ -53,13 +52,12 @@ async function createShoe(req: Request, res: Response) {
   }
 }
 
-async function updateShoe(req: Request, res: Response) {
+async function updateShoe(
+  req: Request<ShoeParams, any, ShoeBody>,
+  res: Response
+) {
   const { id } = req.params;
-  const { ...shoeData }: ShoeParams = req.body;
-
-  if (!id) {
-    return res.status(400).json({ error: "Shoe ID is required" });
-  }
+  const { ...shoeData } = req.body;
 
   try {
     const newShoe = await updateShoeQuery(id, shoeData);
@@ -81,12 +79,8 @@ async function updateShoe(req: Request, res: Response) {
   }
 }
 
-async function deleteShoe(req: Request, res: Response) {
+async function deleteShoe(req: Request<ShoeParams>, res: Response) {
   const { id } = req.params;
-
-  if (!id) {
-    return res.status(400).json({ error: "Shoe ID is required" });
-  }
 
   try {
     const deletedShoe = await deleteShoeQuery(id);

@@ -10,6 +10,7 @@ import type {
   CategoryBody,
   CategoryFilterByName,
   CategoryParams,
+  NoParams,
 } from "../types/types.js";
 
 async function getAllCategories(req: Request, res: Response) {
@@ -19,7 +20,7 @@ async function getAllCategories(req: Request, res: Response) {
 }
 
 async function createCategory(
-  req: Request<CategoryParams, any, CategoryBody>,
+  req: Request<NoParams, any, CategoryBody>,
   res: Response
 ) {
   const { ...categoryData } = req.body;

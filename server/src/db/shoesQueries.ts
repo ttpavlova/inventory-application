@@ -1,4 +1,4 @@
-import type { ShoeId, ShoeParams } from "../types/types.js";
+import type { ShoeBody, ShoeId } from "../types/types.js";
 import { pool } from "./pool.js";
 
 async function getAllShoesQuery() {
@@ -23,7 +23,7 @@ async function createShoeQuery({
   material,
   color,
   country,
-}: ShoeParams) {
+}: ShoeBody) {
   const { rows } = await pool.query(
     `INSERT INTO shoes (gender, season, category_id, brand_id, material_id, color_id, country_id) 
     VALUES
@@ -43,7 +43,7 @@ async function createShoeQuery({
   return rows[0];
 }
 
-async function updateShoeQuery(id: ShoeId, shoeData: ShoeParams) {
+async function updateShoeQuery(id: ShoeId, shoeData: ShoeBody) {
   const { gender, season, category, brand, material, color, country } =
     shoeData;
   const { rows } = await pool.query(
