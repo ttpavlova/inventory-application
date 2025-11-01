@@ -8,4 +8,18 @@ export interface ShoeParams {
   country: string;
 }
 
-export type shoeId = string;
+export type ShoeId = string;
+
+export interface CategoryParams {
+  id: string;
+}
+
+export interface CategoryBody {
+  name: string;
+}
+
+export interface CategoryFilterByName extends CategoryBody {}
+
+export type CategoryId = CategoryParams["id"];
+
+export type CategoryName = CategoryBody["name"];

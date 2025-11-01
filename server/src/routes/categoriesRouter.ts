@@ -9,9 +9,10 @@ import {
 const categoriesRouter = Router();
 
 categoriesRouter.get("/", getAllCategories);
-categoriesRouter.get("/:name", getShoesByCategory);
 categoriesRouter.post("/", createCategory);
 categoriesRouter.put("/:id", updateCategory);
 categoriesRouter.delete("/:id", deleteCategory);
+
+categoriesRouter.get("/:name", getShoesByCategory);
 
 export { categoriesRouter };

@@ -1,8 +1,15 @@
 import type { Request, Response } from "express";
 import {
+  createCategoryQuery,
   getAllCategoriesQuery,
   getShoesByCategoryQuery,
+  updateCategoryQuery,
 } from "../db/categoriesQueries.js";
+import type {
+  CategoryBody,
+  CategoryFilterByName,
+  CategoryParams,
+} from "../types/types.js";
 
 async function getAllCategories(req: Request, res: Response) {
   const categories = await getAllCategoriesQuery();
@@ -10,12 +17,61 @@ async function getAllCategories(req: Request, res: Response) {
   res.json({ categories });
 }
 
-async function getShoesByCategory(req: Request, res: Response) {
-  const { name } = req.params;
+async function createCategory(
+  req: Request<CategoryParams, any, CategoryBody>,
+  res: Response
+) {
+  const { ...categoryData } = req.body;
 
-  if (!name) {
-    return res.status(400).json({ error: "Category name is required" });
+  try {
+    const newCategory = await createCategoryQuery(categoryData);
+
+    res.status(201).json({
+      success: true,
+      data: newCategory,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Database error: failed to create a category",
+      error: error instanceof Error ? error.message : error,
+    });
   }
+}
+async function updateCategory(
+  req: Request<CategoryParams, any, CategoryBody>,
+  res: Response
+) {
+  const { id } = req.params;
+  const { ...categoryData } = req.body;
+
+  try {
+    const newCategory = await updateCategoryQuery(id, categoryData);
+
+    if (!newCategory) {
+      return res.status(404).json({ error: "Category not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: newCategory,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Database error: failed to update a category",
+      error: error instanceof Error ? error.message : error,
+    });
+  }
+}
+
+async function deleteCategory() {}
+
+async function getShoesByCategory(
+  req: Request<CategoryFilterByName>,
+  res: Response
+) {
+  const { name } = req.params;
 
   try {
     const shoes = await getShoesByCategoryQuery(name);
@@ -38,10 +94,6 @@ async function getShoesByCategory(req: Request, res: Response) {
     });
   }
 }
-
-async function createCategory() {}
-async function updateCategory() {}
-async function deleteCategory() {}
 
 export {
   getAllCategories,
