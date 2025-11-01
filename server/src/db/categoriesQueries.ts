@@ -35,6 +35,15 @@ async function updateCategoryQuery(id: CategoryId, categoryData: CategoryBody) {
   return rows[0];
 }
 
+async function deleteCategoryQuery(id: CategoryId) {
+  const { rows } = await pool.query(
+    `DELETE FROM categories WHERE id = $1 RETURNING *`,
+    [id]
+  );
+
+  return rows[0];
+}
+
 async function getShoesByCategoryQuery(category: CategoryName) {
   const { rows } = await pool.query(
     `SELECT * FROM view_shoes WHERE LOWER(category_name) = LOWER($1)`,
@@ -46,7 +55,8 @@ async function getShoesByCategoryQuery(category: CategoryName) {
 
 export {
   getAllCategoriesQuery,
-  getShoesByCategoryQuery,
   createCategoryQuery,
   updateCategoryQuery,
+  deleteCategoryQuery,
+  getShoesByCategoryQuery,
 };

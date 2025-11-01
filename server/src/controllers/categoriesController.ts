@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import {
   createCategoryQuery,
+  deleteCategoryQuery,
   getAllCategoriesQuery,
   getShoesByCategoryQuery,
   updateCategoryQuery,
@@ -65,7 +66,28 @@ async function updateCategory(
   }
 }
 
-async function deleteCategory() {}
+async function deleteCategory(req: Request<CategoryParams>, res: Response) {
+  const { id } = req.params;
+
+  try {
+    const deletedCategory = await deleteCategoryQuery(id);
+
+    if (!deletedCategory) {
+      return res.status(404).json({ error: "Category not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: deletedCategory,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Database error: failed to delete a category",
+      error: error instanceof Error ? error.message : error,
+    });
+  }
+}
 
 async function getShoesByCategory(
   req: Request<CategoryFilterByName>,
@@ -97,8 +119,8 @@ async function getShoesByCategory(
 
 export {
   getAllCategories,
-  getShoesByCategory,
   createCategory,
   updateCategory,
   deleteCategory,
+  getShoesByCategory,
 };
