@@ -6,33 +6,60 @@ import {
   updateShoeQuery,
   deleteShoeQuery,
 } from "../db/shoesQueries.js";
-import type { NoParams, ShoeBody, ShoeParams } from "../types/types.js";
+import type {
+  NoParams,
+  ResponseBody,
+  Shoe,
+  ShoeBody,
+  ShoeParams,
+} from "../types/types.js";
 
-async function getAllShoes(req: Request, res: Response) {
-  const shoes = await getAllShoesQuery();
+async function getAllShoes(req: Request, res: Response<ResponseBody<Shoe[]>>) {
+  try {
+    const shoes = await getAllShoesQuery();
 
-  res.json({ shoes });
+    res.status(200).json({
+      success: true,
+      data: shoes,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Database error: failed to get a list of shoes",
+      error: error instanceof Error ? error.message : error,
+    });
+  }
 }
 
-async function getShoeById(req: Request<ShoeParams>, res: Response) {
+async function getShoeById(
+  req: Request<ShoeParams>,
+  res: Response<ResponseBody<Shoe>>
+) {
   const { id } = req.params;
 
   try {
     const shoe = await getShoeByIdQuery(id);
 
     if (!shoe) {
-      return res.status(404).json({ error: "Shoe not found" });
+      return res.status(404).json({ message: "Shoe not found" });
     }
 
-    res.json(shoe);
+    res.status(200).json({
+      success: true,
+      data: shoe,
+    });
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({
+      success: false,
+      message: "Database error: failed to get a shoe by id",
+      error: error instanceof Error ? error.message : error,
+    });
   }
 }
 
 async function createShoe(
-  req: Request<NoParams, any, ShoeBody>,
-  res: Response
+  req: Request<NoParams, ResponseBody<Shoe>, ShoeBody>,
+  res: Response<ResponseBody<Shoe>>
 ) {
   const { ...shoeData } = req.body;
 
@@ -53,8 +80,8 @@ async function createShoe(
 }
 
 async function updateShoe(
-  req: Request<ShoeParams, any, ShoeBody>,
-  res: Response
+  req: Request<ShoeParams, ResponseBody<Shoe>, ShoeBody>,
+  res: Response<ResponseBody<Shoe>>
 ) {
   const { id } = req.params;
   const { ...shoeData } = req.body;
@@ -63,7 +90,7 @@ async function updateShoe(
     const newShoe = await updateShoeQuery(id, shoeData);
 
     if (!newShoe) {
-      return res.status(404).json({ error: "Shoe not found" });
+      return res.status(404).json({ message: "Shoe not found" });
     }
 
     res.status(200).json({
@@ -79,14 +106,17 @@ async function updateShoe(
   }
 }
 
-async function deleteShoe(req: Request<ShoeParams>, res: Response) {
+async function deleteShoe(
+  req: Request<ShoeParams>,
+  res: Response<ResponseBody<Shoe>>
+) {
   const { id } = req.params;
 
   try {
     const deletedShoe = await deleteShoeQuery(id);
 
     if (!deletedShoe) {
-      return res.status(404).json({ error: "Shoe not found" });
+      return res.status(404).json({ message: "Shoe not found" });
     }
 
     res.status(200).json({

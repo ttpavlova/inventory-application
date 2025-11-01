@@ -1,13 +1,20 @@
-import type { CategoryBody, CategoryId, CategoryName } from "../types/types.js";
+import type {
+  Category,
+  CategoryBody,
+  CategoryId,
+  CategoryName,
+} from "../types/types.js";
 import { pool } from "./pool.js";
 
-async function getAllCategoriesQuery() {
+async function getAllCategoriesQuery(): Promise<Category[]> {
   const { rows } = await pool.query("SELECT * FROM categories");
 
   return rows;
 }
 
-async function createCategoryQuery(categoryData: CategoryBody) {
+async function createCategoryQuery(
+  categoryData: CategoryBody
+): Promise<Category> {
   const { name } = categoryData;
 
   const { rows } = await pool.query(
@@ -20,7 +27,10 @@ async function createCategoryQuery(categoryData: CategoryBody) {
   return rows[0];
 }
 
-async function updateCategoryQuery(id: CategoryId, categoryData: CategoryBody) {
+async function updateCategoryQuery(
+  id: CategoryId,
+  categoryData: CategoryBody
+): Promise<Category> {
   const { name } = categoryData;
 
   const { rows } = await pool.query(
@@ -35,7 +45,7 @@ async function updateCategoryQuery(id: CategoryId, categoryData: CategoryBody) {
   return rows[0];
 }
 
-async function deleteCategoryQuery(id: CategoryId) {
+async function deleteCategoryQuery(id: CategoryId): Promise<Category> {
   const { rows } = await pool.query(
     `DELETE FROM categories WHERE id = $1 RETURNING *`,
     [id]
@@ -44,7 +54,9 @@ async function deleteCategoryQuery(id: CategoryId) {
   return rows[0];
 }
 
-async function getShoesByCategoryQuery(category: CategoryName) {
+async function getShoesByCategoryQuery(
+  category: CategoryName
+): Promise<Category[]> {
   const { rows } = await pool.query(
     `SELECT * FROM view_shoes WHERE LOWER(category_name) = LOWER($1)`,
     [category]

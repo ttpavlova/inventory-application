@@ -12,6 +12,8 @@ export interface ShoeBody {
   country: string;
 }
 
+export type Shoe = ShoeParams & ShoeBody;
+
 export type ShoeId = ShoeParams["id"];
 
 export interface CategoryParams {
@@ -22,10 +24,34 @@ export interface CategoryBody {
   name: string;
 }
 
-export interface CategoryFilterByName extends CategoryBody {}
+export type Category = CategoryParams & CategoryBody;
+
+export interface CategoryFilterByName {
+  name: string;
+}
 
 export type CategoryId = CategoryParams["id"];
 
 export type CategoryName = CategoryBody["name"];
 
 export type NoParams = Record<string, never>;
+
+interface SuccessResponse<T> {
+  success: true;
+  data: T;
+}
+
+interface ErrorResponse {
+  success: false;
+  message: string;
+  error: unknown;
+}
+
+interface NotFoundError {
+  message: string;
+}
+
+export type ResponseBody<T> =
+  | SuccessResponse<T>
+  | ErrorResponse
+  | NotFoundError;

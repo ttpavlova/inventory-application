@@ -7,21 +7,37 @@ import {
   updateCategoryQuery,
 } from "../db/categoriesQueries.js";
 import type {
+  Category,
   CategoryBody,
   CategoryFilterByName,
   CategoryParams,
   NoParams,
+  ResponseBody,
 } from "../types/types.js";
 
-async function getAllCategories(req: Request, res: Response) {
-  const categories = await getAllCategoriesQuery();
+async function getAllCategories(
+  req: Request,
+  res: Response<ResponseBody<Category[]>>
+) {
+  try {
+    const categories = await getAllCategoriesQuery();
 
-  res.json({ categories });
+    res.status(200).json({
+      success: true,
+      data: categories,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Database error: failed to get a list of shoes",
+      error: error instanceof Error ? error.message : error,
+    });
+  }
 }
 
 async function createCategory(
-  req: Request<NoParams, any, CategoryBody>,
-  res: Response
+  req: Request<NoParams, ResponseBody<Category>, CategoryBody>,
+  res: Response<ResponseBody<Category>>
 ) {
   const { ...categoryData } = req.body;
 
@@ -41,8 +57,8 @@ async function createCategory(
   }
 }
 async function updateCategory(
-  req: Request<CategoryParams, any, CategoryBody>,
-  res: Response
+  req: Request<CategoryParams, ResponseBody<Category>, CategoryBody>,
+  res: Response<ResponseBody<Category>>
 ) {
   const { id } = req.params;
   const { ...categoryData } = req.body;
@@ -51,7 +67,7 @@ async function updateCategory(
     const newCategory = await updateCategoryQuery(id, categoryData);
 
     if (!newCategory) {
-      return res.status(404).json({ error: "Category not found" });
+      return res.status(404).json({ message: "Category not found" });
     }
 
     res.status(200).json({
@@ -67,14 +83,17 @@ async function updateCategory(
   }
 }
 
-async function deleteCategory(req: Request<CategoryParams>, res: Response) {
+async function deleteCategory(
+  req: Request<CategoryParams>,
+  res: Response<ResponseBody<Category>>
+) {
   const { id } = req.params;
 
   try {
     const deletedCategory = await deleteCategoryQuery(id);
 
     if (!deletedCategory) {
-      return res.status(404).json({ error: "Category not found" });
+      return res.status(404).json({ message: "Category not found" });
     }
 
     res.status(200).json({
@@ -92,7 +111,7 @@ async function deleteCategory(req: Request<CategoryParams>, res: Response) {
 
 async function getShoesByCategory(
   req: Request<CategoryFilterByName>,
-  res: Response
+  res: Response<ResponseBody<Category[]>>
 ) {
   const { name } = req.params;
 
@@ -102,7 +121,7 @@ async function getShoesByCategory(
     if (shoes.length === 0) {
       return res
         .status(404)
-        .json({ error: `Shoes by category ${name} not found` });
+        .json({ message: `Shoes by category ${name} not found` });
     }
 
     res.status(200).json({
