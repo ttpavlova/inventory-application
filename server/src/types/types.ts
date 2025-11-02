@@ -1,3 +1,5 @@
+import type { ValidationError } from "express-validator";
+
 export interface ShoeParams {
   id: string;
 }
@@ -51,7 +53,13 @@ interface NotFoundError {
   message: string;
 }
 
+interface ValidationErrors {
+  success: false;
+  errors: ValidationError[];
+}
+
 export type ResponseBody<T> =
   | SuccessResponse<T>
   | ErrorResponse
-  | NotFoundError;
+  | NotFoundError
+  | ValidationErrors;
