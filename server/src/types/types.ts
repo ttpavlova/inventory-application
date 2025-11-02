@@ -50,6 +50,7 @@ interface ErrorResponse {
 }
 
 interface NotFoundError {
+  success: false;
   message: string;
 }
 

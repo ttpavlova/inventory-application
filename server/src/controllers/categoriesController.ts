@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import { body, validationResult } from "express-validator";
 import {
   createCategoryQuery,
   deleteCategoryQuery,
@@ -14,6 +15,15 @@ import type {
   NoParams,
   ResponseBody,
 } from "../types/types.js";
+
+const getLengthErr = (max: number) => `must be between 1 and ${max} characters`;
+
+const validateCategory = [
+  body("name")
+    .trim()
+    .isLength({ min: 1, max: 50 })
+    .withMessage(`Category ${getLengthErr(50)}`),
+];
 
 async function getAllCategories(
   req: Request,
@@ -35,53 +45,79 @@ async function getAllCategories(
   }
 }
 
-async function createCategory(
-  req: Request<NoParams, ResponseBody<Category>, CategoryBody>,
-  res: Response<ResponseBody<Category>>
-) {
-  const { ...categoryData } = req.body;
+const createCategory = [
+  validateCategory,
+  async (
+    req: Request<NoParams, ResponseBody<Category>, CategoryBody>,
+    res: Response<ResponseBody<Category>>
+  ) => {
+    const { ...categoryData } = req.body;
 
-  try {
-    const newCategory = await createCategoryQuery(categoryData);
+    const errors = validationResult(req);
 
-    res.status(201).json({
-      success: true,
-      data: newCategory,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Database error: failed to create a category",
-      error: error instanceof Error ? error.message : error,
-    });
-  }
-}
-async function updateCategory(
-  req: Request<CategoryParams, ResponseBody<Category>, CategoryBody>,
-  res: Response<ResponseBody<Category>>
-) {
-  const { id } = req.params;
-  const { ...categoryData } = req.body;
-
-  try {
-    const newCategory = await updateCategoryQuery(id, categoryData);
-
-    if (!newCategory) {
-      return res.status(404).json({ message: "Category not found" });
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        errors: errors.array(),
+      });
     }
 
-    res.status(200).json({
-      success: true,
-      data: newCategory,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Database error: failed to update a category",
-      error: error instanceof Error ? error.message : error,
-    });
-  }
-}
+    try {
+      const newCategory = await createCategoryQuery(categoryData);
+
+      res.status(201).json({
+        success: true,
+        data: newCategory,
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Database error: failed to create a category",
+        error: error instanceof Error ? error.message : error,
+      });
+    }
+  },
+];
+
+const updateCategory = [
+  validateCategory,
+  async (
+    req: Request<CategoryParams, ResponseBody<Category>, CategoryBody>,
+    res: Response<ResponseBody<Category>>
+  ) => {
+    const { id } = req.params;
+    const { ...categoryData } = req.body;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        errors: errors.array(),
+      });
+    }
+
+    try {
+      const newCategory = await updateCategoryQuery(id, categoryData);
+
+      if (!newCategory) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Category not found" });
+      }
+
+      res.status(200).json({
+        success: true,
+        data: newCategory,
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Database error: failed to update a category",
+        error: error instanceof Error ? error.message : error,
+      });
+    }
+  },
+];
 
 async function deleteCategory(
   req: Request<CategoryParams>,
@@ -93,7 +129,9 @@ async function deleteCategory(
     const deletedCategory = await deleteCategoryQuery(id);
 
     if (!deletedCategory) {
-      return res.status(404).json({ message: "Category not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Category not found" });
     }
 
     res.status(200).json({
@@ -121,7 +159,10 @@ async function getShoesByCategory(
     if (shoes.length === 0) {
       return res
         .status(404)
-        .json({ message: `Shoes by category ${name} not found` });
+        .json({
+          success: false,
+          message: `Shoes by category ${name} not found`,
+        });
     }
 
     res.status(200).json({

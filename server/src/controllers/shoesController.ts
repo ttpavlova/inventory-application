@@ -76,7 +76,9 @@ async function getShoeById(
     const shoe = await getShoeByIdQuery(id);
 
     if (!shoe) {
-      return res.status(404).json({ message: "Shoe not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Shoe not found" });
     }
 
     res.status(200).json({
@@ -145,7 +147,9 @@ const updateShoe = [
       const newShoe = await updateShoeQuery(id, shoeData);
 
       if (!newShoe) {
-        return res.status(404).json({ message: "Shoe not found" });
+        return res
+          .status(404)
+          .json({ success: false, message: "Shoe not found" });
       }
 
       res.status(200).json({
@@ -172,7 +176,9 @@ async function deleteShoe(
     const deletedShoe = await deleteShoeQuery(id);
 
     if (!deletedShoe) {
-      return res.status(404).json({ message: "Shoe not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Shoe not found" });
     }
 
     res.status(200).json({
