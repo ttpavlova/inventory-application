@@ -95,7 +95,7 @@ async function getShoeById(
 }
 
 const createShoe = [
-  validateShoe,
+  ...validateShoe,
   async (
     req: Request<NoParams, ResponseBody<Shoe>, ShoeBody>,
     res: Response<ResponseBody<Shoe>>
@@ -127,7 +127,7 @@ const createShoe = [
   },
 ];
 const updateShoe = [
-  validateShoe,
+  ...validateShoe,
   async (
     req: Request<ShoeParams, ResponseBody<Shoe>, ShoeBody>,
     res: Response<ResponseBody<Shoe>>

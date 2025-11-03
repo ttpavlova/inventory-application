@@ -46,7 +46,7 @@ async function getAllCategories(
 }
 
 const createCategory = [
-  validateCategory,
+  ...validateCategory,
   async (
     req: Request<NoParams, ResponseBody<Category>, CategoryBody>,
     res: Response<ResponseBody<Category>>
@@ -80,7 +80,7 @@ const createCategory = [
 ];
 
 const updateCategory = [
-  validateCategory,
+  ...validateCategory,
   async (
     req: Request<CategoryParams, ResponseBody<Category>, CategoryBody>,
     res: Response<ResponseBody<Category>>
@@ -157,12 +157,10 @@ async function getShoesByCategory(
     const shoes = await getShoesByCategoryQuery(name);
 
     if (shoes.length === 0) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: `Shoes by category ${name} not found`,
-        });
+      return res.status(404).json({
+        success: false,
+        message: `Shoes by category ${name} not found`,
+      });
     }
 
     res.status(200).json({
