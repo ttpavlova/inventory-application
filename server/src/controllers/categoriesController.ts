@@ -15,6 +15,7 @@ import type {
   NoParams,
   ResponseBody,
 } from "../types/types.js";
+import { buildErrorResponse } from "../helpers/buildErrorResponse .js";
 
 const getLengthErr = (max: number) => `must be between 1 and ${max} characters`;
 
@@ -33,15 +34,17 @@ async function getAllCategories(
     const categories = await getAllCategoriesQuery();
 
     res.status(200).json({
-      success: true,
       data: categories,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Database error: failed to get a list of categories",
-      error: error instanceof Error ? error.message : error,
-    });
+    res
+      .status(500)
+      .json(
+        buildErrorResponse(
+          "Database error: failed to get a list of categories",
+          error
+        )
+      );
   }
 }
 
@@ -57,7 +60,6 @@ const createCategory = [
 
     if (!errors.isEmpty()) {
       return res.status(400).json({
-        success: false,
         errors: errors.array(),
       });
     }
@@ -66,15 +68,17 @@ const createCategory = [
       const newCategory = await createCategoryQuery(categoryData);
 
       res.status(201).json({
-        success: true,
         data: newCategory,
       });
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: "Database error: failed to create a category",
-        error: error instanceof Error ? error.message : error,
-      });
+      res
+        .status(500)
+        .json(
+          buildErrorResponse(
+            "Database error: failed to create a category",
+            error
+          )
+        );
     }
   },
 ];
@@ -91,7 +95,6 @@ const updateCategory = [
 
     if (!errors.isEmpty()) {
       return res.status(400).json({
-        success: false,
         errors: errors.array(),
       });
     }
@@ -100,21 +103,21 @@ const updateCategory = [
       const newCategory = await updateCategoryQuery(id, categoryData);
 
       if (!newCategory) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Category not found" });
+        return res.status(404).json({ message: "Category not found" });
       }
 
       res.status(200).json({
-        success: true,
         data: newCategory,
       });
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: "Database error: failed to update a category",
-        error: error instanceof Error ? error.message : error,
-      });
+      res
+        .status(500)
+        .json(
+          buildErrorResponse(
+            "Database error: failed to update a category",
+            error
+          )
+        );
     }
   },
 ];
@@ -129,21 +132,18 @@ async function deleteCategory(
     const deletedCategory = await deleteCategoryQuery(id);
 
     if (!deletedCategory) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Category not found" });
+      return res.status(404).json({ message: "Category not found" });
     }
 
     res.status(200).json({
-      success: true,
       data: deletedCategory,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Database error: failed to delete a category",
-      error: error instanceof Error ? error.message : error,
-    });
+    res
+      .status(500)
+      .json(
+        buildErrorResponse("Database error: failed to delete a category", error)
+      );
   }
 }
 
@@ -158,21 +158,22 @@ async function getShoesByCategory(
 
     if (shoes.length === 0) {
       return res.status(404).json({
-        success: false,
         message: `Shoes by category ${name} not found`,
       });
     }
 
     res.status(200).json({
-      success: true,
       data: shoes,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Database error: failed to get shoes by category",
-      error: error instanceof Error ? error.message : error,
-    });
+    res
+      .status(500)
+      .json(
+        buildErrorResponse(
+          "Database error: failed to get shoes by category",
+          error
+        )
+      );
   }
 }
 

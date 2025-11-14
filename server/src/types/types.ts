@@ -39,23 +39,19 @@ export type CategoryName = CategoryBody["name"];
 export type NoParams = Record<string, never>;
 
 interface SuccessResponse<T> {
-  success: true;
   data: T;
 }
 
 interface ErrorResponse {
-  success: false;
   message: string;
-  error: unknown;
+  error?: unknown;
 }
 
 interface NotFoundError {
-  success: false;
   message: string;
 }
 
 interface ValidationErrors {
-  success: false;
   errors: ValidationError[];
 }
 

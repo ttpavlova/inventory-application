@@ -14,6 +14,7 @@ import type {
   ShoeBody,
   ShoeParams,
 } from "../types/types.js";
+import { buildErrorResponse } from "../helpers/buildErrorResponse .js";
 
 const invalidErr = "Invalid";
 const getLengthErr = (max: number) => `must be between 1 and ${max} characters`;
@@ -54,15 +55,17 @@ async function getAllShoes(req: Request, res: Response<ResponseBody<Shoe[]>>) {
     const shoes = await getAllShoesQuery();
 
     res.status(200).json({
-      success: true,
       data: shoes,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Database error: failed to get a list of shoes",
-      error: error instanceof Error ? error.message : error,
-    });
+    res
+      .status(500)
+      .json(
+        buildErrorResponse(
+          "Database error: failed to get a list of shoes",
+          error
+        )
+      );
   }
 }
 
@@ -76,21 +79,18 @@ async function getShoeById(
     const shoe = await getShoeByIdQuery(id);
 
     if (!shoe) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Shoe not found" });
+      return res.status(404).json({ message: "Shoe not found" });
     }
 
     res.status(200).json({
-      success: true,
       data: shoe,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Database error: failed to get a shoe by id",
-      error: error instanceof Error ? error.message : error,
-    });
+    res
+      .status(500)
+      .json(
+        buildErrorResponse("Database error: failed to get a shoe by id", error)
+      );
   }
 }
 
@@ -105,24 +105,23 @@ const createShoe = [
 
     if (!errors.isEmpty()) {
       return res.status(400).json({
-        success: false,
         errors: errors.array(),
       });
     }
 
     try {
       const newShoe = await createShoeQuery(shoeData);
+      console.log(process.env.NODE_ENV);
 
       res.status(201).json({
-        success: true,
         data: newShoe,
       });
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: "Database error: failed to create a shoe",
-        error: error instanceof Error ? error.message : error,
-      });
+      res
+        .status(500)
+        .json(
+          buildErrorResponse("Database error: failed to create a shoe", error)
+        );
     }
   },
 ];
@@ -138,7 +137,6 @@ const updateShoe = [
 
     if (!errors.isEmpty()) {
       return res.status(400).json({
-        success: false,
         errors: errors.array(),
       });
     }
@@ -147,21 +145,18 @@ const updateShoe = [
       const newShoe = await updateShoeQuery(id, shoeData);
 
       if (!newShoe) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Shoe not found" });
+        return res.status(404).json({ message: "Shoe not found" });
       }
 
       res.status(200).json({
-        success: true,
         data: newShoe,
       });
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: "Database error: failed to update a shoe",
-        error: error instanceof Error ? error.message : error,
-      });
+      res
+        .status(500)
+        .json(
+          buildErrorResponse("Database error: failed to update a shoe", error)
+        );
     }
   },
 ];
@@ -176,21 +171,18 @@ async function deleteShoe(
     const deletedShoe = await deleteShoeQuery(id);
 
     if (!deletedShoe) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Shoe not found" });
+      return res.status(404).json({ message: "Shoe not found" });
     }
 
     res.status(200).json({
-      success: true,
       data: deletedShoe,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Database error: failed to delete a shoe",
-      error: error instanceof Error ? error.message : error,
-    });
+    res
+      .status(500)
+      .json(
+        buildErrorResponse("Database error: failed to delete a shoe", error)
+      );
   }
 }
 
