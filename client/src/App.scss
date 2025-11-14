@@ -1,0 +1,67 @@
+@use "styles/reset";
+@use "styles/variables";
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  width: 100%;
+  margin: 0 auto;
+  font-family: "Roboto", sans-serif;
+  font-size: 1.4rem;
+  line-height: 1.2;
+  background-color: #f5f5f5;
+  background-color: #fff;
+  color: #4d4d4d;
+  background-color: variables.$secondary-color;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 15px;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 500;
+  color: #4d4d4d;
+  background-color: #fff;
+  border: 1px solid variables.$primary-color;
+  cursor: pointer;
+}
+
+.btn:hover {
+  color: variables.$primary-color_lighter;
+  border: 1px solid variables.$primary-color_lighter;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: variables.$primary-color;
+}
+
+.btn-primary:hover {
+  color: #fff;
+  background-color: variables.$primary-color_lighter;
+}
+
+.btn:hover,
+.btn-primary:hover {
+  transition: 0.1s ease;
+}
+
+.btn-small {
+  padding: 5px 15px;
+}
+
+@media screen and (min-width: 620px) {
+  body {
+    font-size: 1.6rem;
+    line-height: 1.4;
+  }
+}
+
+@media screen and (max-width: 992px) {
+  button {
+    user-select: none;
+  }
+}

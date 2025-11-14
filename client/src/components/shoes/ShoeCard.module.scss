@@ -1,0 +1,31 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid black;
+}
+
+.cover {
+  height: 200px;
+  width: 100%;
+  background-color: lightgray;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.detail {
+  display: inline-block;
+  padding: 0 24px;
+}
+
+.sizes {
+  padding: 0 24px;
+}
+
+.footer {
+  padding: 0 24px 24px;
+}
