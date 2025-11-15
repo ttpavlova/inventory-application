@@ -19,7 +19,9 @@ const ShoeCard = ({ shoe }: ShoeCardProps) => {
         </span>
         <div className={styles.sizes}>
           {exampleSizes.map((size) => (
-            <span className={styles.size}>{size}</span>
+            <span key={size} className={styles.size}>
+              {size}
+            </span>
           ))}
         </div>
       </div>
