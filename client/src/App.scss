@@ -2,10 +2,16 @@
 @use "styles/variables";
 
 html {
+  height: 100%;
   font-size: 62.5%;
 }
 
+#root {
+  height: 100%;
+}
+
 body {
+  height: 100%;
   width: 100%;
   margin: 0 auto;
   font-family: "Roboto", sans-serif;
@@ -15,6 +21,12 @@ body {
   background-color: #fff;
   color: #4d4d4d;
   background-color: variables.$secondary-color;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100%;
 }
 
 .btn {
