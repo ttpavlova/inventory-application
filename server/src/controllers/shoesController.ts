@@ -1,11 +1,12 @@
 import type { Request, Response } from "express";
 import { body, validationResult } from "express-validator";
 import {
-  getAllShoesQuery,
+  getShoesQuery,
   getShoeByIdQuery,
   createShoeQuery,
   updateShoeQuery,
   deleteShoeQuery,
+  getTotalItems,
 } from "../db/shoesQueries.js";
 import type {
   NoParams,
@@ -50,12 +51,16 @@ const validateShoe = [
     .withMessage(`Country ${getLengthErr(30)}`),
 ];
 
-async function getAllShoes(req: Request, res: Response<ResponseBody<Shoe[]>>) {
+async function getShoes(req: Request, res: Response<ResponseBody<Shoe[]>>) {
+  const { page = 1 } = req.query;
+
   try {
-    const shoes = await getAllShoesQuery();
+    const shoes = await getShoesQuery(Number(page));
+    const totalItems = await getTotalItems();
 
     res.status(200).json({
       data: shoes,
+      totalItems,
     });
   } catch (error) {
     res
@@ -185,4 +190,4 @@ async function deleteShoe(
   }
 }
 
-export { getAllShoes, getShoeById, createShoe, updateShoe, deleteShoe };
+export { getShoes, getShoeById, createShoe, updateShoe, deleteShoe };

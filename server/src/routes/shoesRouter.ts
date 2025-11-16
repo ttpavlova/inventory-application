@@ -1,6 +1,6 @@
 import { Router } from "express";
 import {
-  getAllShoes,
+  getShoes,
   getShoeById,
   createShoe,
   updateShoe,
@@ -8,7 +8,7 @@ import {
 } from "../controllers/shoesController.js";
 const shoesRouter = Router();
 
-shoesRouter.get("/", getAllShoes);
+shoesRouter.get("/", getShoes);
 shoesRouter.get("/:id", getShoeById);
 shoesRouter.post("/", createShoe);
 shoesRouter.put("/:id", updateShoe);

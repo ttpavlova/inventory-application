@@ -40,6 +40,7 @@ export type NoParams = Record<string, never>;
 
 interface SuccessResponse<T> {
   data: T;
+  totalItems?: number;
 }
 
 interface ErrorResponse {

@@ -1,10 +1,21 @@
 import type { Shoe, ShoeBody, ShoeId } from "../types/types.js";
 import { pool } from "./pool.js";
 
-async function getAllShoesQuery(): Promise<Shoe[]> {
-  const { rows } = await pool.query("SELECT * FROM view_shoes");
+async function getShoesQuery(page = 1): Promise<Shoe[]> {
+  const limit = 10;
+  const offset = (page - 1) * limit;
+
+  const { rows } = await pool.query(
+    `SELECT * FROM view_shoes LIMIT ${limit} OFFSET ${offset}`
+  );
 
   return rows;
+}
+
+async function getTotalItems(): Promise<number> {
+  const { rows } = await pool.query("SELECT COUNT(*) FROM view_shoes");
+
+  return Number(rows[0].count);
 }
 
 async function getShoeByIdQuery(id: ShoeId): Promise<Shoe> {
@@ -74,9 +85,10 @@ async function deleteShoeQuery(id: ShoeId): Promise<Shoe> {
 }
 
 export {
-  getAllShoesQuery,
+  getShoesQuery,
   getShoeByIdQuery,
   createShoeQuery,
   updateShoeQuery,
   deleteShoeQuery,
+  getTotalItems,
 };
