@@ -111,7 +111,6 @@ const createShoe = [
 
     try {
       const newShoe = await createShoeQuery(shoeData);
-      console.log(process.env.NODE_ENV);
 
       res.status(201).json({
         data: newShoe,

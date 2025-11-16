@@ -14,6 +14,11 @@ export interface Shoe {
   country: string;
 }
 
+export interface Category {
+  id: string;
+  name: string;
+}
+
 export interface ResponseParams<T> {
   data: T;
 }

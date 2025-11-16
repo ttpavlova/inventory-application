@@ -1,4 +1,5 @@
-import { useCustomQuery } from "../../hooks/useCustomQuery";
+import { useCustomQuery } from "../../hooks/useGetShoesQuery";
+import { Menu } from "../Menu/Menu";
 import ShoeCard from "./ShoeCard";
 import styles from "./Shoes.module.scss";
 
@@ -11,7 +12,7 @@ const Shoes = () => {
 
   return (
     <div className={styles.mainContainer}>
-      <aside className={styles.menu}>Menu</aside>
+      <Menu />
 
       <div className={styles.shoesContainer}>
         {data && data.map((shoe) => <ShoeCard key={shoe.id} shoe={shoe} />)}
