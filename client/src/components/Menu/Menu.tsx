@@ -16,7 +16,7 @@ export const Menu = () => {
         <legend>Categories</legend>
         {data &&
           data.map((item) => (
-            <div>
+            <div key={item.id}>
               <input
                 type="checkbox"
                 id={item.name}

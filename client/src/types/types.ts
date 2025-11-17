@@ -21,4 +21,5 @@ export interface Category {
 
 export interface ResponseParams<T> {
   data: T;
+  totalItems: number;
 }

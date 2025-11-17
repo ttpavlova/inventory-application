@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Header } from "./components/Header/Header";
 import { Footer } from "./components/Footer/Footer";
 import { ShoeDetails } from "./components/Shoes/ShoeDetails";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ function App() {
           </Routes>
           <Footer />
         </div>
+        <ReactQueryDevtools initialIsOpen />
       </QueryClientProvider>
     </BrowserRouter>
   );

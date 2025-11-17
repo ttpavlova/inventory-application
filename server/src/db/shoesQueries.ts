@@ -2,7 +2,7 @@ import type { Shoe, ShoeBody, ShoeId } from "../types/types.js";
 import { pool } from "./pool.js";
 
 async function getShoesQuery(page = 1): Promise<Shoe[]> {
-  const limit = 10;
+  const limit = 2;
   const offset = (page - 1) * limit;
 
   const { rows } = await pool.query(

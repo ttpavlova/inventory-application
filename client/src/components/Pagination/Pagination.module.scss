@@ -1,0 +1,33 @@
+.wrapper {
+  margin: 20px 0 0;
+}
+
+.pages {
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.page {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  background-color: #df8181;
+  color: #fff;
+  font-weight: 500;
+  line-height: 30px;
+  border-radius: 50%;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+
+  a {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+
+  &:last-child {
+    margin: 0;
+  }
+}
