@@ -8,7 +8,9 @@ import { useEffect, useState } from "react";
 
 const Shoes = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [page, setPage] = useState(Number(searchParams.get("page")));
+  const initialPage =
+    searchParams.get("page") == null ? 1 : Number(searchParams.get("page"));
+  const [page, setPage] = useState(initialPage);
 
   const { isPending, error, data /* , isFetching */ } = useGetShoesQuery(page);
 

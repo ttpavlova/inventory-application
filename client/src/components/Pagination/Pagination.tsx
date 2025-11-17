@@ -1,4 +1,5 @@
 import styles from "./Pagination.module.scss";
+import cls from "classnames";
 
 interface PaginationProps {
   page: number;
@@ -48,28 +49,41 @@ export const Pagination = ({
   return (
     <div className={styles.wrapper} onClick={(e) => getNewPage(e)}>
       <ul className={styles.pages}>
-        <li className={styles.page}>
+        <li
+          className={cls(styles.page, {
+            [styles.current]: page === 1,
+          })}
+        >
           <a rel="nofollow">{1}</a>
         </li>
         {page - 2 > 2 && (
-          <li className={styles.page}>
+          <li className={`${styles.page} ${styles.disabled}`}>
             <a rel="nofollow">{"..."}</a>
           </li>
         )}
 
-        {middlePages.map((page) => (
-          <li key={page} className={styles.page}>
-            <a rel="nofollow">{page}</a>
+        {middlePages.map((number) => (
+          <li
+            key={number}
+            className={cls(styles.page, {
+              [styles.current]: number === page,
+            })}
+          >
+            <a rel="nofollow">{number}</a>
           </li>
         ))}
 
         {page + 2 < totalPages - 1 && (
-          <li className={styles.page}>
+          <li className={`${styles.page} ${styles.disabled}`}>
             <a rel="nofollow">{"..."}</a>
           </li>
         )}
         {totalPages !== 1 && (
-          <li className={styles.page}>
+          <li
+            className={cls(styles.page, {
+              [styles.current]: page === totalPages,
+            })}
+          >
             <a rel="nofollow">{totalPages}</a>
           </li>
         )}

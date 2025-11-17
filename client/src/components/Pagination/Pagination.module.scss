@@ -12,14 +12,23 @@
   width: 30px;
   height: 30px;
   margin-right: 10px;
-  background-color: #df8181;
-  color: #fff;
+  color: #df8181;
   font-weight: 500;
   line-height: 30px;
   border-radius: 50%;
   text-align: center;
   cursor: pointer;
   user-select: none;
+
+  &.current {
+    background-color: #df8181;
+    color: #fff;
+    cursor: default;
+  }
+
+  &.disabled {
+    cursor: default;
+  }
 
   a {
     display: block;
@@ -29,5 +38,10 @@
 
   &:last-child {
     margin: 0;
+  }
+
+  &:hover:not(.current, .disabled) {
+    background-color: #a15b5b;
+    color: #fff;
   }
 }
