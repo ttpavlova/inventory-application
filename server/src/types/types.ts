@@ -61,3 +61,35 @@ export type ResponseBody<T> =
   | ErrorResponse
   | NotFoundError
   | ValidationErrors;
+
+export interface Brand {
+  id: string;
+  name: string;
+}
+
+export interface Material {
+  id: string;
+  name: string;
+}
+
+export interface Color {
+  id: string;
+  name: string;
+}
+
+interface Filters {
+  categories: Category[];
+  brands: Brand[];
+  materials: Material[];
+  colors: Color[];
+}
+
+interface SuccessResponseFilters {
+  data: Filters;
+}
+
+export type ResponseBodyFilters =
+  | SuccessResponseFilters
+  | ErrorResponse
+  | NotFoundError
+  | ValidationErrors;

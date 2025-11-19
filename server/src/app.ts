@@ -5,6 +5,7 @@ import { dirname, join } from "path";
 import { shoesRouter } from "./routes/shoesRouter.js";
 import { categoriesRouter } from "./routes/categoriesRouter.js";
 import { indexRouter } from "./routes/indexRouter.js";
+import { filtersRouter } from "./routes/filtersRouter.js";
 
 const app = express();
 const corsOptions = {
@@ -23,6 +24,7 @@ app.use(express.json());
 
 app.use("/api/shoes", shoesRouter);
 app.use("/api/categories", categoriesRouter);
+app.use("/api/filters", filtersRouter);
 app.use("/", indexRouter);
 
 // Здесь мы настраиваем API роуты
