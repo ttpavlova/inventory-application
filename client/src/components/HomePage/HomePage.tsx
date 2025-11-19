@@ -6,7 +6,7 @@ export const HomePage = () => {
     <div className={styles.homePage}>
       <Link to="/shoes">Shoe List</Link>
       <Link to="/categories">Categories</Link>
-      <Link to="/new-shoe">Add a Shoe</Link>
+      <Link to="/shoes/create">Add a Shoe</Link>
     </div>
   );
 };

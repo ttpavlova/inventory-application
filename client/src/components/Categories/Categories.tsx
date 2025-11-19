@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Category } from "../../types/types";
+import CategoryCard from "./CategoryCard";
+import styles from "./Categories.module.scss";
 
 const Categories = () => {
   const [data, setData] = useState<Category[]>([]);
@@ -15,12 +17,12 @@ const Categories = () => {
   }, []);
 
   const items = data.map((item) => (
-    <a key={item.id} href={item.name}>
-      {item.name}
-    </a>
+    <div key={item.id}>
+      <CategoryCard name={item.name} />
+    </div>
   ));
 
-  return <div>{items}</div>;
+  return <div className={styles.wrapper}>{items}</div>;
 };
 
 export default Categories;

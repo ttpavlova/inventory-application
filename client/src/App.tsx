@@ -8,6 +8,7 @@ import { Header } from "./components/Header/Header";
 import { Footer } from "./components/Footer/Footer";
 import { ShoeDetails } from "./components/Shoes/ShoeDetails";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { CreateForm } from "./components/Shoes/CreateForm/CreateForm";
 
 const queryClient = new QueryClient();
 
@@ -20,8 +21,9 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="shoes" element={<Shoes />} />
-            <Route path="/shoes/:id" element={<ShoeDetails />} />
+            <Route path="shoes/:id" element={<ShoeDetails />} />
             <Route path="categories" element={<Categories />} />
+            <Route path="shoes/create" element={<CreateForm />} />
           </Routes>
           <Footer />
         </div>

@@ -12,7 +12,7 @@ export const Pagination = ({
   totalItems,
   handleChange,
 }: PaginationProps) => {
-  const limit = 2;
+  const limit = 5;
   const totalPages = Math.ceil(totalItems / limit);
 
   const getMiddlePages = () => {

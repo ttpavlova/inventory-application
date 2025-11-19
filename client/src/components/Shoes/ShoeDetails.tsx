@@ -5,7 +5,6 @@ import { useGetShoeByIdQuery } from "../../hooks/useGetShoeByIdQuery";
 export const ShoeDetails = () => {
   const { id: paramId } = useParams();
 
-  console.log(paramId);
   const { isPending, error, data: shoe } = useGetShoeByIdQuery(String(paramId));
 
   if (isPending) return "Loading...";
