@@ -5,11 +5,14 @@ import {
   getAllColorsQuery,
   getAllMaterialsQuery,
 } from "../db/filtersQueries.js";
-import { type ResponseBodyFilters } from "../types/types.js";
+import { type Filters, type ListResponseBody } from "../types/types.js";
 import { buildErrorResponse } from "../helpers/buildErrorResponse.js";
 import { genders, seasons } from "../helpers/getFilters.js";
 
-async function getAllFilters(req: Request, res: Response<ResponseBodyFilters>) {
+async function getAllFilters(
+  req: Request,
+  res: Response<ListResponseBody<Filters>>
+) {
   try {
     const [categories, brands, materials, colors] = await Promise.all([
       getAllCategoriesQuery(),

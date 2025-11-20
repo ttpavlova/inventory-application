@@ -1,7 +1,12 @@
-import type { Shoe, ShoeBody, ShoeId } from "../types/types.js";
+import type {
+  ShoeBodyRequest,
+  ShoeId,
+  ShoeRequest,
+  ShoeResponse,
+} from "../types/types.js";
 import { pool } from "./pool.js";
 
-async function getShoesQuery(page = 1): Promise<Shoe[]> {
+async function getShoesQuery(page = 1): Promise<ShoeResponse[]> {
   const limit = 5;
   const offset = (page - 1) * limit;
 
@@ -18,7 +23,7 @@ async function getTotalItems(): Promise<number> {
   return Number(rows[0].count);
 }
 
-async function getShoeByIdQuery(id: ShoeId): Promise<Shoe> {
+async function getShoeByIdQuery(id: ShoeId): Promise<ShoeResponse> {
   const { rows } = await pool.query(`SELECT * FROM view_shoes WHERE id = $1`, [
     id,
   ]);
@@ -29,49 +34,44 @@ async function getShoeByIdQuery(id: ShoeId): Promise<Shoe> {
 async function createShoeQuery({
   gender,
   season,
-  category,
-  brand,
-  material,
-  color,
-}: ShoeBody): Promise<Shoe> {
+  categoryId,
+  brandId,
+  materialId,
+  colorId,
+}: ShoeBodyRequest): Promise<ShoeRequest> {
   const { rows } = await pool.query(
     `INSERT INTO shoes (gender, season, category_id, brand_id, material_id, color_id) 
-    VALUES
-    (
-      $1,
-      $2,
-      (SELECT id FROM categories WHERE name = $3),
-      (SELECT id FROM brands WHERE name = $4),
-      (SELECT id FROM materials WHERE name = $5),
-      (SELECT id FROM colors WHERE name = $6)
-    )
+    VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING *;`,
-    [gender, season, category, brand, material, color]
+    [gender, season, categoryId, brandId, materialId, colorId]
   );
 
   return rows[0];
 }
 
-async function updateShoeQuery(id: ShoeId, shoeData: ShoeBody): Promise<Shoe> {
-  const { gender, season, category, brand, material, color } = shoeData;
+async function updateShoeQuery(
+  id: ShoeId,
+  shoeData: ShoeBodyRequest
+): Promise<ShoeRequest> {
+  const { gender, season, categoryId, brandId, materialId, colorId } = shoeData;
   const { rows } = await pool.query(
     `UPDATE shoes 
     SET 
       gender = $1,
       season = $2,
-      category_id = (SELECT id FROM categories WHERE name = $3),
-      brand_id = (SELECT id FROM brands WHERE name = $4),
-      material_id = (SELECT id FROM materials WHERE name = $5),
-      color_id = (SELECT id FROM colors WHERE name = $6),
-    WHERE id = $8
+      category_id = $3,
+      brand_id = $4,
+      material_id = $5,
+      color_id = $6
+    WHERE id = $7
     RETURNING *;`,
-    [gender, season, category, brand, material, color, id]
+    [gender, season, categoryId, brandId, materialId, colorId, id]
   );
 
   return rows[0];
 }
 
-async function deleteShoeQuery(id: ShoeId): Promise<Shoe> {
+async function deleteShoeQuery(id: ShoeId): Promise<ShoeRequest> {
   const { rows } = await pool.query(
     `DELETE FROM shoes WHERE id = $1 RETURNING *`,
     [id]

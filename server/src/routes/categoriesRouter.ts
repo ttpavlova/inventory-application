@@ -13,6 +13,6 @@ categoriesRouter.post("/", createCategory);
 categoriesRouter.put("/:id", updateCategory);
 categoriesRouter.delete("/:id", deleteCategory);
 
-categoriesRouter.get("/:name", getShoesByCategory);
+categoriesRouter.get("/:id", getShoesByCategory);
 
 export { categoriesRouter };

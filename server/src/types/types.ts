@@ -1,19 +1,35 @@
-import type { ValidationError } from "express-validator";
-
 export interface ShoeParams {
   id: number;
 }
 
-export interface ShoeBody {
-  gender: string;
-  season: string;
+export const GENDERS = ["Men", "Women"] as const;
+export const SEASONS = ["Summer", "Winter", "Demi-season"] as const;
+
+export type GenderType = (typeof GENDERS)[number];
+export type SeasonType = (typeof SEASONS)[number];
+
+// shape for data mutation
+export interface ShoeBodyRequest {
+  gender: GenderType;
+  season: SeasonType;
+  categoryId: number;
+  brandId: number;
+  materialId: number;
+  colorId: number;
+}
+
+// shape for returning a list of data
+export interface ShoeBodyResponse {
+  gender: GenderType;
+  season: SeasonType;
   category: string;
   brand: string;
   material: string;
   color: string;
 }
 
-export type Shoe = ShoeParams & ShoeBody;
+export type ShoeRequest = ShoeParams & ShoeBodyRequest;
+export type ShoeResponse = ShoeParams & ShoeBodyResponse;
 
 export type ShoeId = ShoeParams["id"];
 
@@ -26,10 +42,6 @@ export interface CategoryBody {
 }
 
 export type Category = CategoryParams & CategoryBody;
-
-export interface CategoryFilterByName {
-  name: string;
-}
 
 export type CategoryId = CategoryParams["id"];
 
@@ -51,35 +63,37 @@ interface NotFoundError {
   message: string;
 }
 
-interface ValidationErrors {
-  errors: ValidationError[];
+type FlattenedErrors<T> = {
+  [K in keyof T]?: string[];
+};
+
+interface ValidationErrors<T> {
+  errors: FlattenedErrors<T>;
 }
 
-export type ResponseBody<T> =
+interface SuccessResponse<T> {
+  data: T;
+}
+
+interface SuccessGetListResponse<T> extends SuccessResponse<T> {
+  totalItems?: number;
+}
+
+export type ListResponseBody<T> =
+  | SuccessGetListResponse<T>
+  | ErrorResponse
+  | NotFoundError;
+
+export type ItemResponseBody<T> =
+  | SuccessResponse<T>
+  | ErrorResponse
+  | NotFoundError;
+
+export type MutationResponseBody<T, A> =
   | SuccessResponse<T>
   | ErrorResponse
   | NotFoundError
-  | ValidationErrors;
-
-// export const GENDER = {
-//   MEN: "Men",
-//   WOMEN: "Women",
-// } as const;
-
-// export const SEASON = {
-//   SUMMER: "Summer",
-//   WINTER: "Winter",
-//   DEMI_SEASON: "Demi-season",
-// } as const;
-
-// export type GenderType = (typeof GENDER)[keyof typeof GENDER];
-// export type SeasonType = (typeof SEASON)[keyof typeof SEASON];
-
-export const GENDERS = ["Men", "Women"] as const;
-export const SEASONS = ["Summer", "Winter", "Demi-season"] as const;
-
-export type GenderType = (typeof GENDERS)[number];
-export type SeasonType = (typeof SEASONS)[number];
+  | ValidationErrors<A>;
 
 export interface Filter {
   id: number;
@@ -94,7 +108,7 @@ export interface Season extends Filter {
   name: SeasonType;
 }
 
-interface Filters {
+export interface Filters {
   genders: Gender[];
   seasons: Season[];
   categories: Category[];
@@ -102,13 +116,3 @@ interface Filters {
   materials: Filter[];
   colors: Filter[];
 }
-
-interface SuccessResponseFilters {
-  data: Filters;
-}
-
-export type ResponseBodyFilters =
-  | SuccessResponseFilters
-  | ErrorResponse
-  | NotFoundError
-  | ValidationErrors;

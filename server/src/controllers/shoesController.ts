@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { body, validationResult } from "express-validator";
+import { z } from "zod";
 import {
   getShoesQuery,
   getShoeByIdQuery,
@@ -11,44 +11,32 @@ import {
 import {
   GENDERS,
   SEASONS,
+  type ItemResponseBody,
+  type ListResponseBody,
+  type MutationResponseBody,
   type NoParams,
-  type ResponseBody,
-  type Shoe,
-  type ShoeBody,
+  type ShoeBodyRequest,
   type ShoeParams,
+  type ShoeRequest,
+  type ShoeResponse,
 } from "../types/types.js";
 import { buildErrorResponse } from "../helpers/buildErrorResponse.js";
 
-const getLengthErr = (max: number) => `must be between 1 and ${max} characters`;
+const Shoe = z.object({
+  gender: z.enum(GENDERS),
+  season: z.enum(SEASONS),
+  categoryId: z.number(),
+  brandId: z.number(),
+  materialId: z.number(),
+  colorId: z.number(),
+});
 
-const validateShoe = [
-  body("gender")
-    .trim()
-    .isIn(GENDERS)
-    .withMessage(`Gender must be one of ${GENDERS.join(", ")}`),
-  body("season")
-    .trim()
-    .isIn(SEASONS)
-    .withMessage(`Season must be one of ${SEASONS.join(", ")}`),
-  body("category")
-    .trim()
-    .isLength({ min: 1, max: 50 })
-    .withMessage(`Category ${getLengthErr(50)}`),
-  body("brand")
-    .trim()
-    .isLength({ min: 1, max: 50 })
-    .withMessage(`Brand ${getLengthErr(50)}`),
-  body("material")
-    .trim()
-    .isLength({ min: 1, max: 50 })
-    .withMessage(`Material ${getLengthErr(50)}`),
-  body("color")
-    .trim()
-    .isLength({ min: 1, max: 30 })
-    .withMessage(`Color ${getLengthErr(30)}`),
-];
+type Shoe = z.infer<typeof Shoe>;
 
-async function getShoes(req: Request, res: Response<ResponseBody<Shoe[]>>) {
+async function getShoes(
+  req: Request,
+  res: Response<ListResponseBody<ShoeResponse[]>>
+) {
   const { page = 1 } = req.query;
 
   try {
@@ -73,7 +61,7 @@ async function getShoes(req: Request, res: Response<ResponseBody<Shoe[]>>) {
 
 async function getShoeById(
   req: Request<ShoeParams>,
-  res: Response<ResponseBody<Shoe>>
+  res: Response<ItemResponseBody<ShoeResponse>>
 ) {
   const { id } = req.params;
 
@@ -96,75 +84,83 @@ async function getShoeById(
   }
 }
 
-const createShoe = [
-  ...validateShoe,
-  async (
-    req: Request<NoParams, ResponseBody<Shoe>, ShoeBody>,
-    res: Response<ResponseBody<Shoe>>
-  ) => {
-    const { ...shoeData } = req.body;
-    const errors = validationResult(req);
+async function createShoe(
+  req: Request<
+    NoParams,
+    MutationResponseBody<ShoeRequest, Shoe>,
+    ShoeBodyRequest
+  >,
+  res: Response<MutationResponseBody<ShoeRequest, Shoe>>
+) {
+  const { ...shoeData } = req.body;
 
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        errors: errors.array(),
-      });
+  const validatedFields = Shoe.safeParse(shoeData);
+  if (!validatedFields.success) {
+    const flattened = z.flattenError(validatedFields.error);
+
+    return res.status(400).json({
+      errors: flattened.fieldErrors,
+      // message: "Missing fields. Failed to create a shoe",
+    });
+  }
+
+  try {
+    const newShoe = await createShoeQuery(shoeData);
+
+    res.status(201).json({
+      data: newShoe,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json(
+        buildErrorResponse("Database error: failed to create a shoe", error)
+      );
+  }
+}
+
+async function updateShoe(
+  req: Request<
+    ShoeParams,
+    MutationResponseBody<ShoeRequest, Shoe>,
+    ShoeBodyRequest
+  >,
+  res: Response<MutationResponseBody<ShoeRequest, Shoe>>
+) {
+  const { id } = req.params;
+  const { ...shoeData } = req.body;
+
+  const validatedFields = Shoe.safeParse(shoeData);
+  if (!validatedFields.success) {
+    const flattened = z.flattenError(validatedFields.error);
+
+    return res.status(400).json({
+      errors: flattened.fieldErrors,
+    });
+  }
+
+  try {
+    const newShoe = await updateShoeQuery(id, shoeData);
+
+    if (!newShoe) {
+      return res.status(404).json({ message: "Shoe not found" });
     }
 
-    try {
-      const newShoe = await createShoeQuery(shoeData);
-
-      res.status(201).json({
-        data: newShoe,
-      });
-    } catch (error) {
-      res
-        .status(500)
-        .json(
-          buildErrorResponse("Database error: failed to create a shoe", error)
-        );
-    }
-  },
-];
-const updateShoe = [
-  ...validateShoe,
-  async (
-    req: Request<ShoeParams, ResponseBody<Shoe>, ShoeBody>,
-    res: Response<ResponseBody<Shoe>>
-  ) => {
-    const { id } = req.params;
-    const { ...shoeData } = req.body;
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        errors: errors.array(),
-      });
-    }
-
-    try {
-      const newShoe = await updateShoeQuery(id, shoeData);
-
-      if (!newShoe) {
-        return res.status(404).json({ message: "Shoe not found" });
-      }
-
-      res.status(200).json({
-        data: newShoe,
-      });
-    } catch (error) {
-      res
-        .status(500)
-        .json(
-          buildErrorResponse("Database error: failed to update a shoe", error)
-        );
-    }
-  },
-];
+    res.status(200).json({
+      data: newShoe,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json(
+        buildErrorResponse("Database error: failed to update a shoe", error)
+      );
+  }
+}
 
 async function deleteShoe(
   req: Request<ShoeParams>,
-  res: Response<ResponseBody<Shoe>>
+  res: Response<ItemResponseBody<ShoeRequest>>
 ) {
   const { id } = req.params;
 
