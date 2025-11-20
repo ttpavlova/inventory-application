@@ -1,10 +1,9 @@
 export interface Category {
-  id: string;
+  id: number;
   name: string;
 }
 
-export interface Shoe {
-  id: string;
+export interface ShoeBody {
   gender: string;
   season: string;
   category: string;
@@ -14,8 +13,12 @@ export interface Shoe {
   country: string;
 }
 
+export interface Shoe extends ShoeBody {
+  id: number;
+}
+
 export interface Category {
-  id: string;
+  id: number;
   name: string;
 }
 
@@ -24,26 +27,34 @@ export interface ResponseParams<T> {
   totalItems: number;
 }
 
-export interface Brand {
-  id: string;
+export const GENDERS = ["Men", "Women"] as const;
+export const SEASONS = ["Summer", "Winter", "Demi-season"] as const;
+
+export type GenderType = (typeof GENDERS)[number];
+export type SeasonType = (typeof SEASONS)[number];
+
+export interface Filter {
+  id: number;
   name: string;
 }
 
-export interface Material {
-  id: string;
-  name: string;
+export interface Gender extends Filter {
+  name: GenderType;
 }
 
-export interface Color {
-  id: string;
-  name: string;
+export interface Season extends Filter {
+  name: SeasonType;
 }
+
+export type FilterOptions = Gender[] | Season[] | Category[] | Filter[];
 
 interface Filters {
+  genders: Gender[];
+  seasons: Season[];
   categories: Category[];
-  brands: Brand[];
-  materials: Material[];
-  colors: Color[];
+  brands: Filter[];
+  materials: Filter[];
+  colors: Filter[];
 }
 
 export interface ResponseParamsFilters {

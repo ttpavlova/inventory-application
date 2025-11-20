@@ -1,76 +1,99 @@
 import { useNavigate } from "react-router-dom";
 import { useGetFiltersQuery } from "../../../hooks/useGetFiltersQuery";
 import styles from "./CreateForm.module.scss";
+import { SelectElem } from "../../ui/SelectElem/SelectElem";
+import { usePostShoe } from "../../../hooks/usePostShoe";
+import { useState } from "react";
+import type { ShoeBody } from "../../../types/types";
+
+type FormData = Partial<ShoeBody>;
 
 export const CreateForm = () => {
+  const initialOptions: FormData = {
+    gender: "",
+    season: "",
+    category: "",
+    brand: "",
+    material: "",
+    color: "",
+  };
+
+  const [selectedOptions, setSelectedOptions] =
+    useState<FormData>(initialOptions);
   const { isPending, error, data /* , isFetching */ } = useGetFiltersQuery();
+  const {
+    loading: createLoading,
+    error: createError,
+    createShoe,
+  } = usePostShoe();
 
   const navigate = useNavigate();
 
-  if (isPending) return "Loading...";
+  if (isPending || createLoading) return "Loading...";
 
   if (error) return "An error has occurred: " + error.message;
 
-  console.log(data);
+  if (!data) return "Something went wrong";
+
+  const isValidItem = (options: FormData): options is ShoeBody => {
+    return Object.keys(options).every(
+      (key) => options[key as keyof ShoeBody]?.trim() != ""
+    );
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // type guard for options: ShoeBody
+    if (isValidItem(selectedOptions)) {
+      createShoe(selectedOptions);
+    }
+  };
+
+  const updateSelectedOptions = (key: string, value: string) => {
+    setSelectedOptions({ ...selectedOptions, [key]: value });
+  };
+
+  const filtersToShow = [
+    { name: "gender", options: data.genders },
+    { name: "season", options: data.seasons },
+    { name: "category", options: data.categories },
+    { name: "brand", options: data.brands },
+    { name: "material", options: data.materials },
+    { name: "color", options: data.colors },
+  ];
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.filters}>
-        <div className={styles.select}>
-          <label htmlFor="pet-select">Choose a category:</label>
-          <select name="pets" id="pet-select">
-            <option value="">--Please choose an option--</option>
-            {data?.categories.map((option) => (
-              <option key={option.id} value={option.name}>
-                {option.name}
-              </option>
-            ))}
-          </select>
-        </div>
+      {data && (
+        <form onSubmit={(e) => handleSubmit(e)} className={styles.filters}>
+          {filtersToShow.map((filter) => (
+            <SelectElem
+              key={filter.name}
+              filterName={filter.name}
+              options={filter.options}
+              value={
+                selectedOptions[filter.name as keyof typeof selectedOptions]
+              }
+              updateSelectedOptions={updateSelectedOptions}
+            />
+          ))}
 
-        <div className={styles.select}>
-          <label htmlFor="pet-select">Choose a brand:</label>
-          <select name="pets" id="pet-select">
-            <option value="">--Please choose an option--</option>
-            {data?.brands.map((option) => (
-              <option key={option.id} value={option.name}>
-                {option.name}
-              </option>
-            ))}
-          </select>
-        </div>
+          {createError && <div>{createError}</div>}
 
-        <div className={styles.select}>
-          <label htmlFor="pet-select">Choose a material:</label>
-          <select name="pets" id="pet-select">
-            <option value="">--Please choose an option--</option>
-            {data?.materials.map((option) => (
-              <option key={option.id} value={option.name}>
-                {option.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className={styles.select}>
-          <label htmlFor="pet-select">Choose a color:</label>
-          <select name="pets" id="pet-select">
-            <option value="">--Please choose an option--</option>
-            {data?.colors.map((option) => (
-              <option key={option.id} value={option.name}>
-                {option.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <button className={`${styles.btn} ${styles.btnPrimary}`}>Save</button>
-          <button className={styles.btn} onClick={() => navigate(-1)}>
-            Cancel
-          </button>
-        </div>
-      </div>
+          <div>
+            <button
+              type="submit"
+              className={`${styles.btn} ${styles.btnPrimary}`}
+            >
+              Save
+            </button>
+            <button className={styles.btn} onClick={() => navigate(-1)}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 };
