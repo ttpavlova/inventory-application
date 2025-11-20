@@ -5,8 +5,9 @@ import {
   getAllColorsQuery,
   getAllMaterialsQuery,
 } from "../db/filtersQueries.js";
-import type { ResponseBodyFilters } from "../types/types.js";
-import { buildErrorResponse } from "../helpers/buildErrorResponse .js";
+import { type ResponseBodyFilters } from "../types/types.js";
+import { buildErrorResponse } from "../helpers/buildErrorResponse.js";
+import { genders, seasons } from "../helpers/getFilters.js";
 
 async function getAllFilters(req: Request, res: Response<ResponseBodyFilters>) {
   try {
@@ -19,6 +20,8 @@ async function getAllFilters(req: Request, res: Response<ResponseBodyFilters>) {
 
     res.status(200).json({
       data: {
+        genders,
+        seasons,
         categories,
         brands,
         materials,

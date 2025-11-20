@@ -15,7 +15,7 @@ import type {
   NoParams,
   ResponseBody,
 } from "../types/types.js";
-import { buildErrorResponse } from "../helpers/buildErrorResponse .js";
+import { buildErrorResponse } from "../helpers/buildErrorResponse.js";
 
 const getLengthErr = (max: number) => `must be between 1 and ${max} characters`;
 

@@ -1,19 +1,19 @@
-import type { Brand, Color, Material } from "../types/types.js";
+import type { Filter } from "../types/types.js";
 import { pool } from "./pool.js";
 
-async function getAllBrandsQuery(): Promise<Brand[]> {
+async function getAllBrandsQuery(): Promise<Filter[]> {
   const { rows } = await pool.query("SELECT * FROM brands");
 
   return rows;
 }
 
-async function getAllMaterialsQuery(): Promise<Material[]> {
+async function getAllMaterialsQuery(): Promise<Filter[]> {
   const { rows } = await pool.query("SELECT * FROM materials");
 
   return rows;
 }
 
-async function getAllColorsQuery(): Promise<Color[]> {
+async function getAllColorsQuery(): Promise<Filter[]> {
   const { rows } = await pool.query("SELECT * FROM colors");
 
   return rows;

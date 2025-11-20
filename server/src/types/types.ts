@@ -1,7 +1,7 @@
 import type { ValidationError } from "express-validator";
 
 export interface ShoeParams {
-  id: string;
+  id: number;
 }
 
 export interface ShoeBody {
@@ -11,7 +11,6 @@ export interface ShoeBody {
   brand: string;
   material: string;
   color: string;
-  country: string;
 }
 
 export type Shoe = ShoeParams & ShoeBody;
@@ -19,7 +18,7 @@ export type Shoe = ShoeParams & ShoeBody;
 export type ShoeId = ShoeParams["id"];
 
 export interface CategoryParams {
-  id: string;
+  id: number;
 }
 
 export interface CategoryBody {
@@ -62,26 +61,46 @@ export type ResponseBody<T> =
   | NotFoundError
   | ValidationErrors;
 
-export interface Brand {
-  id: string;
+// export const GENDER = {
+//   MEN: "Men",
+//   WOMEN: "Women",
+// } as const;
+
+// export const SEASON = {
+//   SUMMER: "Summer",
+//   WINTER: "Winter",
+//   DEMI_SEASON: "Demi-season",
+// } as const;
+
+// export type GenderType = (typeof GENDER)[keyof typeof GENDER];
+// export type SeasonType = (typeof SEASON)[keyof typeof SEASON];
+
+export const GENDERS = ["Men", "Women"] as const;
+export const SEASONS = ["Summer", "Winter", "Demi-season"] as const;
+
+export type GenderType = (typeof GENDERS)[number];
+export type SeasonType = (typeof SEASONS)[number];
+
+export interface Filter {
+  id: number;
   name: string;
 }
 
-export interface Material {
-  id: string;
-  name: string;
+export interface Gender extends Filter {
+  name: GenderType;
 }
 
-export interface Color {
-  id: string;
-  name: string;
+export interface Season extends Filter {
+  name: SeasonType;
 }
 
 interface Filters {
+  genders: Gender[];
+  seasons: Season[];
   categories: Category[];
-  brands: Brand[];
-  materials: Material[];
-  colors: Color[];
+  brands: Filter[];
+  materials: Filter[];
+  colors: Filter[];
 }
 
 interface SuccessResponseFilters {

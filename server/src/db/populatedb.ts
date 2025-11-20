@@ -25,11 +25,6 @@ CREATE TABLE IF NOT EXISTS colors (
   name VARCHAR (30) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS countries (
-  id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  name VARCHAR (30) NOT NULL UNIQUE
-);
-
 CREATE TABLE IF NOT EXISTS shoes (
   id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   gender VARCHAR (20) NOT NULL CHECK (gender IN ('Men', 'Women')),
@@ -38,8 +33,7 @@ CREATE TABLE IF NOT EXISTS shoes (
   category_id INT NOT NULL REFERENCES categories(id),
   brand_id INT NOT NULL REFERENCES brands(id),
   material_id INT NOT NULL REFERENCES materials(id),
-  color_id INT NOT NULL REFERENCES colors(id),
-  country_id INT NOT NULL REFERENCES countries(id)
+  color_id INT NOT NULL REFERENCES colors(id)
 );
 
 CREATE TABLE IF NOT EXISTS sizes (
@@ -84,18 +78,13 @@ VALUES
   ('Beige'),
   ('White');
 
-INSERT INTO countries (name) 
+INSERT INTO shoes (gender, season, category_id, brand_id, material_id, color_id) 
 VALUES
-  ('US'),
-  ('Italy');
-
-INSERT INTO shoes (gender, season, category_id, brand_id, material_id, color_id, country_id) 
-VALUES
-  ('Women', 'Summer', 3, 1, 1, 1, 1),
-  ('Men', 'Summer', 3, 1, 1, 5, 1),
-  ('Women', 'Demi-season', 1, 3, 1, 3, 2),
-  ('Women', 'Summer', 2, 3, 2, 4, 2),
-  ('Men', 'Demi-season', 3, 2, 1, 1, 1);
+  ('Women', 'Summer', 3, 1, 1, 1),
+  ('Men', 'Summer', 3, 1, 1, 5),
+  ('Women', 'Demi-season', 1, 3, 1, 3),
+  ('Women', 'Summer', 2, 3, 2, 4),
+  ('Men', 'Demi-season', 3, 2, 1, 1);
 
 INSERT INTO sizes (eu_size) 
 VALUES
@@ -131,14 +120,12 @@ SELECT
     c.name AS category,
     b.name AS brand,
     m.name AS material,
-    col.name AS color,
-    co.name AS country
+    col.name AS color
 FROM shoes s
 LEFT JOIN categories c ON s.category_id = c.id
 LEFT JOIN brands b ON s.brand_id = b.id
 LEFT JOIN materials m ON s.material_id = m.id
-LEFT JOIN colors col ON s.color_id = col.id
-LEFT JOIN countries co ON s.country_id = co.id;
+LEFT JOIN colors col ON s.color_id = col.id;
 
 CREATE OR REPLACE VIEW view_quantity_in_stock AS
 SELECT 
@@ -151,7 +138,6 @@ SELECT
     v_s.brand,
     v_s.material,
     v_s.color,
-    v_s.country,
     sizes.eu_size AS eu_size
 FROM quantity_in_stock q
 LEFT JOIN view_shoes v_s ON q.shoe_id = v_s.id

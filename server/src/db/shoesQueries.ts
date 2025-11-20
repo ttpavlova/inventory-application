@@ -33,10 +33,9 @@ async function createShoeQuery({
   brand,
   material,
   color,
-  country,
 }: ShoeBody): Promise<Shoe> {
   const { rows } = await pool.query(
-    `INSERT INTO shoes (gender, season, category_id, brand_id, material_id, color_id, country_id) 
+    `INSERT INTO shoes (gender, season, category_id, brand_id, material_id, color_id) 
     VALUES
     (
       $1,
@@ -44,19 +43,17 @@ async function createShoeQuery({
       (SELECT id FROM categories WHERE name = $3),
       (SELECT id FROM brands WHERE name = $4),
       (SELECT id FROM materials WHERE name = $5),
-      (SELECT id FROM colors WHERE name = $6),
-      (SELECT id FROM countries WHERE name = $7)
+      (SELECT id FROM colors WHERE name = $6)
     )
     RETURNING *;`,
-    [gender, season, category, brand, material, color, country]
+    [gender, season, category, brand, material, color]
   );
 
   return rows[0];
 }
 
 async function updateShoeQuery(id: ShoeId, shoeData: ShoeBody): Promise<Shoe> {
-  const { gender, season, category, brand, material, color, country } =
-    shoeData;
+  const { gender, season, category, brand, material, color } = shoeData;
   const { rows } = await pool.query(
     `UPDATE shoes 
     SET 
@@ -66,10 +63,9 @@ async function updateShoeQuery(id: ShoeId, shoeData: ShoeBody): Promise<Shoe> {
       brand_id = (SELECT id FROM brands WHERE name = $4),
       material_id = (SELECT id FROM materials WHERE name = $5),
       color_id = (SELECT id FROM colors WHERE name = $6),
-      country_id = (SELECT id FROM countries WHERE name = $7)
     WHERE id = $8
     RETURNING *;`,
-    [gender, season, category, brand, material, color, country, id]
+    [gender, season, category, brand, material, color, id]
   );
 
   return rows[0];

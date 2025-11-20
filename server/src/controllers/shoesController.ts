@@ -8,27 +8,28 @@ import {
   deleteShoeQuery,
   getTotalItems,
 } from "../db/shoesQueries.js";
-import type {
-  NoParams,
-  ResponseBody,
-  Shoe,
-  ShoeBody,
-  ShoeParams,
+import {
+  GENDERS,
+  SEASONS,
+  type NoParams,
+  type ResponseBody,
+  type Shoe,
+  type ShoeBody,
+  type ShoeParams,
 } from "../types/types.js";
-import { buildErrorResponse } from "../helpers/buildErrorResponse .js";
+import { buildErrorResponse } from "../helpers/buildErrorResponse.js";
 
-const invalidErr = "Invalid";
 const getLengthErr = (max: number) => `must be between 1 and ${max} characters`;
 
 const validateShoe = [
   body("gender")
     .trim()
-    .isIn(["Men", "Women"])
-    .withMessage(`${invalidErr} gender`),
+    .isIn(GENDERS)
+    .withMessage(`Gender must be one of ${GENDERS.join(", ")}`),
   body("season")
     .trim()
-    .isIn(["Summer", "Winter", "Demi-season"])
-    .withMessage(`${invalidErr} season`),
+    .isIn(SEASONS)
+    .withMessage(`Season must be one of ${SEASONS.join(", ")}`),
   body("category")
     .trim()
     .isLength({ min: 1, max: 50 })
@@ -45,10 +46,6 @@ const validateShoe = [
     .trim()
     .isLength({ min: 1, max: 30 })
     .withMessage(`Color ${getLengthErr(30)}`),
-  body("country")
-    .trim()
-    .isLength({ min: 1, max: 30 })
-    .withMessage(`Country ${getLengthErr(30)}`),
 ];
 
 async function getShoes(req: Request, res: Response<ResponseBody<Shoe[]>>) {
