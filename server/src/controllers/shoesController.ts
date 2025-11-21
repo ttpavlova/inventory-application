@@ -9,29 +9,19 @@ import {
   getTotalItems,
 } from "../db/shoesQueries.js";
 import {
-  GENDERS,
-  SEASONS,
   type ItemResponseBody,
   type ListResponseBody,
   type MutationResponseBody,
   type NoParams,
-  type ShoeBodyRequest,
   type ShoeParams,
   type ShoeRequest,
   type ShoeResponse,
 } from "../types/types.js";
 import { buildErrorResponse } from "../helpers/buildErrorResponse.js";
-
-const Shoe = z.object({
-  gender: z.enum(GENDERS),
-  season: z.enum(SEASONS),
-  categoryId: z.number(),
-  brandId: z.number(),
-  materialId: z.number(),
-  colorId: z.number(),
-});
-
-type Shoe = z.infer<typeof Shoe>;
+import {
+  ShoeBodyRequestSchema,
+  type ShoeBodyRequest,
+} from "../schemas/schemas.js";
 
 async function getShoes(
   req: Request,
@@ -87,14 +77,14 @@ async function getShoeById(
 async function createShoe(
   req: Request<
     NoParams,
-    MutationResponseBody<ShoeRequest, Shoe>,
+    MutationResponseBody<ShoeRequest, ShoeBodyRequest>,
     ShoeBodyRequest
   >,
-  res: Response<MutationResponseBody<ShoeRequest, Shoe>>
+  res: Response<MutationResponseBody<ShoeRequest, ShoeBodyRequest>>
 ) {
   const { ...shoeData } = req.body;
 
-  const validatedFields = Shoe.safeParse(shoeData);
+  const validatedFields = ShoeBodyRequestSchema.safeParse(shoeData);
   if (!validatedFields.success) {
     const flattened = z.flattenError(validatedFields.error);
 
@@ -122,15 +112,15 @@ async function createShoe(
 async function updateShoe(
   req: Request<
     ShoeParams,
-    MutationResponseBody<ShoeRequest, Shoe>,
+    MutationResponseBody<ShoeRequest, ShoeBodyRequest>,
     ShoeBodyRequest
   >,
-  res: Response<MutationResponseBody<ShoeRequest, Shoe>>
+  res: Response<MutationResponseBody<ShoeRequest, ShoeBodyRequest>>
 ) {
   const { id } = req.params;
   const { ...shoeData } = req.body;
 
-  const validatedFields = Shoe.safeParse(shoeData);
+  const validatedFields = ShoeBodyRequestSchema.safeParse(shoeData);
   if (!validatedFields.success) {
     const flattened = z.flattenError(validatedFields.error);
 

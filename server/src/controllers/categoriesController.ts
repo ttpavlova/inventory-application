@@ -9,7 +9,6 @@ import {
 } from "../db/categoriesQueries.js";
 import type {
   Category,
-  CategoryBody,
   CategoryParams,
   ItemResponseBody,
   ListResponseBody,
@@ -17,12 +16,7 @@ import type {
   NoParams,
 } from "../types/types.js";
 import { buildErrorResponse } from "../helpers/buildErrorResponse.js";
-
-const Category = z.object({
-  name: z.string().min(1).max(50),
-});
-
-type CategoryType = z.infer<typeof Category>;
+import { CategoryBodySchema, type CategoryBody } from "../schemas/schemas.js";
 
 async function getAllCategories(
   req: Request,
@@ -49,14 +43,14 @@ async function getAllCategories(
 async function createCategory(
   req: Request<
     NoParams,
-    MutationResponseBody<Category, CategoryType>,
+    MutationResponseBody<Category, CategoryBody>,
     CategoryBody
   >,
-  res: Response<MutationResponseBody<Category, CategoryType>>
+  res: Response<MutationResponseBody<Category, CategoryBody>>
 ) {
   const { ...categoryData } = req.body;
 
-  const validatedFields = Category.safeParse(categoryData);
+  const validatedFields = CategoryBodySchema.safeParse(categoryData);
   if (!validatedFields.success) {
     const flattened = z.flattenError(validatedFields.error);
 
@@ -83,15 +77,15 @@ async function createCategory(
 async function updateCategory(
   req: Request<
     CategoryParams,
-    MutationResponseBody<Category, CategoryType>,
+    MutationResponseBody<Category, CategoryBody>,
     CategoryBody
   >,
-  res: Response<MutationResponseBody<Category, CategoryType>>
+  res: Response<MutationResponseBody<Category, CategoryBody>>
 ) {
   const { id } = req.params;
   const { ...categoryData } = req.body;
 
-  const validatedFields = Category.safeParse(categoryData);
+  const validatedFields = CategoryBodySchema.safeParse(categoryData);
   if (!validatedFields.success) {
     const flattened = z.flattenError(validatedFields.error);
 

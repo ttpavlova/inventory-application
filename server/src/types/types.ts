@@ -1,3 +1,5 @@
+import type { ShoeBodyRequest, CategoryBody } from "../schemas/schemas.js";
+
 export interface ShoeParams {
   id: number;
 }
@@ -9,14 +11,15 @@ export type GenderType = (typeof GENDERS)[number];
 export type SeasonType = (typeof SEASONS)[number];
 
 // shape for data mutation
-export interface ShoeBodyRequest {
-  gender: GenderType;
-  season: SeasonType;
-  categoryId: number;
-  brandId: number;
-  materialId: number;
-  colorId: number;
-}
+// same as ShoeBodyRequest from schemas.ts
+// export interface ShoeBodyRequest {
+//   gender: GenderType;
+//   season: SeasonType;
+//   categoryId: number;
+//   brandId: number;
+//   materialId: number;
+//   colorId: number;
+// }
 
 // shape for returning a list of data
 export interface ShoeBodyResponse {
@@ -37,9 +40,10 @@ export interface CategoryParams {
   id: number;
 }
 
-export interface CategoryBody {
-  name: string;
-}
+// same as CategoryBody from schemas.ts
+// export interface CategoryBody {
+//   name: string;
+// }
 
 export type Category = CategoryParams & CategoryBody;
 
@@ -51,6 +55,9 @@ export type NoParams = Record<string, never>;
 
 interface SuccessResponse<T> {
   data: T;
+}
+
+interface SuccessGetListResponse<T> extends SuccessResponse<T> {
   totalItems?: number;
 }
 
@@ -69,14 +76,6 @@ type FlattenedErrors<T> = {
 
 interface ValidationErrors<T> {
   errors: FlattenedErrors<T>;
-}
-
-interface SuccessResponse<T> {
-  data: T;
-}
-
-interface SuccessGetListResponse<T> extends SuccessResponse<T> {
-  totalItems?: number;
 }
 
 export type ListResponseBody<T> =
