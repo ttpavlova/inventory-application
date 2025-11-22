@@ -1,28 +1,15 @@
-import type { ShoeBodyRequest, CategoryBody } from "../schemas/schemas.js";
+import { GENDERS, SEASONS } from "../constants/constants.js";
+import type { ShoeBody, CategoryBody } from "../schemas/schemas.js"; // shapes for data mutation
 
 export interface ShoeParams {
   id: number;
 }
 
-export const GENDERS = ["Men", "Women"] as const;
-export const SEASONS = ["Summer", "Winter", "Demi-season"] as const;
-
 export type GenderType = (typeof GENDERS)[number];
 export type SeasonType = (typeof SEASONS)[number];
 
-// shape for data mutation
-// same as ShoeBodyRequest from schemas.ts
-// export interface ShoeBodyRequest {
-//   gender: GenderType;
-//   season: SeasonType;
-//   categoryId: number;
-//   brandId: number;
-//   materialId: number;
-//   colorId: number;
-// }
-
 // shape for returning a list of data
-export interface ShoeBodyResponse {
+export interface ShoeBodyView {
   gender: GenderType;
   season: SeasonType;
   category: string;
@@ -31,19 +18,14 @@ export interface ShoeBodyResponse {
   color: string;
 }
 
-export type ShoeRequest = ShoeParams & ShoeBodyRequest;
-export type ShoeResponse = ShoeParams & ShoeBodyResponse;
+export type Shoe = ShoeParams & ShoeBody;
+export type ShoeView = ShoeParams & ShoeBodyView;
 
 export type ShoeId = ShoeParams["id"];
 
 export interface CategoryParams {
   id: number;
 }
-
-// same as CategoryBody from schemas.ts
-// export interface CategoryBody {
-//   name: string;
-// }
 
 export type Category = CategoryParams & CategoryBody;
 
@@ -53,12 +35,9 @@ export type CategoryName = CategoryBody["name"];
 
 export type NoParams = Record<string, never>;
 
-interface SuccessResponse<T> {
-  data: T;
-}
-
-interface SuccessGetListResponse<T> extends SuccessResponse<T> {
-  totalItems?: number;
+interface List<T> {
+  items: T;
+  totalCount: number;
 }
 
 interface ErrorResponse {
@@ -78,21 +57,15 @@ interface ValidationErrors<T> {
   errors: FlattenedErrors<T>;
 }
 
-export type ListResponseBody<T> =
-  | SuccessGetListResponse<T>
-  | ErrorResponse
-  | NotFoundError;
-
-export type ItemResponseBody<T> =
-  | SuccessResponse<T>
-  | ErrorResponse
-  | NotFoundError;
-
-export type MutationResponseBody<T, A> =
-  | SuccessResponse<T>
+export type GetListResponse<T> = List<T> | ErrorResponse; // for lists with pagination
+export type GetResponse<T> = T | ErrorResponse | NotFoundError; // for lists where pagination isn't needed and items
+export type PostResponse<T, A> = T | ErrorResponse | ValidationErrors<A>;
+export type PutResponse<T, A> =
+  | T
   | ErrorResponse
   | NotFoundError
   | ValidationErrors<A>;
+export type DeleteResponse = ErrorResponse | NotFoundError;
 
 export interface Filter {
   id: number;

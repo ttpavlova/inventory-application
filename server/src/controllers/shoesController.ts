@@ -9,49 +9,43 @@ import {
   getTotalItems,
 } from "../db/shoesQueries.js";
 import {
-  type ItemResponseBody,
-  type ListResponseBody,
-  type MutationResponseBody,
+  type DeleteResponse,
+  type GetListResponse,
+  type GetResponse,
   type NoParams,
+  type PostResponse,
+  type PutResponse,
+  type Shoe,
   type ShoeParams,
-  type ShoeRequest,
-  type ShoeResponse,
+  type ShoeView,
 } from "../types/types.js";
 import { buildErrorResponse } from "../helpers/buildErrorResponse.js";
-import {
-  ShoeBodyRequestSchema,
-  type ShoeBodyRequest,
-} from "../schemas/schemas.js";
+import { ShoeBodySchema, type ShoeBody } from "../schemas/schemas.js";
 
 async function getShoes(
   req: Request,
-  res: Response<ListResponseBody<ShoeResponse[]>>
+  res: Response<GetListResponse<ShoeView[]>>
 ) {
-  const { page = 1 } = req.query;
+  const { page = 1, limit = 10 } = req.query;
 
   try {
-    const shoes = await getShoesQuery(Number(page));
-    const totalItems = await getTotalItems();
+    const shoes = await getShoesQuery(Number(page), Number(limit));
+    const totalCount = await getTotalItems();
 
     res.status(200).json({
-      data: shoes,
-      totalItems,
+      items: shoes,
+      totalCount,
     });
   } catch (error) {
     res
       .status(500)
-      .json(
-        buildErrorResponse(
-          "Database error: failed to get a list of shoes",
-          error
-        )
-      );
+      .json(buildErrorResponse("Error: failed to get a list of shoes", error));
   }
 }
 
 async function getShoeById(
   req: Request<ShoeParams>,
-  res: Response<ItemResponseBody<ShoeResponse>>
+  res: Response<GetResponse<ShoeView>>
 ) {
   const { id } = req.params;
 
@@ -62,65 +56,48 @@ async function getShoeById(
       return res.status(404).json({ message: "Shoe not found" });
     }
 
-    res.status(200).json({
-      data: shoe,
-    });
+    res.status(200).json(shoe);
   } catch (error) {
     res
       .status(500)
-      .json(
-        buildErrorResponse("Database error: failed to get a shoe by id", error)
-      );
+      .json(buildErrorResponse("Error: failed to get a shoe by id", error));
   }
 }
 
 async function createShoe(
-  req: Request<
-    NoParams,
-    MutationResponseBody<ShoeRequest, ShoeBodyRequest>,
-    ShoeBodyRequest
-  >,
-  res: Response<MutationResponseBody<ShoeRequest, ShoeBodyRequest>>
+  req: Request<NoParams, PostResponse<Shoe, ShoeBody>, ShoeBody>,
+  res: Response<PostResponse<Shoe, ShoeBody>>
 ) {
   const { ...shoeData } = req.body;
 
-  const validatedFields = ShoeBodyRequestSchema.safeParse(shoeData);
+  const validatedFields = ShoeBodySchema.safeParse(shoeData);
   if (!validatedFields.success) {
     const flattened = z.flattenError(validatedFields.error);
 
     return res.status(400).json({
       errors: flattened.fieldErrors,
-      // message: "Missing fields. Failed to create a shoe",
     });
   }
 
   try {
     const newShoe = await createShoeQuery(shoeData);
 
-    res.status(201).json({
-      data: newShoe,
-    });
+    res.status(201).json(newShoe);
   } catch (error) {
     res
       .status(500)
-      .json(
-        buildErrorResponse("Database error: failed to create a shoe", error)
-      );
+      .json(buildErrorResponse("Error: failed to create a shoe", error));
   }
 }
 
 async function updateShoe(
-  req: Request<
-    ShoeParams,
-    MutationResponseBody<ShoeRequest, ShoeBodyRequest>,
-    ShoeBodyRequest
-  >,
-  res: Response<MutationResponseBody<ShoeRequest, ShoeBodyRequest>>
+  req: Request<ShoeParams, PutResponse<Shoe, ShoeBody>, ShoeBody>,
+  res: Response<PutResponse<Shoe, ShoeBody>>
 ) {
   const { id } = req.params;
   const { ...shoeData } = req.body;
 
-  const validatedFields = ShoeBodyRequestSchema.safeParse(shoeData);
+  const validatedFields = ShoeBodySchema.safeParse(shoeData);
   if (!validatedFields.success) {
     const flattened = z.flattenError(validatedFields.error);
 
@@ -136,21 +113,17 @@ async function updateShoe(
       return res.status(404).json({ message: "Shoe not found" });
     }
 
-    res.status(200).json({
-      data: newShoe,
-    });
+    res.status(200).json(newShoe);
   } catch (error) {
     res
       .status(500)
-      .json(
-        buildErrorResponse("Database error: failed to update a shoe", error)
-      );
+      .json(buildErrorResponse("Error: failed to update a shoe", error));
   }
 }
 
 async function deleteShoe(
   req: Request<ShoeParams>,
-  res: Response<ItemResponseBody<ShoeRequest>>
+  res: Response<DeleteResponse>
 ) {
   const { id } = req.params;
 
@@ -161,15 +134,11 @@ async function deleteShoe(
       return res.status(404).json({ message: "Shoe not found" });
     }
 
-    res.status(200).json({
-      data: deletedShoe,
-    });
+    res.status(204).send();
   } catch (error) {
     res
       .status(500)
-      .json(
-        buildErrorResponse("Database error: failed to delete a shoe", error)
-      );
+      .json(buildErrorResponse("Error: failed to delete a shoe", error));
   }
 }
 

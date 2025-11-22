@@ -1,13 +1,8 @@
-import type {
-  ShoeBodyRequest,
-  ShoeId,
-  ShoeRequest,
-  ShoeResponse,
-} from "../types/types.js";
+import type { ShoeBody } from "../schemas/schemas.js";
+import type { Shoe, ShoeId, ShoeView } from "../types/types.js";
 import { pool } from "./pool.js";
 
-async function getShoesQuery(page = 1): Promise<ShoeResponse[]> {
-  const limit = 5;
+async function getShoesQuery(page = 1, limit = 10): Promise<ShoeView[]> {
   const offset = (page - 1) * limit;
 
   const { rows } = await pool.query(
@@ -23,7 +18,7 @@ async function getTotalItems(): Promise<number> {
   return Number(rows[0].count);
 }
 
-async function getShoeByIdQuery(id: ShoeId): Promise<ShoeResponse> {
+async function getShoeByIdQuery(id: ShoeId): Promise<ShoeView> {
   const { rows } = await pool.query(`SELECT * FROM view_shoes WHERE id = $1`, [
     id,
   ]);
@@ -38,7 +33,7 @@ async function createShoeQuery({
   brandId,
   materialId,
   colorId,
-}: ShoeBodyRequest): Promise<ShoeRequest> {
+}: ShoeBody): Promise<Shoe> {
   const { rows } = await pool.query(
     `INSERT INTO shoes (gender, season, category_id, brand_id, material_id, color_id) 
     VALUES ($1, $2, $3, $4, $5, $6)
@@ -49,10 +44,7 @@ async function createShoeQuery({
   return rows[0];
 }
 
-async function updateShoeQuery(
-  id: ShoeId,
-  shoeData: ShoeBodyRequest
-): Promise<ShoeRequest> {
+async function updateShoeQuery(id: ShoeId, shoeData: ShoeBody): Promise<Shoe> {
   const { gender, season, categoryId, brandId, materialId, colorId } = shoeData;
   const { rows } = await pool.query(
     `UPDATE shoes 
@@ -71,7 +63,7 @@ async function updateShoeQuery(
   return rows[0];
 }
 
-async function deleteShoeQuery(id: ShoeId): Promise<ShoeRequest> {
+async function deleteShoeQuery(id: ShoeId): Promise<Shoe> {
   const { rows } = await pool.query(
     `DELETE FROM shoes WHERE id = $1 RETURNING *`,
     [id]

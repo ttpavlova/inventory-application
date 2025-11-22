@@ -10,43 +10,35 @@ import {
 import type {
   Category,
   CategoryParams,
-  ItemResponseBody,
-  ListResponseBody,
-  MutationResponseBody,
+  DeleteResponse,
+  GetResponse,
   NoParams,
+  PostResponse,
+  PutResponse,
 } from "../types/types.js";
 import { buildErrorResponse } from "../helpers/buildErrorResponse.js";
 import { CategoryBodySchema, type CategoryBody } from "../schemas/schemas.js";
 
 async function getAllCategories(
   req: Request,
-  res: Response<ListResponseBody<Category[]>>
+  res: Response<GetResponse<Category[]>>
 ) {
   try {
     const categories = await getAllCategoriesQuery();
 
-    res.status(200).json({
-      data: categories,
-    });
+    res.status(200).json(categories);
   } catch (error) {
     res
       .status(500)
       .json(
-        buildErrorResponse(
-          "Database error: failed to get a list of categories",
-          error
-        )
+        buildErrorResponse("Error: failed to get a list of categories", error)
       );
   }
 }
 
 async function createCategory(
-  req: Request<
-    NoParams,
-    MutationResponseBody<Category, CategoryBody>,
-    CategoryBody
-  >,
-  res: Response<MutationResponseBody<Category, CategoryBody>>
+  req: Request<NoParams, PostResponse<Category, CategoryBody>, CategoryBody>,
+  res: Response<PostResponse<Category, CategoryBody>>
 ) {
   const { ...categoryData } = req.body;
 
@@ -62,25 +54,21 @@ async function createCategory(
   try {
     const newCategory = await createCategoryQuery(categoryData);
 
-    res.status(201).json({
-      data: newCategory,
-    });
+    res.status(201).json(newCategory);
   } catch (error) {
     res
       .status(500)
-      .json(
-        buildErrorResponse("Database error: failed to create a category", error)
-      );
+      .json(buildErrorResponse("Error: failed to create a category", error));
   }
 }
 
 async function updateCategory(
   req: Request<
     CategoryParams,
-    MutationResponseBody<Category, CategoryBody>,
+    PutResponse<Category, CategoryBody>,
     CategoryBody
   >,
-  res: Response<MutationResponseBody<Category, CategoryBody>>
+  res: Response<PutResponse<Category, CategoryBody>>
 ) {
   const { id } = req.params;
   const { ...categoryData } = req.body;
@@ -101,21 +89,17 @@ async function updateCategory(
       return res.status(404).json({ message: "Category not found" });
     }
 
-    res.status(200).json({
-      data: newCategory,
-    });
+    res.status(200).json(newCategory);
   } catch (error) {
     res
       .status(500)
-      .json(
-        buildErrorResponse("Database error: failed to update a category", error)
-      );
+      .json(buildErrorResponse("Error: failed to update a category", error));
   }
 }
 
 async function deleteCategory(
   req: Request<CategoryParams>,
-  res: Response<ItemResponseBody<Category>>
+  res: Response<DeleteResponse>
 ) {
   const { id } = req.params;
 
@@ -126,21 +110,17 @@ async function deleteCategory(
       return res.status(404).json({ message: "Category not found" });
     }
 
-    res.status(200).json({
-      data: deletedCategory,
-    });
+    res.status(204).send();
   } catch (error) {
     res
       .status(500)
-      .json(
-        buildErrorResponse("Database error: failed to delete a category", error)
-      );
+      .json(buildErrorResponse("Error: failed to delete a category", error));
   }
 }
 
 async function getShoesByCategory(
   req: Request<CategoryParams>,
-  res: Response<ListResponseBody<Category[]>>
+  res: Response<GetResponse<Category[]>>
 ) {
   const { id } = req.params;
 
@@ -153,17 +133,12 @@ async function getShoesByCategory(
       });
     }
 
-    res.status(200).json({
-      data: shoes,
-    });
+    res.status(200).json(shoes);
   } catch (error) {
     res
       .status(500)
       .json(
-        buildErrorResponse(
-          "Database error: failed to get shoes by category",
-          error
-        )
+        buildErrorResponse("Error: failed to get shoes by category", error)
       );
   }
 }

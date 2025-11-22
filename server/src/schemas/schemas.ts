@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { GENDERS, SEASONS } from "../types/types.js";
+import { GENDERS, SEASONS } from "../constants/constants.js";
 
-const ShoeBodyRequestSchema = z.object({
+const ShoeBodySchema = z.object({
   gender: z.enum(GENDERS),
   season: z.enum(SEASONS),
   categoryId: z.number(),
@@ -10,7 +10,7 @@ const ShoeBodyRequestSchema = z.object({
   colorId: z.number(),
 });
 
-type ShoeBodyRequest = z.infer<typeof ShoeBodyRequestSchema>;
+type ShoeBody = z.infer<typeof ShoeBodySchema>;
 
 const CategoryBodySchema = z.object({
   name: z.string().min(1).max(50),
@@ -18,9 +18,4 @@ const CategoryBodySchema = z.object({
 
 type CategoryBody = z.infer<typeof CategoryBodySchema>;
 
-export {
-  ShoeBodyRequestSchema,
-  type ShoeBodyRequest,
-  CategoryBodySchema,
-  type CategoryBody,
-};
+export { ShoeBodySchema, type ShoeBody, CategoryBodySchema, type CategoryBody };

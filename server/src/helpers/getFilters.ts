@@ -1,4 +1,4 @@
-import { GENDERS, SEASONS } from "../types/types.js";
+import { GENDERS, SEASONS } from "../constants/constants.js";
 
 const genderOptions = GENDERS;
 const seasonOptions = SEASONS;

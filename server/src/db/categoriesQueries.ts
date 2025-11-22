@@ -1,4 +1,5 @@
-import type { Category, CategoryBody, CategoryId } from "../types/types.js";
+import type { CategoryBody } from "../schemas/schemas.js";
+import type { Category, CategoryId } from "../types/types.js";
 import { pool } from "./pool.js";
 
 async function getAllCategoriesQuery(): Promise<Category[]> {
