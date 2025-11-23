@@ -1,17 +1,24 @@
-import { GENDERS, SEASONS } from "../constants/constants.js";
+import {
+  GENDER_OPTIONS,
+  GENDERS,
+  SEASON_OPTIONS,
+  SEASONS,
+} from "../constants/constants.js";
 import type { ShoeBody, CategoryBody } from "../schemas/schemas.js"; // shapes for data mutation
 
 export interface ShoeParams {
   id: number;
 }
 
-export type GenderType = (typeof GENDERS)[number];
-export type SeasonType = (typeof SEASONS)[number];
+export type Gender = (typeof GENDERS)[number];
+export type Season = (typeof SEASONS)[number];
+export type GenderOptions = typeof GENDER_OPTIONS;
+export type SeasonOptions = typeof SEASON_OPTIONS;
 
 // shape for returning a list of data
 export interface ShoeBodyView {
-  gender: GenderType;
-  season: SeasonType;
+  gender: Gender;
+  season: Season;
   category: string;
   brand: string;
   material: string;
@@ -35,7 +42,7 @@ export type CategoryName = CategoryBody["name"];
 
 export type NoParams = Record<string, never>;
 
-interface List<T> {
+export interface List<T> {
   items: T;
   totalCount: number;
 }
@@ -59,12 +66,14 @@ interface ValidationErrors<T> {
 
 export type GetListResponse<T> = List<T> | ErrorResponse; // for lists with pagination
 export type GetResponse<T> = T | ErrorResponse | NotFoundError; // for lists where pagination isn't needed and items
-export type PostResponse<T, A> = T | ErrorResponse | ValidationErrors<A>;
-export type PutResponse<T, A> =
+// export type GetResponse<T> = T | ErrorResponse; // for lists where pagination isn't needed
+// export type GetItemResponse<T> = T | ErrorResponse | NotFoundError; // for items
+export type PostResponse<T, U> = T | ErrorResponse | ValidationErrors<U>;
+export type PutResponse<T, U> =
   | T
   | ErrorResponse
   | NotFoundError
-  | ValidationErrors<A>;
+  | ValidationErrors<U>;
 export type DeleteResponse = ErrorResponse | NotFoundError;
 
 export interface Filter {
@@ -72,17 +81,9 @@ export interface Filter {
   name: string;
 }
 
-export interface Gender extends Filter {
-  name: GenderType;
-}
-
-export interface Season extends Filter {
-  name: SeasonType;
-}
-
 export interface Filters {
-  genders: Gender[];
-  seasons: Season[];
+  genders: GenderOptions;
+  seasons: SeasonOptions;
   categories: Category[];
   brands: Filter[];
   materials: Filter[];

@@ -5,13 +5,13 @@ import {
   getAllColorsQuery,
   getAllMaterialsQuery,
 } from "../db/filtersQueries.js";
-import { type Filters, type ListResponseBody } from "../types/types.js";
+import { type Filters, type GetResponse } from "../types/types.js";
 import { buildErrorResponse } from "../helpers/buildErrorResponse.js";
-import { genders, seasons } from "../helpers/getFilters.js";
+import { GENDER_OPTIONS, SEASON_OPTIONS } from "../constants/constants.js";
 
 async function getAllFilters(
   req: Request,
-  res: Response<ListResponseBody<Filters>>
+  res: Response<GetResponse<Filters>>
 ) {
   try {
     const [categories, brands, materials, colors] = await Promise.all([
@@ -21,16 +21,19 @@ async function getAllFilters(
       getAllColorsQuery(),
     ]);
 
-    res.status(200).json({
-      data: {
-        genders,
-        seasons,
-        categories,
-        brands,
-        materials,
-        colors,
-      },
-    });
+    const genders = GENDER_OPTIONS;
+    const seasons = SEASON_OPTIONS;
+
+    const filters = {
+      genders,
+      seasons,
+      categories,
+      brands,
+      materials,
+      colors,
+    };
+
+    res.status(200).json(filters);
   } catch (error) {
     res
       .status(500)
