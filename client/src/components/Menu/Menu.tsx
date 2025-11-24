@@ -1,12 +1,21 @@
-import { useGetCategoriesQuery } from "../../hooks/useGetCategoriesQuery";
+import { useApi } from "../../hooks/useApi";
+import { type Category } from "../../types/types";
 import styles from "./Menu.module.scss";
 
 export const Menu = () => {
-  const { isPending, error, data /* , isFetching */ } = useGetCategoriesQuery();
+  const { loading, error, data } = useApi<Category[]>("/api/categories");
 
-  if (isPending) return "Loading...";
+  if (loading) {
+    return <span>Loading...</span>;
+  }
 
-  if (error) return "An error has occurred: " + error.message;
+  if (error) {
+    return <span>Something went wrong. Try again later</span>;
+  }
+
+  if (!data) {
+    return <span>Filters not found</span>;
+  }
 
   return (
     <aside className={styles.container}>

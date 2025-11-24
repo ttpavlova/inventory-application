@@ -1,17 +1,28 @@
 import { useParams } from "react-router-dom";
 import styles from "./ShoeDetails.module.scss";
-import { useGetShoeByIdQuery } from "../../hooks/useGetShoeByIdQuery";
+import { useApi } from "../../hooks/useApi";
+import type { ShoeView } from "../../types/types";
 
 export const ShoeDetails = () => {
   const { id: paramId } = useParams();
 
-  const { isPending, error, data: shoe } = useGetShoeByIdQuery(Number(paramId));
+  const {
+    data: shoe,
+    loading,
+    error,
+  } = useApi<ShoeView>(`/api/shoes/${paramId}`);
 
-  if (isPending) return "Loading...";
+  if (loading) {
+    return <span>Loading...</span>;
+  }
 
-  if (error) return "An error has occurred: " + error.message;
+  if (error) {
+    return <span>Something went wrong. Try again later</span>;
+  }
 
-  if (!shoe) return "Shoe not found";
+  if (!shoe) {
+    return <span>Shoe not found</span>;
+  }
 
   const fieldsToShow = [
     "category",

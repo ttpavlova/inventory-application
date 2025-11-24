@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import type { Shoe } from "../../types/types";
+import type { ShoeView } from "../../types/types";
 import styles from "./ShoeCard.module.scss";
 
 interface ShoeCardProps {
-  shoe: Shoe;
+  shoe: ShoeView;
 }
 
 const ShoeCard = ({ shoe }: ShoeCardProps) => {

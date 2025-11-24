@@ -3,32 +3,25 @@ import "./App.scss";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Shoes from "./components/Shoes/Shoes";
 import Categories from "./components/Categories/Categories";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Header } from "./components/Header/Header";
 import { Footer } from "./components/Footer/Footer";
 import { ShoeDetails } from "./components/Shoes/ShoeDetails";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { CreateForm } from "./components/Shoes/CreateForm/CreateForm";
-
-const queryClient = new QueryClient();
 
 function App() {
   return (
     <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <div className="wrapper">
-          <Header />
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="shoes" element={<Shoes />} />
-            <Route path="shoes/:id" element={<ShoeDetails />} />
-            <Route path="categories" element={<Categories />} />
-            <Route path="shoes/create" element={<CreateForm />} />
-          </Routes>
-          <Footer />
-        </div>
-        <ReactQueryDevtools initialIsOpen />
-      </QueryClientProvider>
+      <div className="wrapper">
+        <Header />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="shoes" element={<Shoes />} />
+          <Route path="shoes/:id" element={<ShoeDetails />} />
+          <Route path="categories" element={<Categories />} />
+          <Route path="shoes/create" element={<CreateForm />} />
+        </Routes>
+        <Footer />
+      </div>
     </BrowserRouter>
   );
 }

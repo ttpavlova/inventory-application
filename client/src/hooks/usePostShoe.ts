@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { ShoeBody } from "../types/types";
 import { delay } from "../components/helpers/delay";
+import type { ShoeBody } from "../schemas/schemas";
 
 export const usePostShoe = () => {
   const [loading, setLoading] = useState(false);
@@ -32,7 +32,7 @@ export const usePostShoe = () => {
       }
     } catch (error) {
       setError("Something went wrong");
-      console.log(error, "IN CATCH");
+      console.log(error);
     }
 
     setLoading(false);

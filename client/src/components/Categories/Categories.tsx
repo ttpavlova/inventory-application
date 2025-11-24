@@ -1,26 +1,30 @@
-import { useEffect, useState } from "react";
 import type { Category } from "../../types/types";
 import CategoryCard from "./CategoryCard";
 import styles from "./Categories.module.scss";
+import { useApi } from "../../hooks/useApi";
 
 const Categories = () => {
-  const [data, setData] = useState<Category[]>([]);
+  const { data, loading, error } = useApi<Category[]>("/api/categories");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch("/api/categories");
-      const result = await res.json();
-      setData(result.data);
-    };
+  if (loading) {
+    return <span>Loading...</span>;
+  }
 
-    fetchData();
-  }, []);
+  if (error) {
+    return <span>Something went wrong. Try again later</span>;
+  }
 
-  const items = data.map((item) => (
-    <div key={item.id}>
-      <CategoryCard name={item.name} />
-    </div>
-  ));
+  if (data && data.length === 0) {
+    return <span>Categories not found</span>;
+  }
+
+  const items =
+    data &&
+    data.map((item) => (
+      <div key={item.id}>
+        <CategoryCard name={item.name} />
+      </div>
+    ));
 
   return <div className={styles.wrapper}>{items}</div>;
 };

@@ -1,43 +1,58 @@
 import { useNavigate } from "react-router-dom";
-import { useGetFiltersQuery } from "../../../hooks/useGetFiltersQuery";
 import styles from "./CreateForm.module.scss";
 import { SelectElem } from "../../ui/SelectElem/SelectElem";
 import { usePostShoe } from "../../../hooks/usePostShoe";
 import { useState } from "react";
-import type { ShoeBody } from "../../../types/types";
+import type {
+  FilterOptions,
+  Filters,
+  ShoeBodyView,
+} from "../../../types/types";
+import { useApi } from "../../../hooks/useApi";
+import type { ShoeBody } from "../../../schemas/schemas";
 
-type FormData = Partial<ShoeBody>;
+type FormData = {
+  [k in keyof ShoeBody]: ShoeBody[k] | null;
+};
+
+type FormFields = {
+  field: keyof ShoeBody;
+  label: keyof ShoeBodyView;
+  options: FilterOptions;
+};
 
 export const CreateForm = () => {
   const initialOptions: FormData = {
-    gender: "",
-    season: "",
-    category: "",
-    brand: "",
-    material: "",
-    color: "",
+    gender: null,
+    season: null,
+    categoryId: null,
+    brandId: null,
+    materialId: null,
+    colorId: null,
   };
 
   const [selectedOptions, setSelectedOptions] =
     useState<FormData>(initialOptions);
-  const { isPending, error, data /* , isFetching */ } = useGetFiltersQuery();
-  const {
-    loading: createLoading,
-    error: createError,
-    createShoe,
-  } = usePostShoe();
+  const { data, loading, error } = useApi<Filters>(`/api/filters`);
+  const { error: createError, createShoe } = usePostShoe();
 
   const navigate = useNavigate();
 
-  if (isPending || createLoading) return "Loading...";
+  if (loading) {
+    return <span>Loading...</span>;
+  }
 
-  if (error) return "An error has occurred: " + error.message;
+  if (error || !data) {
+    return <span>Something went wrong. Try again later</span>;
+  }
 
-  if (!data) return "Something went wrong";
+  // if (!data) {
+  //   return <span>Filters not found</span>;
+  // }
 
   const isValidItem = (options: FormData): options is ShoeBody => {
     return Object.keys(options).every(
-      (key) => options[key as keyof ShoeBody]?.trim() != ""
+      (key) => options[key as keyof ShoeBody] != null
     );
   };
 
@@ -50,31 +65,33 @@ export const CreateForm = () => {
     }
   };
 
-  const updateSelectedOptions = (key: string, value: string) => {
-    setSelectedOptions({ ...selectedOptions, [key]: value });
+  const updateSelectedOptions = (key: string, value: string | number) => {
+    setSelectedOptions({
+      ...selectedOptions,
+      [key]: value,
+    });
   };
 
-  const filtersToShow = [
-    { name: "gender", options: data.genders },
-    { name: "season", options: data.seasons },
-    { name: "category", options: data.categories },
-    { name: "brand", options: data.brands },
-    { name: "material", options: data.materials },
-    { name: "color", options: data.colors },
+  const formFields: FormFields[] = [
+    { field: "gender", label: "gender", options: data.genders },
+    { field: "season", label: "season", options: data.seasons },
+    { field: "categoryId", label: "category", options: data.categories },
+    { field: "brandId", label: "brand", options: data.brands },
+    { field: "materialId", label: "material", options: data.materials },
+    { field: "colorId", label: "color", options: data.colors },
   ];
 
   return (
     <div className={styles.wrapper}>
       {data && (
         <form onSubmit={(e) => handleSubmit(e)} className={styles.filters}>
-          {filtersToShow.map((filter) => (
+          {formFields.map(({ field, label, options }) => (
             <SelectElem
-              key={filter.name}
-              filterName={filter.name}
-              options={filter.options}
-              value={
-                selectedOptions[filter.name as keyof typeof selectedOptions]
-              }
+              key={label}
+              field={field}
+              label={label}
+              options={options}
+              value={selectedOptions[field]}
               updateSelectedOptions={updateSelectedOptions}
             />
           ))}

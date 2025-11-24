@@ -1,62 +1,91 @@
-export interface Category {
+import {
+  GENDER_OPTIONS,
+  GENDERS,
+  SEASON_OPTIONS,
+  SEASONS,
+} from "../constants/constants.js";
+import type { ShoeBody, CategoryBody } from "../schemas/schemas.js"; // shapes for data mutation
+
+export interface ShoeParams {
   id: number;
-  name: string;
 }
 
-export interface ShoeBody {
-  gender: string;
-  season: string;
+export type Gender = (typeof GENDERS)[number];
+export type Season = (typeof SEASONS)[number];
+export type GenderOptions = typeof GENDER_OPTIONS;
+export type SeasonOptions = typeof SEASON_OPTIONS;
+
+// shape for returning a list of data
+export interface ShoeBodyView {
+  gender: Gender;
+  season: Season;
   category: string;
   brand: string;
   material: string;
   color: string;
-  country: string;
 }
 
-export interface Shoe extends ShoeBody {
+export type Shoe = ShoeParams & ShoeBody;
+export type ShoeView = ShoeParams & ShoeBodyView;
+
+export type ShoeId = ShoeParams["id"];
+
+export interface CategoryParams {
   id: number;
 }
 
-export interface Category {
-  id: number;
-  name: string;
+export type Category = CategoryParams & CategoryBody;
+
+export type CategoryId = CategoryParams["id"];
+
+export type CategoryName = CategoryBody["name"];
+
+export type NoParams = Record<string, never>;
+
+export interface List<T> {
+  items: T;
+  totalCount: number;
 }
 
-export interface ResponseParams<T> {
-  data: T;
-  totalItems: number;
+interface ErrorResponse {
+  message: string;
+  error?: unknown;
 }
 
-export const GENDERS = ["Men", "Women"] as const;
-export const SEASONS = ["Summer", "Winter", "Demi-season"] as const;
+interface NotFoundError {
+  message: string;
+}
 
-export type GenderType = (typeof GENDERS)[number];
-export type SeasonType = (typeof SEASONS)[number];
+type FlattenedErrors<T> = {
+  [K in keyof T]?: string[];
+};
+
+interface ValidationErrors<T> {
+  errors: FlattenedErrors<T>;
+}
+
+export type GetListResponse<T> = List<T> | ErrorResponse; // for lists with pagination
+export type GetResponse<T> = T | ErrorResponse | NotFoundError; // for lists where pagination isn't needed and items
+export type PostResponse<T, U> = T | ErrorResponse | ValidationErrors<U>;
+export type PutResponse<T, U> =
+  | T
+  | ErrorResponse
+  | NotFoundError
+  | ValidationErrors<U>;
+export type DeleteResponse = ErrorResponse | NotFoundError;
 
 export interface Filter {
   id: number;
   name: string;
 }
 
-export interface Gender extends Filter {
-  name: GenderType;
-}
-
-export interface Season extends Filter {
-  name: SeasonType;
-}
-
-export type FilterOptions = Gender[] | Season[] | Category[] | Filter[];
-
-interface Filters {
-  genders: Gender[];
-  seasons: Season[];
+export interface Filters {
+  genders: GenderOptions;
+  seasons: SeasonOptions;
   categories: Category[];
   brands: Filter[];
   materials: Filter[];
   colors: Filter[];
 }
 
-export interface ResponseParamsFilters {
-  data: Filters;
-}
+export type FilterOptions = Filters[keyof Filters];

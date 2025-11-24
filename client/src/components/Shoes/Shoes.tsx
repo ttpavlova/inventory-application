@@ -1,26 +1,34 @@
 import { useSearchParams } from "react-router-dom";
-import { useGetShoesQuery } from "../../hooks/useGetShoesQuery";
 import { Menu } from "../Menu/Menu";
 import ShoeCard from "./ShoeCard";
 import styles from "./Shoes.module.scss";
 import { Pagination } from "../Pagination/Pagination";
 import { useEffect, useState } from "react";
+import type { ShoeView } from "../../types/types";
+import { useApiShoes } from "../../hooks/useApiShoes";
 
 const Shoes = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialPage =
     searchParams.get("page") == null ? 1 : Number(searchParams.get("page"));
   const [page, setPage] = useState(initialPage);
+  const limit = 5;
 
-  const { isPending, error, data /* , isFetching */ } = useGetShoesQuery(page);
+  const { items, totalCount, loading, error } = useApiShoes<ShoeView[]>(
+    `/api/shoes/?page=${page}&limit=${limit}`
+  );
 
   useEffect(() => {
     setSearchParams({ page: String(page) });
   }, [page]);
 
-  if (isPending) return "Loading...";
+  if (loading) {
+    return <span>Loading...</span>;
+  }
 
-  if (error) return "An error has occurred: " + error.message;
+  if (error) {
+    return <span>Something went wrong. Try again later</span>;
+  }
 
   const changePage = (page: number) => {
     setPage(page);
@@ -31,23 +39,24 @@ const Shoes = () => {
       <Menu />
 
       <div className={styles.wrapper}>
-        {data?.data && data.data.length !== 0 ? (
+        {items && items.length !== 0 ? (
           <>
             <div className={styles.shoesContainer}>
-              {data.data.map((shoe) => (
-                <ShoeCard key={shoe.id} shoe={shoe} />
+              {items.map((item) => (
+                <ShoeCard key={item.id} shoe={item} />
               ))}
             </div>
           </>
         ) : (
           <>
-            <div>"No shoes found!"</div>
+            <div>No shoes found</div>
           </>
         )}
-        {data?.data && (
+        {items && totalCount && (
           <Pagination
             page={page}
-            totalItems={data.totalItems}
+            limit={limit}
+            totalCount={totalCount}
             handleChange={changePage}
           />
         )}

@@ -3,17 +3,18 @@ import cls from "classnames";
 
 interface PaginationProps {
   page: number;
-  totalItems: number;
+  limit: number;
+  totalCount: number;
   handleChange: (page: number) => void;
 }
 
 export const Pagination = ({
   page,
-  totalItems,
+  limit,
+  totalCount,
   handleChange,
 }: PaginationProps) => {
-  const limit = 5;
-  const totalPages = Math.ceil(totalItems / limit);
+  const totalPages = Math.ceil(totalCount / limit);
 
   const getMiddlePages = () => {
     const middlePages = [];
