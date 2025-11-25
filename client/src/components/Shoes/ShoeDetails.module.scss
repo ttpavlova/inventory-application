@@ -1,3 +1,5 @@
+@use "../../styles/mixins" as mixins;
+
 .container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -30,4 +32,18 @@
   width: 400px;
   max-width: 100%;
   background-color: lightgray;
+}
+
+.buttons {
+  margin-top: 16px;
+}
+
+.btn {
+  @include mixins.btn;
+
+  margin-right: 16px;
+
+  &:last-child {
+    margin: 0;
+  }
 }

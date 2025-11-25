@@ -4,8 +4,7 @@ import ShoeCard from "./ShoeCard";
 import styles from "./Shoes.module.scss";
 import { Pagination } from "../Pagination/Pagination";
 import { useEffect, useState } from "react";
-import type { ShoeView } from "../../types/types";
-import { useApiShoes } from "../../hooks/useApiShoes";
+import { useGetAllShoes } from "../../hooks/list";
 
 const Shoes = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -14,9 +13,7 @@ const Shoes = () => {
   const [page, setPage] = useState(initialPage);
   const limit = 5;
 
-  const { items, totalCount, loading, error } = useApiShoes<ShoeView[]>(
-    `/api/shoes/?page=${page}&limit=${limit}`
-  );
+  const { data, loading, error } = useGetAllShoes(page, limit);
 
   useEffect(() => {
     setSearchParams({ page: String(page) });
@@ -39,10 +36,10 @@ const Shoes = () => {
       <Menu />
 
       <div className={styles.wrapper}>
-        {items && items.length !== 0 ? (
+        {data && data.items.length !== 0 ? (
           <>
             <div className={styles.shoesContainer}>
-              {items.map((item) => (
+              {data.items.map((item) => (
                 <ShoeCard key={item.id} shoe={item} />
               ))}
             </div>
@@ -52,11 +49,11 @@ const Shoes = () => {
             <div>No shoes found</div>
           </>
         )}
-        {items && totalCount && (
+        {data && (
           <Pagination
             page={page}
             limit={limit}
-            totalCount={totalCount}
+            totalCount={data.totalCount}
             handleChange={changePage}
           />
         )}

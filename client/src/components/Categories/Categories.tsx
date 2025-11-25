@@ -1,10 +1,9 @@
-import type { Category } from "../../types/types";
 import CategoryCard from "./CategoryCard";
 import styles from "./Categories.module.scss";
-import { useApi } from "../../hooks/useApi";
+import { useGetAllCategories } from "../../hooks/list";
 
 const Categories = () => {
-  const { data, loading, error } = useApi<Category[]>("/api/categories");
+  const { data, loading, error } = useGetAllCategories();
 
   if (loading) {
     return <span>Loading...</span>;

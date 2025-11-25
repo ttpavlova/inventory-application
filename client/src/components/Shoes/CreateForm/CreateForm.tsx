@@ -1,15 +1,10 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "./CreateForm.module.scss";
 import { SelectElem } from "../../ui/SelectElem/SelectElem";
-import { usePostShoe } from "../../../hooks/usePostShoe";
 import { useState } from "react";
-import type {
-  FilterOptions,
-  Filters,
-  ShoeBodyView,
-} from "../../../types/types";
-import { useApi } from "../../../hooks/useApi";
+import type { FilterOptions, ShoeBodyView } from "../../../types/types";
 import type { ShoeBody } from "../../../schemas/schemas";
+import { useCreateShoe, useGetAllFilters } from "../../../hooks/list";
 
 type FormData = {
   [k in keyof ShoeBody]: ShoeBody[k] | null;
@@ -33,8 +28,13 @@ export const CreateForm = () => {
 
   const [selectedOptions, setSelectedOptions] =
     useState<FormData>(initialOptions);
-  const { data, loading, error } = useApi<Filters>(`/api/filters`);
-  const { error: createError, createShoe } = usePostShoe();
+  const { data, loading, error } = useGetAllFilters();
+  const {
+    id,
+    // loading: loadingCreate,
+    error: errorCreate,
+    request: createShoe,
+  } = useCreateShoe();
 
   const navigate = useNavigate();
 
@@ -45,10 +45,6 @@ export const CreateForm = () => {
   if (error || !data) {
     return <span>Something went wrong. Try again later</span>;
   }
-
-  // if (!data) {
-  //   return <span>Filters not found</span>;
-  // }
 
   const isValidItem = (options: FormData): options is ShoeBody => {
     return Object.keys(options).every(
@@ -96,7 +92,13 @@ export const CreateForm = () => {
             />
           ))}
 
-          {createError && <div>{createError}</div>}
+          {errorCreate && <div>{errorCreate}</div>}
+          {id && (
+            <div>
+              A shoe with ID: <Link to={`/shoes/${id}`}>{id}</Link> was created
+              successfully
+            </div>
+          )}
 
           <div>
             <button

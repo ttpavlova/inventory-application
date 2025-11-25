@@ -60,18 +60,21 @@ type FlattenedErrors<T> = {
   [K in keyof T]?: string[];
 };
 
-interface ValidationErrors<T> {
-  errors: FlattenedErrors<T>;
+interface ValidationErrors<TBody> {
+  errors: FlattenedErrors<TBody>;
 }
 
 export type GetListResponse<T> = List<T> | ErrorResponse; // for lists with pagination
 export type GetResponse<T> = T | ErrorResponse | NotFoundError; // for lists where pagination isn't needed and items
-export type PostResponse<T, U> = T | ErrorResponse | ValidationErrors<U>;
-export type PutResponse<T, U> =
+export type PostResponse<T, TBody> =
+  | T
+  | ErrorResponse
+  | ValidationErrors<TBody>;
+export type PutResponse<T, TBody> =
   | T
   | ErrorResponse
   | NotFoundError
-  | ValidationErrors<U>;
+  | ValidationErrors<TBody>;
 export type DeleteResponse = ErrorResponse | NotFoundError;
 
 export interface Filter {
