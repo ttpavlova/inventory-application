@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchData } from "./fetchData";
 
-export const useFetchQuery = <Output>(url: string) => {
+export const useApiQuery = <Output>(url: string) => {
   const [data, setData] = useState<Output | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);

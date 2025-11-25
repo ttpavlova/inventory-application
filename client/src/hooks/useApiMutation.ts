@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { fetchData } from "./fetchData";
 
-type Method = "POST" | "PUT" | "DELETE";
+type Method = "POST" | "PUT";
 
-export const useFetchMutation = <Input, Output extends { id: number }>(
+export const useApiMutation = <Input, Output extends { id: number }>(
   url: string,
   method: Method
 ) => {
@@ -11,7 +11,7 @@ export const useFetchMutation = <Input, Output extends { id: number }>(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
-  const request = async (body?: Input) => {
+  const request = async (body: Input) => {
     if (!loading) {
       setLoading(true);
     }
@@ -20,11 +20,8 @@ export const useFetchMutation = <Input, Output extends { id: number }>(
     try {
       const options: RequestInit = {
         method,
+        body: JSON.stringify(body),
       };
-
-      if (method === "POST" || method === "PUT") {
-        options.body = JSON.stringify(body);
-      }
 
       const data = await fetchData<Output>(url, options);
 
@@ -37,7 +34,5 @@ export const useFetchMutation = <Input, Output extends { id: number }>(
     }
   };
 
-  return method === "DELETE"
-    ? { loading, error, request }
-    : { data, id: data?.id, loading, error, request };
+  return { data, id: data?.id, loading, error, request };
 };
