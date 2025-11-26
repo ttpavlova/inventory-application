@@ -1,5 +1,10 @@
 import type { ShoeBody } from "../schemas/schemas.js";
-import type { Shoe, ShoeId, ShoeView } from "../types/types.js";
+import type {
+  Shoe,
+  ShoeDbWithRelations,
+  ShoeId,
+  ShoeView,
+} from "../types/types.js";
 import { pool } from "./pool.js";
 
 async function getShoesQuery(page = 1, limit = 10): Promise<ShoeView[]> {
@@ -18,10 +23,28 @@ async function getTotalItems(): Promise<number> {
   return Number(rows[0].count);
 }
 
-async function getShoeByIdQuery(id: ShoeId): Promise<ShoeView> {
-  const { rows } = await pool.query(`SELECT * FROM view_shoes WHERE id = $1`, [
-    id,
-  ]);
+async function getShoeByIdQuery(id: ShoeId): Promise<ShoeDbWithRelations> {
+  const { rows } = await pool.query(
+    `SELECT
+      s.id,
+      s.gender,
+      s.season,
+      s.category_id,
+      c.name AS category_name,
+      s.brand_id,
+      b.name AS brand_name,
+      s.material_id,
+      m.name AS material_name,
+      s.color_id,
+      col.name AS color_name
+    FROM shoes s
+    JOIN categories c ON s.category_id = c.id
+    JOIN brands b ON s.brand_id = b.id
+    JOIN materials m ON s.material_id = m.id
+    JOIN colors col ON s.color_id = col.id
+    WHERE s.id = $1`,
+    [id]
+  );
 
   return rows[0];
 }

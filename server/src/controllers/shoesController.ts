@@ -16,11 +16,13 @@ import {
   type PostResponse,
   type PutResponse,
   type Shoe,
+  type ShoeWithRelations,
   type ShoeParams,
   type ShoeView,
 } from "../types/types.js";
 import { buildErrorResponse } from "../helpers/buildErrorResponse.js";
 import { ShoeBodySchema, type ShoeBody } from "../schemas/schemas.js";
+import { transformShoe } from "../helpers/mapShoes.js";
 
 async function getShoes(
   req: Request,
@@ -45,7 +47,7 @@ async function getShoes(
 
 async function getShoeById(
   req: Request<ShoeParams>,
-  res: Response<GetResponse<ShoeView>>
+  res: Response<GetResponse<ShoeWithRelations>>
 ) {
   const { id } = req.params;
 
@@ -56,7 +58,9 @@ async function getShoeById(
       return res.status(404).json({ message: "Shoe not found" });
     }
 
-    res.status(200).json(shoe);
+    const mappedShoe = transformShoe(shoe);
+
+    res.status(200).json(mappedShoe);
   } catch (error) {
     res
       .status(500)

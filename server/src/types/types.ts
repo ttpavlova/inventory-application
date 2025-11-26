@@ -30,6 +30,30 @@ export type ShoeView = ShoeParams & ShoeBodyView;
 
 export type ShoeId = ShoeParams["id"];
 
+export type ShoeWithRelations = {
+  id: number;
+  gender: Gender;
+  season: Season;
+  category: Category;
+  brand: Filter;
+  material: Filter;
+  color: Filter;
+};
+
+export interface ShoeDbWithRelations {
+  id: number;
+  gender: Gender;
+  season: Season;
+  category_id: number;
+  category_name: string;
+  brand_id: number;
+  brand_name: string;
+  material_id: number;
+  material_name: string;
+  color_id: number;
+  color_name: string;
+}
+
 export interface CategoryParams {
   id: number;
 }
