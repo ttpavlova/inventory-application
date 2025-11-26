@@ -1,0 +1,26 @@
+@use "../../../styles/variables";
+@use "../../../styles/mixins" as mixins;
+
+.wrapper {
+  padding: 20px 30px;
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.btn {
+  @include mixins.btn;
+
+  margin-right: 16px;
+
+  &:last-child {
+    margin: 0;
+  }
+}
+
+.btnPrimary {
+  @include mixins.btn-primary;
+}

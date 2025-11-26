@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import styles from "./ShoeDetails.module.scss";
 import { useDeleteShoe, useGetShoeById } from "../../hooks/list";
 
@@ -25,18 +25,19 @@ export const ShoeDetails = () => {
   }
 
   const fieldsToShow = [
+    "id",
     "category",
     "gender",
     "season",
     "brand",
     "material",
     "color",
-  ];
+  ] as const;
 
   const descriptionList = fieldsToShow.map((field) => (
     <p key={field}>
       <span className={styles.descriptionTitle}>{field}</span>:{" "}
-      {shoe[field as keyof typeof shoe]}
+      {typeof shoe[field] === "object" ? shoe[field].name : shoe[field]}
     </p>
   ));
 
@@ -58,7 +59,9 @@ export const ShoeDetails = () => {
         {descriptionList}
 
         <div className={styles.buttons}>
-          <button className={styles.btn}>Edit</button>
+          <Link to={`/shoes/update/${paramId}`} className={styles.btn}>
+            Edit
+          </Link>
           <button className={styles.btn} onClick={handleDelete}>
             Delete
           </button>

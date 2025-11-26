@@ -1,10 +1,14 @@
-import { Link, useNavigate } from "react-router-dom";
-import styles from "./CreateForm.module.scss";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import styles from "./UpdateForm.module.scss";
 import { SelectElem } from "../../ui/SelectElem/SelectElem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { FilterOptions, ShoeBodyView } from "../../../types/types";
 import type { ShoeBody } from "../../../schemas/schemas";
-import { useCreateShoe, useGetAllFilters } from "../../../hooks/list";
+import {
+  useGetAllFilters,
+  useGetShoeById,
+  useUpdateShoe,
+} from "../../../hooks/list";
 
 type FormData = {
   [k in keyof ShoeBody]: ShoeBody[k] | null;
@@ -25,18 +29,32 @@ const initialOptions: FormData = {
   colorId: null,
 };
 
-export const CreateForm = () => {
+export const UpdateForm = () => {
   const [selectedOptions, setSelectedOptions] =
     useState<FormData>(initialOptions);
+
+  const { id: paramId } = useParams();
+  const navigate = useNavigate();
+
+  const { data: shoe } = useGetShoeById(Number(paramId));
   const { data, loading, error } = useGetAllFilters();
   const {
     id,
     // loading: loadingCreate,
     error: errorCreate,
     request: createShoe,
-  } = useCreateShoe();
+  } = useUpdateShoe(Number(paramId));
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    setSelectedOptions({
+      gender: shoe?.gender || null,
+      season: shoe?.season || null,
+      categoryId: shoe?.category?.id || null,
+      brandId: shoe?.brand?.id || null,
+      materialId: shoe?.material?.id || null,
+      colorId: shoe?.color?.id || null,
+    });
+  }, [shoe]);
 
   if (loading) {
     return <span>Loading...</span>;
@@ -44,6 +62,10 @@ export const CreateForm = () => {
 
   if (error || !data) {
     return <span>Something went wrong. Try again later</span>;
+  }
+
+  if (!shoe) {
+    return <span>Shoe not found</span>;
   }
 
   const isValidItem = (options: FormData): options is ShoeBody => {
@@ -95,7 +117,7 @@ export const CreateForm = () => {
           {errorCreate && <div>{errorCreate}</div>}
           {id && (
             <div>
-              A shoe with ID: <Link to={`/shoes/${id}`}>{id}</Link> was created
+              A shoe with ID: <Link to={`/shoes/${id}`}>{id}</Link> was updated
               successfully
             </div>
           )}

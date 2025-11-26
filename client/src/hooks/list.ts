@@ -1,5 +1,12 @@
 import type { ShoeBody } from "../schemas/schemas";
-import type { Category, Filters, List, Shoe, ShoeView } from "../types/types";
+import type {
+  Category,
+  Filters,
+  List,
+  Shoe,
+  ShoeWithRelations,
+  ShoeView,
+} from "../types/types";
 import { useApiDelete } from "./useApiDelete";
 import { useApiMutation } from "./useApiMutation";
 import { useApiQuery } from "./useApiQuery";
@@ -11,7 +18,7 @@ export const useGetAllShoes = (page: number, limit: number) => {
 };
 
 export const useGetShoeById = (id: number) => {
-  return useApiQuery<ShoeView>(`/api/shoes/${id}`);
+  return useApiQuery<ShoeWithRelations>(`/api/shoes/${id}`);
 };
 
 export const useCreateShoe = () => {

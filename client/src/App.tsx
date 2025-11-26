@@ -7,6 +7,7 @@ import { Header } from "./components/Header/Header";
 import { Footer } from "./components/Footer/Footer";
 import { ShoeDetails } from "./components/Shoes/ShoeDetails";
 import { CreateForm } from "./components/Shoes/CreateForm/CreateForm";
+import { UpdateForm } from "./components/Shoes/UpdateForm/UpdateForm";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="shoes/:id" element={<ShoeDetails />} />
           <Route path="categories" element={<Categories />} />
           <Route path="shoes/create" element={<CreateForm />} />
+          <Route path="shoes/update/:id" element={<UpdateForm />} />
         </Routes>
         <Footer />
       </div>
