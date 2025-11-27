@@ -8,20 +8,26 @@ import { Footer } from "./components/Footer/Footer";
 import { ShoeDetails } from "./components/Shoes/ShoeDetails";
 import { CreateForm } from "./components/Shoes/CreateForm/CreateForm";
 import { UpdateForm } from "./components/Shoes/UpdateForm/UpdateForm";
+import { NotFound } from "./pages/NotFound/NotFound";
+import { ErrorBoundary } from "react-error-boundary";
+import { ErrorPage } from "./pages/ErrorPage/ErrorPage";
 
 function App() {
   return (
     <BrowserRouter>
       <div className="wrapper">
         <Header />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="shoes" element={<Shoes />} />
-          <Route path="shoes/:id" element={<ShoeDetails />} />
-          <Route path="categories" element={<Categories />} />
-          <Route path="shoes/create" element={<CreateForm />} />
-          <Route path="shoes/update/:id" element={<UpdateForm />} />
-        </Routes>
+        <ErrorBoundary fallback={<ErrorPage />}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="shoes" element={<Shoes />} />
+            <Route path="shoes/:id" element={<ShoeDetails />} />
+            <Route path="categories" element={<Categories />} />
+            <Route path="shoes/create" element={<CreateForm />} />
+            <Route path="shoes/update/:id" element={<UpdateForm />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </ErrorBoundary>
         <Footer />
       </div>
     </BrowserRouter>
