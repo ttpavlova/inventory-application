@@ -1,25 +1,25 @@
-import { HomePage } from "./components/HomePage/HomePage";
-import "./App.scss";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Shoes from "./components/Shoes/Shoes";
-import Categories from "./components/Categories/Categories";
+import { ErrorBoundary } from "react-error-boundary";
+import { Home } from "./pages/Home/Home";
+import { Shoes } from "./pages/Shoes/Shoes";
+import { Categories } from "./pages/Categories/Categories";
 import { Header } from "./components/Header/Header";
 import { Footer } from "./components/Footer/Footer";
-import { ShoeDetails } from "./components/Shoes/ShoeDetails";
-import { CreateForm } from "./components/Shoes/CreateForm/CreateForm";
-import { UpdateForm } from "./components/Shoes/UpdateForm/UpdateForm";
+import { ShoeDetails } from "./pages/ShoeDetails/ShoeDetails";
+import { CreateForm } from "./pages/CreateForm/CreateForm";
+import { UpdateForm } from "./pages/UpdateForm/UpdateForm";
 import { NotFound } from "./pages/NotFound/NotFound";
-import { ErrorBoundary } from "react-error-boundary";
-import { ErrorPage } from "./pages/ErrorPage/ErrorPage";
+import { Error } from "./pages/Error/Error";
+import "./App.scss";
 
 function App() {
   return (
     <BrowserRouter>
-      <div className="wrapper">
+      <div className="container">
         <Header />
-        <ErrorBoundary fallback={<ErrorPage />}>
+        <ErrorBoundary fallback={<Error />}>
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<Home />} />
             <Route path="shoes" element={<Shoes />} />
             <Route path="shoes/:id" element={<ShoeDetails />} />
             <Route path="categories" element={<Categories />} />

@@ -4,8 +4,6 @@ interface CategoryCardProps {
   name: Category["name"];
 }
 
-const CategoryCard = ({ name }: CategoryCardProps) => {
+export const CategoryCard = ({ name }: CategoryCardProps) => {
   return <div>{name}</div>;
 };
-
-export default CategoryCard;

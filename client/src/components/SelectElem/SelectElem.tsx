@@ -1,7 +1,7 @@
 import type { ChangeEvent } from "react";
-import type { FilterOptions } from "../../../types/types";
+import type { FilterOptions } from "../../types/types";
 import styles from "./SelectElem.module.scss";
-import type { ShoeBody } from "../../../schemas/schemas";
+import type { ShoeBody } from "../../schemas/schemas";
 
 interface SelectElemProps {
   field: string;

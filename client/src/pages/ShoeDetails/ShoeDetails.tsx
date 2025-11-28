@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import styles from "./ShoeDetails.module.scss";
 import { useDeleteShoe, useGetShoeById } from "../../hooks/list";
+import { NotFound } from "../NotFound/NotFound";
 
 export const ShoeDetails = () => {
   const { id: paramId } = useParams();
@@ -21,7 +22,7 @@ export const ShoeDetails = () => {
   }
 
   if (!shoe) {
-    return <span>Shoe not found</span>;
+    return <NotFound />;
   }
 
   const fieldsToShow = [

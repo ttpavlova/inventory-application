@@ -1,8 +1,8 @@
-import CategoryCard from "./CategoryCard";
+import { CategoryCard } from "./CategoryCard";
 import styles from "./Categories.module.scss";
 import { useGetAllCategories } from "../../hooks/list";
 
-const Categories = () => {
+export const Categories = () => {
   const { data, loading, error } = useGetAllCategories();
 
   if (loading) {
@@ -25,7 +25,5 @@ const Categories = () => {
       </div>
     ));
 
-  return <div className={styles.wrapper}>{items}</div>;
+  return <div className={styles.container}>{items}</div>;
 };
-
-export default Categories;

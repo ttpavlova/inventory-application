@@ -5,7 +5,7 @@ export const Menu = () => {
   const { loading, error, data } = useGetAllCategories();
 
   return (
-    <aside className={styles.container}>
+    <aside className={styles.menu}>
       <span>Filters</span>
 
       {loading && <div>Loading...</div>}

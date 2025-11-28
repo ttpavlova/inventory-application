@@ -48,7 +48,7 @@ export const Pagination = ({
   };
 
   return (
-    <div className={styles.wrapper} onClick={(e) => getNewPage(e)}>
+    <div className={styles.pagination} onClick={(e) => getNewPage(e)}>
       <ul className={styles.pages}>
         <li
           className={cls(styles.page, {

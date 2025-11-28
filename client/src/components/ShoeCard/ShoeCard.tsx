@@ -10,7 +10,7 @@ const ShoeCard = ({ shoe }: ShoeCardProps) => {
   const exampleSizes = [37, 38, 39, 40];
 
   return (
-    <Link to={`/shoes/${shoe.id}`} className={styles.container}>
+    <Link to={`/shoes/${shoe.id}`} className={styles.card}>
       <div className={styles.main}>
         <img className={styles.cover} />
 

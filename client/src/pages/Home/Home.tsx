@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import styles from "./HomePage.module.scss";
+import styles from "./Home.module.scss";
 
-export const HomePage = () => {
+export const Home = () => {
   return (
-    <div className={styles.homePage}>
-      <Link to="/shoes">Shoe List</Link>
+    <div className={styles.home}>
+      <Link to="/shoes">Shoes</Link>
       <Link to="/categories">Categories</Link>
       <Link to="/shoes/create">Add a Shoe</Link>
     </div>
