@@ -6,6 +6,7 @@ interface PaginationProps {
   limit: number;
   totalCount: number;
   handleChange: (page: number) => void;
+  loading: boolean;
 }
 
 export const Pagination = ({
@@ -13,6 +14,7 @@ export const Pagination = ({
   limit,
   totalCount,
   handleChange,
+  loading,
 }: PaginationProps) => {
   const totalPages = Math.ceil(totalCount / limit);
 
@@ -48,7 +50,10 @@ export const Pagination = ({
   };
 
   return (
-    <div className={styles.pagination} onClick={(e) => getNewPage(e)}>
+    <div
+      className={cls(styles.pagination, { [styles.disabled]: loading })}
+      onClick={(e) => getNewPage(e)}
+    >
       <ul className={styles.pages}>
         <li
           className={cls(styles.page, {
@@ -58,7 +63,7 @@ export const Pagination = ({
           <a rel="nofollow">{1}</a>
         </li>
         {page - 2 > 2 && (
-          <li className={`${styles.page} ${styles.disabled}`}>
+          <li className={cls(styles.page, styles.disabled)}>
             <a rel="nofollow">{"..."}</a>
           </li>
         )}
@@ -75,7 +80,7 @@ export const Pagination = ({
         ))}
 
         {page + 2 < totalPages - 1 && (
-          <li className={`${styles.page} ${styles.disabled}`}>
+          <li className={cls(styles.page, styles.disabled)}>
             <a rel="nofollow">{"..."}</a>
           </li>
         )}

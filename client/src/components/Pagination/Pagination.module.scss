@@ -1,5 +1,11 @@
 .pagination {
   margin: 20px 0 0;
+
+  &.disabled {
+    opacity: 0.8;
+    pointer-events: none;
+    cursor: default;
+  }
 }
 
 .pages {
@@ -23,10 +29,12 @@
   &.current {
     background-color: #df8181;
     color: #fff;
+    pointer-events: none;
     cursor: default;
   }
 
   &.disabled {
+    pointer-events: none;
     cursor: default;
   }
 

@@ -4,6 +4,7 @@ import { useGetAllShoes } from "../../hooks/list";
 import ShoeCard from "../ShoeCard/ShoeCard";
 import { Pagination } from "../Pagination/Pagination";
 import styles from "./ShoeList.module.scss";
+import { ShoeListSkeleton } from "../Skeletons/ShoeListSkeleton/ShoeListSkeleton";
 
 export const ShoeList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -18,9 +19,9 @@ export const ShoeList = () => {
     setSearchParams({ page: String(page) });
   }, [page]);
 
-  if (loading) {
-    return <span>Loading...</span>;
-  }
+  // if (loading) {
+  //   return <ShoeListSkeleton />;
+  // }
 
   if (error) {
     return <span>Something went wrong. Try again later</span>;
@@ -32,25 +33,25 @@ export const ShoeList = () => {
 
   return (
     <div className={styles.list}>
-      {data && data.items.length !== 0 ? (
-        <>
-          <div className={styles.cards}>
-            {data.items.map((item) => (
-              <ShoeCard key={item.id} shoe={item} />
-            ))}
-          </div>
-        </>
-      ) : (
-        <>
-          <div>No shoes found</div>
-        </>
+      {loading && <ShoeListSkeleton />}
+
+      {!loading && data && data.items.length !== 0 && (
+        <div className={styles.cards}>
+          {data.items.map((item) => (
+            <ShoeCard key={item.id} shoe={item} />
+          ))}
+        </div>
       )}
+
+      {data && data.items.length === 0 && <div>No shoes found</div>}
+
       {data && (
         <Pagination
           page={page}
           limit={limit}
           totalCount={data.totalCount}
           handleChange={changePage}
+          loading={loading}
         />
       )}
     </div>

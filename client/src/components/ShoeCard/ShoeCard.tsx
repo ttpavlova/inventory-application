@@ -7,27 +7,23 @@ interface ShoeCardProps {
 }
 
 const ShoeCard = ({ shoe }: ShoeCardProps) => {
-  const exampleSizes = [37, 38, 39, 40];
-
   return (
     <Link to={`/shoes/${shoe.id}`} className={styles.card}>
       <div className={styles.main}>
         <img className={styles.cover} />
 
-        <span className={styles.detail}>
-          {`${shoe.category} ${shoe.gender} ${shoe.season} ${shoe.brand}`}
-        </span>
-        <div className={styles.sizes}>
-          {exampleSizes.map((size) => (
-            <span key={size} className={styles.size}>
-              {size}
-            </span>
-          ))}
+        <div className={styles.detail}>
+          <span className={styles.id}>
+            <b>ID:</b> {shoe.id}
+          </span>
+          <span>{`${shoe.category} ${shoe.gender} ${shoe.season} ${shoe.brand}`}</span>
         </div>
       </div>
 
       <div className={styles.footer}>
-        <div className={styles.btn}>Add to cart</div>
+        <Link to={`/shoes/update/${shoe.id}`} className={styles.btn}>
+          Edit
+        </Link>
       </div>
     </Link>
   );
