@@ -19,12 +19,6 @@ const ShoeCard = ({ shoe }: ShoeCardProps) => {
           <span>{`${shoe.category} ${shoe.gender} ${shoe.season} ${shoe.brand}`}</span>
         </div>
       </div>
-
-      <div className={styles.footer}>
-        <Link to={`/shoes/update/${shoe.id}`} className={styles.btn}>
-          Edit
-        </Link>
-      </div>
     </Link>
   );
 };

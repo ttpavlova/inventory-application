@@ -12,8 +12,6 @@ export const ShoeCardSkeleton = () => {
           <div className={styles.line} />
         </div>
       </div>
-
-      <div className={styles.footer} />
     </div>
   );
 };

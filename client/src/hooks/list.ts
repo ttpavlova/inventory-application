@@ -12,6 +12,7 @@ import { useApiMutation } from "./useApiMutation";
 import { useApiQuery } from "./useApiQuery";
 
 export const useGetAllShoes = (page: number, limit: number) => {
+  // TO DO: add categories here
   return useApiQuery<List<ShoeView[]>>(
     `/api/shoes/?page=${page}&limit=${limit}`
   );

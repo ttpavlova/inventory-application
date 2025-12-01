@@ -21,8 +21,7 @@
 
 .detail {
   display: inline-block;
-  min-height: 100px;
-  margin-bottom: 12px;
+  min-height: 125px;
   padding: 24px;
 }
 
@@ -39,11 +38,6 @@
 
   @include mixins.background-gradient;
   animation: shine-lines variables.$skeleton-animation-duration infinite linear;
-}
-
-.footer {
-  min-height: 50px;
-  padding: 0 24px 24px;
 }
 
 @keyframes shine-lines {
