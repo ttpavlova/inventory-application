@@ -10,6 +10,7 @@ import {
   useUpdateShoe,
 } from "../../hooks/list";
 import { NotFound } from "../NotFound/NotFound";
+import { FormSkeleton } from "../../components/Skeletons/FormSkeleton/FormSkeleton";
 
 type FormData = {
   [k in keyof ShoeBody]: ShoeBody[k] | null;
@@ -58,7 +59,7 @@ export const UpdateForm = () => {
   }, [shoe]);
 
   if (loading) {
-    return <span>Loading...</span>;
+    return <FormSkeleton />;
   }
 
   if (error || !data) {

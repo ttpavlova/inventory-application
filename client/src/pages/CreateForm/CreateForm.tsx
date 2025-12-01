@@ -5,6 +5,7 @@ import { useState } from "react";
 import type { FilterOptions, ShoeBodyView } from "../../types/types";
 import type { ShoeBody } from "../../schemas/schemas";
 import { useCreateShoe, useGetAllFilters } from "../../hooks/list";
+import { FormSkeleton } from "../../components/Skeletons/FormSkeleton/FormSkeleton";
 
 type FormData = {
   [k in keyof ShoeBody]: ShoeBody[k] | null;
@@ -39,7 +40,7 @@ export const CreateForm = () => {
   const navigate = useNavigate();
 
   if (loading) {
-    return <span>Loading...</span>;
+    return <FormSkeleton />;
   }
 
   if (error || !data) {

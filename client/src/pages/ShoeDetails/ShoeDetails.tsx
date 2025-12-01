@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import styles from "./ShoeDetails.module.scss";
 import { useDeleteShoe, useGetShoeById } from "../../hooks/list";
 import { NotFound } from "../NotFound/NotFound";
+import { ShoeDetailsSkeleton } from "../../components/Skeletons/ShoeDetailsSkeleton/ShoeDetailsSkeleton";
 
 export const ShoeDetails = () => {
   const { id: paramId } = useParams();
@@ -14,7 +15,7 @@ export const ShoeDetails = () => {
   } = useDeleteShoe(Number(paramId));
 
   if (loading) {
-    return <span>Loading...</span>;
+    return <ShoeDetailsSkeleton />;
   }
 
   if (error) {

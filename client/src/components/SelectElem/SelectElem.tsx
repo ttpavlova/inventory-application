@@ -27,7 +27,7 @@ export const SelectElem = ({
   };
 
   return (
-    <div className={styles.select}>
+    <div className={styles.row}>
       <label htmlFor={field}>Choose a {label}:</label>
       <select
         name={field}
