@@ -28,11 +28,16 @@ async function getShoes(
   req: Request,
   res: Response<GetListResponse<ShoeView[]>>
 ) {
-  const { page = 1, limit = 10 } = req.query;
+  const { page = 1, limit = 10, categories } = req.query;
 
   try {
-    const shoes = await getShoesQuery(Number(page), Number(limit));
-    const totalCount = await getTotalItems();
+    const categoriesIds = categories?.toString().split(",") || [];
+    const shoes = await getShoesQuery(
+      Number(page),
+      Number(limit),
+      categoriesIds
+    );
+    const totalCount = await getTotalItems(); // TO DO: fix totalCount
 
     res.status(200).json({
       items: shoes,

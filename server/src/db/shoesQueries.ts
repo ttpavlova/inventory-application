@@ -7,11 +7,41 @@ import type {
 } from "../types/types.js";
 import { pool } from "./pool.js";
 
-async function getShoesQuery(page = 1, limit = 10): Promise<ShoeView[]> {
+async function getShoesQuery(
+  page = 1,
+  limit = 10,
+  categoriesIds: string[]
+): Promise<ShoeView[]> {
   const offset = (page - 1) * limit;
 
+  let paramCount = 0;
+  let query = "";
+  const params = [];
+
+  if (categoriesIds.length > 0) {
+    const placeholders = categoriesIds
+      .map((_, i) => `$${++paramCount}`)
+      .join(",");
+    query += ` WHERE category_id IN (${placeholders}) `;
+    params.push(...categoriesIds);
+  }
   const { rows } = await pool.query(
-    `SELECT * FROM view_shoes LIMIT ${limit} OFFSET ${offset}`
+    `SELECT
+      s.id,
+      s.gender,
+      s.season,
+      c.name AS category,
+      b.name AS brand,
+      m.name AS material,
+      col.name AS color
+    FROM shoes s
+    LEFT JOIN categories c ON s.category_id = c.id
+    LEFT JOIN brands b ON s.brand_id = b.id
+    LEFT JOIN materials m ON s.material_id = m.id
+    LEFT JOIN colors col ON s.color_id = col.id
+    ${query}
+    LIMIT ${limit} OFFSET ${offset}`,
+    [...params]
   );
 
   return rows;
