@@ -116,3 +116,7 @@ export interface Filters {
   materials: Filter[];
   colors: Filter[];
 }
+
+export type FilterParams = {
+  [k in keyof Filters]?: string[] | null;
+};

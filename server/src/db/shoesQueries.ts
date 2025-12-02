@@ -1,6 +1,7 @@
 import { buildWhereClause } from "../helpers/buildWhereClause.js";
 import type { ShoeBody } from "../schemas/schemas.js";
 import type {
+  FilterParams,
   Shoe,
   ShoeDbWithRelations,
   ShoeId,
@@ -11,12 +12,12 @@ import { pool } from "./pool.js";
 async function getShoesQuery(
   page = 1,
   limit = 10,
-  categoriesIds: string[]
+  filters: FilterParams
 ): Promise<{ rows: ShoeView[]; totalCount: number }> {
   const offset = (page - 1) * limit;
-  const query = buildWhereClause(categoriesIds);
-  const limitParam = `$${categoriesIds.length + 1}`;
-  const offsetParam = `$${categoriesIds.length + 2}`;
+  const { query, params } = buildWhereClause(filters);
+  const limitParam = `$${params.length + 1}`;
+  const offsetParam = `$${params.length + 2}`;
 
   const { rows } = await pool.query(
     `SELECT
@@ -36,7 +37,7 @@ async function getShoesQuery(
     ${query}
     ORDER BY id
     LIMIT ${limitParam} OFFSET ${offsetParam}`,
-    [...categoriesIds, limit, offset]
+    [...params, limit, offset]
   );
 
   const shoes = rows.map((row) => {

@@ -30,11 +30,11 @@ async function getShoes(
   const { page = 1, limit = 10, categories } = req.query;
 
   try {
-    const categoriesIds = categories?.toString().split(",") || [];
+    const filters = { categories: categories?.toString().split(",") || [] };
     const { rows: shoes, totalCount } = await getShoesQuery(
       Number(page),
       Number(limit),
-      categoriesIds
+      filters
     );
 
     res.status(200).json({
