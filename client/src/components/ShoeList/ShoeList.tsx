@@ -7,7 +7,8 @@ import { ShoeListSkeleton } from "../Skeletons/ShoeListSkeleton/ShoeListSkeleton
 
 export const ShoeList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const page = searchParams.get("page") ?? 1;
+  const page =
+    searchParams.get("page") == null ? 1 : Number(searchParams.get("page"));
   const limit = 5;
   const categories = searchParams.get("categories") ?? null;
 
