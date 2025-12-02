@@ -40,6 +40,7 @@ async function getShoesQuery(
     LEFT JOIN materials m ON s.material_id = m.id
     LEFT JOIN colors col ON s.color_id = col.id
     ${query}
+    ORDER BY id
     LIMIT ${limit} OFFSET ${offset}`,
     [...params]
   );
@@ -47,8 +48,25 @@ async function getShoesQuery(
   return rows;
 }
 
-async function getTotalItems(): Promise<number> {
-  const { rows } = await pool.query("SELECT COUNT(*) FROM view_shoes");
+async function getTotalItems(categoriesIds: string[]): Promise<number> {
+  let paramCount = 0;
+  let query = "";
+  const params = [];
+
+  if (categoriesIds.length > 0) {
+    const placeholders = categoriesIds
+      .map((_, i) => `$${++paramCount}`)
+      .join(",");
+    query += ` WHERE category_id IN (${placeholders}) `;
+    params.push(...categoriesIds);
+  }
+
+  const { rows } = await pool.query(
+    `SELECT COUNT(*)
+    FROM shoes
+    ${query}`,
+    [...params]
+  );
 
   return Number(rows[0].count);
 }

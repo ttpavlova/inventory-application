@@ -37,7 +37,7 @@ async function getShoes(
       Number(limit),
       categoriesIds
     );
-    const totalCount = await getTotalItems(); // TO DO: fix totalCount
+    const totalCount = await getTotalItems(categoriesIds);
 
     res.status(200).json({
       items: shoes,
