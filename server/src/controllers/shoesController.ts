@@ -31,21 +31,15 @@ async function getShoes(
 
   try {
     const categoriesIds = categories?.toString().split(",") || [];
-    const rows = await getShoesQuery(
+    const { rows: shoes, totalCount } = await getShoesQuery(
       Number(page),
       Number(limit),
       categoriesIds
     );
 
-    const shoes = rows.map((row) => {
-      const shoe = { ...row };
-      delete shoe.count;
-      return shoe;
-    });
-
     res.status(200).json({
       items: shoes,
-      totalCount: rows[0]?.count || 0,
+      totalCount,
     });
   } catch (error) {
     res

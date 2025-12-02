@@ -1,3 +1,4 @@
+import { buildWhereClause } from "../helpers/buildWhereClause.js";
 import type { ShoeBody } from "../schemas/schemas.js";
 import type {
   Shoe,
@@ -11,20 +12,12 @@ async function getShoesQuery(
   page = 1,
   limit = 10,
   categoriesIds: string[]
-): Promise<(ShoeView & { count?: number })[]> {
+): Promise<{ rows: ShoeView[]; totalCount: number }> {
   const offset = (page - 1) * limit;
+  const query = buildWhereClause(categoriesIds);
+  const limitParam = `$${categoriesIds.length + 1}`;
+  const offsetParam = `$${categoriesIds.length + 2}`;
 
-  let paramCount = 0;
-  let query = "";
-  const params = [];
-
-  if (categoriesIds.length > 0) {
-    const placeholders = categoriesIds
-      .map((_, i) => `$${++paramCount}`)
-      .join(",");
-    query += ` WHERE category_id IN (${placeholders}) `;
-    params.push(...categoriesIds);
-  }
   const { rows } = await pool.query(
     `SELECT
       s.id,
@@ -42,11 +35,17 @@ async function getShoesQuery(
     LEFT JOIN colors col ON s.color_id = col.id
     ${query}
     ORDER BY id
-    LIMIT ${limit} OFFSET ${offset}`,
-    [...params]
+    LIMIT ${limitParam} OFFSET ${offsetParam}`,
+    [...categoriesIds, limit, offset]
   );
 
-  return rows;
+  const shoes = rows.map((row) => {
+    const shoe = { ...row };
+    delete shoe.count;
+    return shoe;
+  });
+
+  return { rows: shoes, totalCount: rows[0]?.count || 0 };
 }
 
 async function getShoeByIdQuery(id: ShoeId): Promise<ShoeDbWithRelations> {
