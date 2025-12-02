@@ -102,3 +102,7 @@ export interface Filters {
 }
 
 export type FilterOptions = Filters[keyof Filters];
+
+export type FilterParams = {
+  [k in keyof Filters]?: string | null;
+};

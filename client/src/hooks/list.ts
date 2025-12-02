@@ -1,3 +1,4 @@
+import { buildFilterParams } from "../helpers/buildFilterParams";
 import type { ShoeBody } from "../schemas/schemas";
 import type {
   Category,
@@ -11,10 +12,16 @@ import { useApiDelete } from "./useApiDelete";
 import { useApiMutation } from "./useApiMutation";
 import { useApiQuery } from "./useApiQuery";
 
-export const useGetAllShoes = (page: number, limit: number) => {
-  // TO DO: add categories here
+export const useGetAllShoes = (
+  page: number,
+  limit: number,
+  categories: string | null
+) => {
+  const filters = { categories };
+  const filtersQuery = buildFilterParams(filters);
+
   return useApiQuery<List<ShoeView[]>>(
-    `/api/shoes/?page=${page}&limit=${limit}`
+    `/api/shoes/?page=${page}&limit=${limit}${filtersQuery}`
   );
 };
 

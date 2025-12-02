@@ -1,10 +1,11 @@
 export const buildWhereClause = (categoriesIds: string[]) => {
-  let paramCount = 1;
+  let paramCount = 0;
   let query = "";
 
   if (categoriesIds.length > 0) {
     const placeholders = categoriesIds
-      .map((_, i) => `$${(paramCount += i)}`)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .map((_, i) => `$${(paramCount += 1)}`)
       .join(", ");
     query += ` WHERE category_id IN (${placeholders}) `;
   }
