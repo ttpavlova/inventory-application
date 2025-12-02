@@ -14,46 +14,47 @@ export const ShoeList = () => {
 
   const { data, loading, error } = useGetAllShoes(page, limit, categories);
 
+  const changePage = (page: number) => {
+    setSearchParams((searchParams) => {
+      if (page === 1) {
+        searchParams.delete("page");
+      } else {
+        searchParams.set("page", String(page));
+      }
+
+      return searchParams;
+    });
+  };
+
+  if (loading) {
+    return <ShoeListSkeleton />;
+  }
+
   if (error) {
     return <span>Something went wrong. Try again later</span>;
   }
 
-  const changePage = (page: number) => {
-    if (page === 1) {
-      setSearchParams((searchParams) => {
-        searchParams.delete("page");
-        return searchParams;
-      });
-    } else {
-      setSearchParams((searchParams) => {
-        searchParams.set("page", String(page));
-        return searchParams;
-      });
-    }
-  };
+  if (data && data.items.length === 0) {
+    return <div>No shoes found</div>;
+  }
 
   return (
     <div className={styles.list}>
-      {loading && <ShoeListSkeleton />}
+      {data && data.items.length !== 0 && (
+        <>
+          <div className={styles.cards}>
+            {data.items.map((item) => (
+              <ShoeCard key={item.id} shoe={item} />
+            ))}
+          </div>
 
-      {!loading && data && data.items.length !== 0 && (
-        <div className={styles.cards}>
-          {data.items.map((item) => (
-            <ShoeCard key={item.id} shoe={item} />
-          ))}
-        </div>
-      )}
-
-      {data && data.items.length === 0 && <div>No shoes found</div>}
-
-      {data && (
-        <Pagination
-          page={page}
-          limit={limit}
-          totalCount={data.totalCount}
-          handleChange={changePage}
-          loading={loading}
-        />
+          <Pagination
+            page={page}
+            limit={limit}
+            totalCount={data.totalCount}
+            handleChange={changePage}
+          />
+        </>
       )}
     </div>
   );

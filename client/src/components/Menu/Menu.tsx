@@ -24,17 +24,17 @@ export const Menu = () => {
   const updateFilters = (id: string) => {
     const updatedIds = toggleCategory(id, categoriesIds);
 
-    if (updatedIds.length === 0) {
-      setSearchParams((searchParams) => {
+    setSearchParams((searchParams) => {
+      if (updatedIds.length === 0) {
         searchParams.delete("categories");
-        return searchParams;
-      });
-    } else {
-      setSearchParams((searchParams) => {
+      } else {
         searchParams.set("categories", updatedIds.join(","));
-        return searchParams;
-      });
-    }
+      }
+
+      searchParams.delete("page");
+
+      return searchParams;
+    });
   };
 
   return (
