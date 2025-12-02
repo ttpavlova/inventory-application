@@ -6,7 +6,6 @@ import {
   createShoeQuery,
   updateShoeQuery,
   deleteShoeQuery,
-  getTotalItems,
 } from "../db/shoesQueries.js";
 import {
   type DeleteResponse,
@@ -32,16 +31,21 @@ async function getShoes(
 
   try {
     const categoriesIds = categories?.toString().split(",") || [];
-    const shoes = await getShoesQuery(
+    const rows = await getShoesQuery(
       Number(page),
       Number(limit),
       categoriesIds
     );
-    const totalCount = await getTotalItems(categoriesIds);
+
+    const shoes = rows.map((row) => {
+      const shoe = { ...row };
+      delete shoe.count;
+      return shoe;
+    });
 
     res.status(200).json({
       items: shoes,
-      totalCount,
+      totalCount: rows[0]?.count || 0,
     });
   } catch (error) {
     res

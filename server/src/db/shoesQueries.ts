@@ -11,7 +11,7 @@ async function getShoesQuery(
   page = 1,
   limit = 10,
   categoriesIds: string[]
-): Promise<ShoeView[]> {
+): Promise<(ShoeView & { count?: number })[]> {
   const offset = (page - 1) * limit;
 
   let paramCount = 0;
@@ -33,7 +33,8 @@ async function getShoesQuery(
       c.name AS category,
       b.name AS brand,
       m.name AS material,
-      col.name AS color
+      col.name AS color,
+      COUNT(*) OVER() AS count
     FROM shoes s
     LEFT JOIN categories c ON s.category_id = c.id
     LEFT JOIN brands b ON s.brand_id = b.id
@@ -46,29 +47,6 @@ async function getShoesQuery(
   );
 
   return rows;
-}
-
-async function getTotalItems(categoriesIds: string[]): Promise<number> {
-  let paramCount = 0;
-  let query = "";
-  const params = [];
-
-  if (categoriesIds.length > 0) {
-    const placeholders = categoriesIds
-      .map((_, i) => `$${++paramCount}`)
-      .join(",");
-    query += ` WHERE category_id IN (${placeholders}) `;
-    params.push(...categoriesIds);
-  }
-
-  const { rows } = await pool.query(
-    `SELECT COUNT(*)
-    FROM shoes
-    ${query}`,
-    [...params]
-  );
-
-  return Number(rows[0].count);
 }
 
 async function getShoeByIdQuery(id: ShoeId): Promise<ShoeDbWithRelations> {
@@ -149,5 +127,4 @@ export {
   createShoeQuery,
   updateShoeQuery,
   deleteShoeQuery,
-  getTotalItems,
 };
