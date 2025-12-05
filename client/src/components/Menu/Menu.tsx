@@ -1,6 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import { useGetAllCategories } from "../../hooks/list";
 import styles from "./Menu.module.scss";
+import { MenuSkeleton } from "../Skeletons/MenuSkeleton/MenuSkeleton";
 
 export const Menu = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -8,6 +9,10 @@ export const Menu = () => {
   const categoriesIds = searchParams.get("categories")?.split(",") || [];
 
   const { loading, error, data } = useGetAllCategories();
+
+  if (loading) {
+    return <MenuSkeleton />;
+  }
 
   const toggleCategory = (id: string, prevIds: string[]) => {
     const ids = new Set(prevIds);
@@ -41,7 +46,6 @@ export const Menu = () => {
     <aside className={styles.menu}>
       <span className={styles.title}>Filters</span>
 
-      {loading && <div>Loading...</div>}
       {error && <div>Something went wrong. Try again later</div>}
 
       <fieldset className={styles.fieldset}>

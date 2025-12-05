@@ -14,9 +14,12 @@ const ShoeCard = ({ shoe }: ShoeCardProps) => {
 
         <div className={styles.detail}>
           <span className={styles.id}>
-            <b>ID:</b> {shoe.id}
+            <strong>ID:</strong> {shoe.id}
           </span>
-          <span>{`${shoe.category} ${shoe.gender} ${shoe.season} ${shoe.brand}`}</span>
+          <span>
+            <strong>{shoe.category}</strong>
+            {` ${shoe.gender} ${shoe.season} ${shoe.brand}`}
+          </span>
         </div>
       </div>
     </Link>
