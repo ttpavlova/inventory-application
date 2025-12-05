@@ -2,7 +2,6 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import styles from "./UpdateForm.module.scss";
 import { SelectElem } from "../../components/SelectElem/SelectElem";
 import { useEffect, useState } from "react";
-import type { FilterOptions, ShoeBodyView } from "../../types/types";
 import type { ShoeBody } from "../../schemas/schemas";
 import {
   useGetAllFilters,
@@ -11,16 +10,7 @@ import {
 } from "../../hooks/list";
 import { NotFound } from "../NotFound/NotFound";
 import { FormSkeleton } from "../../components/Skeletons/FormSkeleton/FormSkeleton";
-
-type FormData = {
-  [k in keyof ShoeBody]: ShoeBody[k] | null;
-};
-
-type FormFields = {
-  field: keyof ShoeBody;
-  label: keyof ShoeBodyView;
-  options: FilterOptions;
-};
+import type { FormData, FormFields } from "../../types/form.types";
 
 const initialOptions: FormData = {
   gender: null,

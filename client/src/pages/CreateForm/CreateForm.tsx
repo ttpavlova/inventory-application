@@ -2,20 +2,10 @@ import { Link, useNavigate } from "react-router-dom";
 import styles from "./CreateForm.module.scss";
 import { SelectElem } from "../../components/SelectElem/SelectElem";
 import { useState } from "react";
-import type { FilterOptions, ShoeBodyView } from "../../types/types";
 import type { ShoeBody } from "../../schemas/schemas";
 import { useCreateShoe, useGetAllFilters } from "../../hooks/list";
 import { FormSkeleton } from "../../components/Skeletons/FormSkeleton/FormSkeleton";
-
-type FormData = {
-  [k in keyof ShoeBody]: ShoeBody[k] | null;
-};
-
-type FormFields = {
-  field: keyof ShoeBody;
-  label: keyof ShoeBodyView;
-  options: FilterOptions;
-};
+import type { FormData, FormFields } from "../../types/form.types";
 
 const initialOptions: FormData = {
   gender: null,
