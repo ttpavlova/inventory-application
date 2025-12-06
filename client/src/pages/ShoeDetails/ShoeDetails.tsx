@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import styles from "./ShoeDetails.module.scss";
 import { useDeleteShoe, useGetShoeById } from "../../hooks/list";
 import { NotFound } from "../NotFound/NotFound";
@@ -6,7 +6,7 @@ import { ShoeDetailsSkeleton } from "../../components/Skeletons/ShoeDetailsSkele
 
 export const ShoeDetails = () => {
   const { id: paramId } = useParams();
-
+  const navigate = useNavigate();
   const { data: shoe, loading, error } = useGetShoeById(Number(paramId));
   const {
     // loading: loadingDelete,
@@ -48,9 +48,8 @@ export const ShoeDetails = () => {
       `Are you sure you want to delete a shoe with ID: ${paramId}?`
     );
     if (shouldDelete) {
-      // alert("delete!");
       deleteShoe();
-      // redirect!
+      navigate("/shoes");
     }
   };
 
