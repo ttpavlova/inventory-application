@@ -10,3 +10,7 @@ export type FormFields = {
   label: keyof ShoeBodyView;
   options: FilterOptions;
 };
+
+export type FlattenedErrors<T> = {
+  [K in keyof T]?: string[];
+};

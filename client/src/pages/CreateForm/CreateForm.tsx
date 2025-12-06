@@ -1,11 +1,16 @@
 import { Link, useNavigate } from "react-router-dom";
+import { z } from "zod";
 import styles from "./CreateForm.module.scss";
 import { SelectElem } from "../../components/SelectElem/SelectElem";
 import { useState } from "react";
-import type { ShoeBody } from "../../schemas/schemas";
+import { ShoeBodySchema, type ShoeBody } from "../../schemas/schemas";
 import { useCreateShoe, useGetAllFilters } from "../../hooks/list";
 import { FormSkeleton } from "../../components/Skeletons/FormSkeleton/FormSkeleton";
-import type { FormData, FormFields } from "../../types/form.types";
+import type {
+  FlattenedErrors,
+  FormData,
+  FormFields,
+} from "../../types/form.types";
 
 const initialOptions: FormData = {
   gender: null,
@@ -19,6 +24,9 @@ const initialOptions: FormData = {
 export const CreateForm = () => {
   const [selectedOptions, setSelectedOptions] =
     useState<FormData>(initialOptions);
+  const [validationErrors, setValidationErrors] = useState<
+    FlattenedErrors<ShoeBody>
+  >({});
   const { data, loading, error } = useGetAllFilters();
   const {
     id,
@@ -37,26 +45,30 @@ export const CreateForm = () => {
     return <span>Something went wrong. Try again later</span>;
   }
 
-  const isValidItem = (options: FormData): options is ShoeBody => {
-    return Object.keys(options).every(
-      (key) => options[key as keyof ShoeBody] != null
-    );
-  };
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // type guard for options: ShoeBody
-    if (isValidItem(selectedOptions)) {
-      createShoe(selectedOptions);
+    const result = ShoeBodySchema.safeParse(selectedOptions);
+
+    if (!result.success) {
+      const errors = z.flattenError(result.error);
+      setValidationErrors(errors.fieldErrors);
+      return;
     }
+
+    setValidationErrors({});
+
+    createShoe(result.data);
   };
 
-  const updateSelectedOptions = (key: string, value: string | number) => {
-    setSelectedOptions({
-      ...selectedOptions,
+  const updateSelectedOptions = (
+    key: keyof ShoeBody,
+    value: string | number
+  ) => {
+    setSelectedOptions((prevState) => ({
+      ...prevState,
       [key]: value,
-    });
+    }));
   };
 
   const formFields: FormFields[] = [
@@ -80,6 +92,7 @@ export const CreateForm = () => {
               options={options}
               value={selectedOptions[field]}
               updateSelectedOptions={updateSelectedOptions}
+              error={validationErrors?.[field]?.toString() ?? null}
             />
           ))}
 

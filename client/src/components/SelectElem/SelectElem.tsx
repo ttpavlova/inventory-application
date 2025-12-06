@@ -4,11 +4,12 @@ import styles from "./SelectElem.module.scss";
 import type { ShoeBody } from "../../schemas/schemas";
 
 interface SelectElemProps {
-  field: string;
+  field: keyof ShoeBody;
   label: string;
   options: FilterOptions;
   value: ShoeBody[keyof ShoeBody] | null;
-  updateSelectedOptions: (key: string, value: number | string) => void;
+  updateSelectedOptions: (key: keyof ShoeBody, value: number | string) => void;
+  error: string | null;
 }
 
 export const SelectElem = ({
@@ -17,6 +18,7 @@ export const SelectElem = ({
   options,
   value,
   updateSelectedOptions,
+  error,
 }: SelectElemProps) => {
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const id = isNaN(Number(e.target.value))
@@ -29,22 +31,37 @@ export const SelectElem = ({
   return (
     <div className={styles.row}>
       <label htmlFor={field}>Choose a {label}:</label>
-      <select
-        name={field}
-        id={field}
-        value={value ?? ""}
-        onChange={(e) => handleChange(e)}
-        // required
-      >
-        <option value="" disabled>
-          --Please choose an option--
-        </option>
-        {options.map((option, i) => (
-          <option key={`${option.name}-${i}`} value={option.id}>
-            {option.name}
+      <div>
+        <select
+          name={field}
+          id={field}
+          value={value ?? ""}
+          onChange={(e) => handleChange(e)}
+          aria-describedby={`${field}-error`}
+          // required
+        >
+          <option value="" disabled>
+            --Please choose an option--
           </option>
-        ))}
-      </select>
+          {options.map((option, i) => (
+            <option key={`${option.name}-${i}`} value={option.id}>
+              {option.name}
+            </option>
+          ))}
+        </select>
+        <div
+          id={`${field}-error`}
+          className={styles.errorContainer}
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {error && (
+            <p className={styles.error} key={error}>
+              {error}
+            </p>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,8 +1,9 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { z } from "zod";
 import styles from "./UpdateForm.module.scss";
 import { SelectElem } from "../../components/SelectElem/SelectElem";
 import { useEffect, useState } from "react";
-import type { ShoeBody } from "../../schemas/schemas";
+import { ShoeBodySchema, type ShoeBody } from "../../schemas/schemas";
 import {
   useGetAllFilters,
   useGetShoeById,
@@ -10,7 +11,11 @@ import {
 } from "../../hooks/list";
 import { NotFound } from "../NotFound/NotFound";
 import { FormSkeleton } from "../../components/Skeletons/FormSkeleton/FormSkeleton";
-import type { FormData, FormFields } from "../../types/form.types";
+import type {
+  FlattenedErrors,
+  FormData,
+  FormFields,
+} from "../../types/form.types";
 
 const initialOptions: FormData = {
   gender: null,
@@ -24,7 +29,9 @@ const initialOptions: FormData = {
 export const UpdateForm = () => {
   const [selectedOptions, setSelectedOptions] =
     useState<FormData>(initialOptions);
-
+  const [validationErrors, setValidationErrors] = useState<
+    FlattenedErrors<ShoeBody>
+  >({});
   const { id: paramId } = useParams();
   const navigate = useNavigate();
 
@@ -34,7 +41,7 @@ export const UpdateForm = () => {
     id,
     // loading: loadingCreate,
     error: errorCreate,
-    request: createShoe,
+    request: updateShoe,
   } = useUpdateShoe(Number(paramId));
 
   useEffect(() => {
@@ -60,26 +67,30 @@ export const UpdateForm = () => {
     return <NotFound />;
   }
 
-  const isValidItem = (options: FormData): options is ShoeBody => {
-    return Object.keys(options).every(
-      (key) => options[key as keyof ShoeBody] != null
-    );
-  };
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // type guard for options: ShoeBody
-    if (isValidItem(selectedOptions)) {
-      createShoe(selectedOptions);
+    const result = ShoeBodySchema.safeParse(selectedOptions);
+
+    if (!result.success) {
+      const errors = z.flattenError(result.error);
+      setValidationErrors(errors.fieldErrors);
+      return;
     }
+
+    setValidationErrors({});
+
+    updateShoe(result.data);
   };
 
-  const updateSelectedOptions = (key: string, value: string | number) => {
-    setSelectedOptions({
-      ...selectedOptions,
+  const updateSelectedOptions = (
+    key: keyof ShoeBody,
+    value: string | number
+  ) => {
+    setSelectedOptions((prevState) => ({
+      ...prevState,
       [key]: value,
-    });
+    }));
   };
 
   const formFields: FormFields[] = [
@@ -103,6 +114,7 @@ export const UpdateForm = () => {
               options={options}
               value={selectedOptions[field]}
               updateSelectedOptions={updateSelectedOptions}
+              error={validationErrors?.[field]?.toString() ?? null}
             />
           ))}
 
