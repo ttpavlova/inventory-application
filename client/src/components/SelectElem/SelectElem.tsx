@@ -8,7 +8,10 @@ interface SelectElemProps {
   label: string;
   options: FilterOptions;
   value: ShoeBody[keyof ShoeBody] | null;
-  updateSelectedOptions: (key: keyof ShoeBody, value: number | string) => void;
+  updateSelectedOptions: <K extends keyof ShoeBody>(
+    key: K,
+    value: ShoeBody[K]
+  ) => void;
   error: string | null;
 }
 
@@ -22,7 +25,7 @@ export const SelectElem = ({
 }: SelectElemProps) => {
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const id = isNaN(Number(e.target.value))
-      ? e.target.value
+      ? (e.target.value as ShoeBody[keyof ShoeBody])
       : Number(e.target.value);
 
     updateSelectedOptions(field, id);

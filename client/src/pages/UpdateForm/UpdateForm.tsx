@@ -1,9 +1,6 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { z } from "zod";
-import styles from "./UpdateForm.module.scss";
 import { SelectElem } from "../../components/SelectElem/SelectElem";
-import { useEffect, useState } from "react";
-import { ShoeBodySchema, type ShoeBody } from "../../schemas/schemas";
+import { useEffect } from "react";
 import {
   useGetAllFilters,
   useGetShoeById,
@@ -11,31 +8,19 @@ import {
 } from "../../hooks/list";
 import { NotFound } from "../NotFound/NotFound";
 import { FormSkeleton } from "../../components/Skeletons/FormSkeleton/FormSkeleton";
-import type {
-  FlattenedErrors,
-  FormData,
-  FormFields,
-} from "../../types/form.types";
-
-const initialOptions: FormData = {
-  gender: null,
-  season: null,
-  categoryId: null,
-  brandId: null,
-  materialId: null,
-  colorId: null,
-};
+import type { FormFields } from "../../types/form.types";
+import { useForm } from "../../hooks/useForm";
+import styles from "./UpdateForm.module.scss";
 
 export const UpdateForm = () => {
-  const [selectedOptions, setSelectedOptions] =
-    useState<FormData>(initialOptions);
-  const [validationErrors, setValidationErrors] = useState<
-    FlattenedErrors<ShoeBody>
-  >({});
   const { id: paramId } = useParams();
   const navigate = useNavigate();
 
-  const { data: shoe } = useGetShoeById(Number(paramId));
+  const {
+    data: shoe,
+    loading: loadingShoe,
+    error: errorShoe,
+  } = useGetShoeById(Number(paramId));
   const { data, loading, error } = useGetAllFilters();
   const {
     id,
@@ -43,6 +28,13 @@ export const UpdateForm = () => {
     error: errorCreate,
     request: updateShoe,
   } = useUpdateShoe(Number(paramId));
+  const {
+    selectedOptions,
+    setSelectedOptions,
+    handleSubmit,
+    updateSelectedOptions,
+    validationErrors,
+  } = useForm(updateShoe);
 
   useEffect(() => {
     setSelectedOptions({
@@ -55,43 +47,17 @@ export const UpdateForm = () => {
     });
   }, [shoe]);
 
-  if (loading) {
+  if (loading || loadingShoe) {
     return <FormSkeleton />;
   }
 
-  if (error || !data) {
+  if (error || errorShoe || !data) {
     return <span>Something went wrong. Try again later</span>;
   }
 
   if (!shoe) {
     return <NotFound />;
   }
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const result = ShoeBodySchema.safeParse(selectedOptions);
-
-    if (!result.success) {
-      const errors = z.flattenError(result.error);
-      setValidationErrors(errors.fieldErrors);
-      return;
-    }
-
-    setValidationErrors({});
-
-    updateShoe(result.data);
-  };
-
-  const updateSelectedOptions = (
-    key: keyof ShoeBody,
-    value: string | number
-  ) => {
-    setSelectedOptions((prevState) => ({
-      ...prevState,
-      [key]: value,
-    }));
-  };
 
   const formFields: FormFields[] = [
     { field: "gender", label: "gender", options: data.genders },

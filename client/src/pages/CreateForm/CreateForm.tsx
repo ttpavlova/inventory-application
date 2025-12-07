@@ -1,32 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
-import { z } from "zod";
-import styles from "./CreateForm.module.scss";
 import { SelectElem } from "../../components/SelectElem/SelectElem";
-import { useState } from "react";
-import { ShoeBodySchema, type ShoeBody } from "../../schemas/schemas";
 import { useCreateShoe, useGetAllFilters } from "../../hooks/list";
 import { FormSkeleton } from "../../components/Skeletons/FormSkeleton/FormSkeleton";
-import type {
-  FlattenedErrors,
-  FormData,
-  FormFields,
-} from "../../types/form.types";
-
-const initialOptions: FormData = {
-  gender: null,
-  season: null,
-  categoryId: null,
-  brandId: null,
-  materialId: null,
-  colorId: null,
-};
+import type { FormFields } from "../../types/form.types";
+import { useForm } from "../../hooks/useForm";
+import styles from "./CreateForm.module.scss";
 
 export const CreateForm = () => {
-  const [selectedOptions, setSelectedOptions] =
-    useState<FormData>(initialOptions);
-  const [validationErrors, setValidationErrors] = useState<
-    FlattenedErrors<ShoeBody>
-  >({});
   const { data, loading, error } = useGetAllFilters();
   const {
     id,
@@ -34,6 +14,12 @@ export const CreateForm = () => {
     error: errorCreate,
     request: createShoe,
   } = useCreateShoe();
+  const {
+    selectedOptions,
+    handleSubmit,
+    updateSelectedOptions,
+    validationErrors,
+  } = useForm(createShoe);
 
   const navigate = useNavigate();
 
@@ -44,32 +30,6 @@ export const CreateForm = () => {
   if (error || !data) {
     return <span>Something went wrong. Try again later</span>;
   }
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const result = ShoeBodySchema.safeParse(selectedOptions);
-
-    if (!result.success) {
-      const errors = z.flattenError(result.error);
-      setValidationErrors(errors.fieldErrors);
-      return;
-    }
-
-    setValidationErrors({});
-
-    createShoe(result.data);
-  };
-
-  const updateSelectedOptions = (
-    key: keyof ShoeBody,
-    value: string | number
-  ) => {
-    setSelectedOptions((prevState) => ({
-      ...prevState,
-      [key]: value,
-    }));
-  };
 
   const formFields: FormFields[] = [
     { field: "gender", label: "gender", options: data.genders },
