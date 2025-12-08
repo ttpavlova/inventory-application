@@ -14,6 +14,10 @@ export const Menu = () => {
     return <MenuSkeleton />;
   }
 
+  if (error) {
+    return <div>Something went wrong. Try again later</div>;
+  }
+
   const toggleCategory = (id: string, prevIds: string[]) => {
     const ids = new Set(prevIds);
 
@@ -46,7 +50,7 @@ export const Menu = () => {
     <aside className={styles.menu}>
       <span className={styles.title}>Filters</span>
 
-      {error && <div>Something went wrong. Try again later</div>}
+      <hr />
 
       <fieldset className={styles.fieldset}>
         <legend className={styles.filterName}>Categories</legend>

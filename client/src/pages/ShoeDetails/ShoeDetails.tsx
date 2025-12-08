@@ -56,7 +56,6 @@ export const ShoeDetails = () => {
   return (
     <div className={styles.container}>
       <div className={styles.text}>
-        <p>Title</p>
         {descriptionList}
 
         <div className={styles.buttons}>

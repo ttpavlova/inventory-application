@@ -1,8 +1,31 @@
+@use "../../styles/variables";
+
 .menu {
   min-width: 300px;
   user-select: none;
 }
 
+.title {
+  display: inline-block;
+  width: 100%;
+  margin-top: 30px;
+  font-weight: 700;
+  text-align: center;
+}
+
 .fieldset {
   border: none;
+}
+
+.filterName {
+  font-weight: 700;
+}
+
+input[type="checkbox"] {
+  margin-right: 5px;
+  accent-color: variables.$accent-color;
+
+  &:hover {
+    accent-color: variables.$accent-color-hover;
+  }
 }
