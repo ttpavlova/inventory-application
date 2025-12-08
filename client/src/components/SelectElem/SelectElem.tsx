@@ -33,7 +33,7 @@ export const SelectElem = ({
 
   return (
     <div className={styles.row}>
-      <label htmlFor={field}>Choose a {label}:</label>
+      <label htmlFor={field}>Select a {label}:</label>
       <div>
         <select
           name={field}
@@ -44,7 +44,7 @@ export const SelectElem = ({
           // required
         >
           <option value="" disabled>
-            --Please choose an option--
+            --Please select a {label}--
           </option>
           {options.map((option, i) => (
             <option key={`${option.name}-${i}`} value={option.id}>

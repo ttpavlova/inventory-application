@@ -9,7 +9,7 @@ export const ShoeList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const page =
     searchParams.get("page") == null ? 1 : Number(searchParams.get("page"));
-  const limit = 5;
+  const limit = 10;
   const categories = searchParams.get("categories") ?? null;
 
   const { data, loading, error } = useGetAllShoes(page, limit, categories);

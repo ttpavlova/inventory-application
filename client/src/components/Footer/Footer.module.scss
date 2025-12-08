@@ -1,8 +1,10 @@
+@use "../../styles/variables";
+
 .footer {
   height: 100px;
   width: 100%;
-  background-color: gray;
-  color: #d5d5d5;
+  background-color: variables.$secondary-color;
+  color: variables.$primary-color;
 }
 
 .container {

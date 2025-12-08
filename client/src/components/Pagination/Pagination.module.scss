@@ -1,3 +1,5 @@
+@use "../../styles/variables";
+
 .pagination {
   margin: 20px 0 0;
 }
@@ -12,16 +14,17 @@
   width: 30px;
   height: 30px;
   margin-right: 10px;
-  color: #df8181;
+  color: variables.$accent-color;
   font-weight: 500;
   line-height: 30px;
-  border-radius: 50%;
+  border-radius: 6px;
   text-align: center;
   cursor: pointer;
   user-select: none;
+  transition: color 0.2s ease, background-color 0.2s ease;
 
   &.current {
-    background-color: #df8181;
+    background-color: variables.$accent-color;
     color: #fff;
     pointer-events: none;
     cursor: default;
@@ -43,7 +46,6 @@
   }
 
   &:hover:not(.current, .disabled) {
-    background-color: #a15b5b;
-    color: #fff;
+    background-color: variables.$light-gray;
   }
 }

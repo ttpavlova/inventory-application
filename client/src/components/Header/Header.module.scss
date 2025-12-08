@@ -17,11 +17,12 @@
   padding: 15px 20px;
 
   a {
-    color: #000;
+    font-weight: 500;
+    color: variables.$accent-color;
     text-decoration: none;
 
     &:hover {
-      color: variables.$primary-color;
+      color: variables.$accent-color-hover;
       transition: 0.5 ease;
     }
   }

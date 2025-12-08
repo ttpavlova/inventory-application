@@ -2,7 +2,7 @@ import { ShoeCardSkeleton } from "../ShoeCardSkeleton/ShoeCardSkeleton";
 import styles from "./ShoeListSkeleton.module.scss";
 
 export const ShoeListSkeleton = () => {
-  const limit = 5;
+  const limit = 10;
   const itemNumbers = Array.from(Array(limit).keys());
 
   return (
@@ -11,6 +11,7 @@ export const ShoeListSkeleton = () => {
         {itemNumbers.map((item, i) => (
           <ShoeCardSkeleton key={`${item}-${i}`} />
         ))}
+        <div className={styles.pagination} />
       </div>
     </div>
   );

@@ -2,12 +2,12 @@ import { z } from "zod";
 import { GENDERS, SEASONS } from "../constants/constants.js";
 
 const ShoeBodySchema = z.object({
-  gender: z.enum(GENDERS, { message: "Please select a gender" }),
-  season: z.enum(SEASONS, { message: "Please select a season" }),
-  categoryId: z.number({ message: "Please select a category" }),
-  brandId: z.number({ message: "Please select a brand" }),
-  materialId: z.number({ message: "Please select a material" }),
-  colorId: z.number({ message: "Please select a color" }),
+  gender: z.enum(GENDERS, { message: "Gender should not be empty" }),
+  season: z.enum(SEASONS, { message: "Season should not be empty" }),
+  categoryId: z.number({ message: "Category should not be empty" }),
+  brandId: z.number({ message: "Brand should not be empty" }),
+  materialId: z.number({ message: "Material should not be empty" }),
+  colorId: z.number({ message: "Color should not be empty" }),
 });
 
 type ShoeBody = z.infer<typeof ShoeBodySchema>;

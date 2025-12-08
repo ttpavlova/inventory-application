@@ -1,8 +1,25 @@
+@use "../../styles/variables";
+
 .row {
   display: grid;
-  grid-template-columns: 200px 300px;
+  grid-template-columns: 150px 280px;
   align-items: center;
   gap: 20px;
+}
+
+select {
+  width: 280px;
+  border: none;
+  border-bottom: 2px solid variables.$secondary-color;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: variables.$light-gray;
+  }
+}
+
+option {
+  background-color: #fff;
 }
 
 .errorContainer {
