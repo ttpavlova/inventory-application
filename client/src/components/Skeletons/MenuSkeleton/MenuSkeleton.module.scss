@@ -2,8 +2,7 @@
 @use "../../../styles/mixins" as mixins;
 
 .menu {
-  min-width: 300px;
-  height: 350px;
+  height: 130px;
 }
 
 .filters {
@@ -23,5 +22,12 @@
   40%,
   100% {
     background-position: 300px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .menu {
+    min-width: 300px;
+    height: 350px;
   }
 }
