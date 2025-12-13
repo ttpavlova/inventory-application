@@ -6,6 +6,7 @@ import {
   createShoeQuery,
   updateShoeQuery,
   deleteShoeQuery,
+  getGenderCategoryId,
 } from "../db/shoesQueries.js";
 import {
   type DeleteResponse,
@@ -14,7 +15,6 @@ import {
   type NoParams,
   type PostResponse,
   type PutResponse,
-  type Shoe,
   type ShoeWithRelations,
   type ShoeParams,
   type ShoeView,
@@ -72,12 +72,10 @@ async function getShoeById(
 }
 
 async function createShoe(
-  req: Request<NoParams, PostResponse<Shoe, ShoeBody>, ShoeBody>,
-  res: Response<PostResponse<Shoe, ShoeBody>>
+  req: Request<NoParams, PostResponse<ShoeView, ShoeBody>, ShoeBody>,
+  res: Response<PostResponse<ShoeView, ShoeBody>>
 ) {
-  const { ...shoeData } = req.body;
-
-  const validatedFields = ShoeBodySchema.safeParse(shoeData);
+  const validatedFields = ShoeBodySchema.safeParse(req.body);
   if (!validatedFields.success) {
     const flattened = z.flattenError(validatedFields.error);
 
@@ -86,8 +84,26 @@ async function createShoe(
     });
   }
 
+  const shoeData = validatedFields.data;
+  const { gender, categoryId, ...restShoeData } = shoeData;
+
+  const genderCategoryIdCombination = await getGenderCategoryId(
+    gender,
+    categoryId
+  );
+
+  if (!genderCategoryIdCombination) {
+    return res
+      .status(400)
+      .json({ message: "Invalid 'gender' and 'categoryId' combination" });
+  }
+
   try {
-    const newShoe = await createShoeQuery(shoeData);
+    const { id: genderCategoryId } = genderCategoryIdCombination;
+    const newShoe = await createShoeQuery({
+      genderCategoryId,
+      ...restShoeData,
+    });
 
     res.status(201).json(newShoe);
   } catch (error) {
@@ -98,13 +114,11 @@ async function createShoe(
 }
 
 async function updateShoe(
-  req: Request<ShoeParams, PutResponse<Shoe, ShoeBody>, ShoeBody>,
-  res: Response<PutResponse<Shoe, ShoeBody>>
+  req: Request<ShoeParams, PutResponse<ShoeView, ShoeBody>, ShoeBody>,
+  res: Response<PutResponse<ShoeView, ShoeBody>>
 ) {
   const { id } = req.params;
-  const { ...shoeData } = req.body;
-
-  const validatedFields = ShoeBodySchema.safeParse(shoeData);
+  const validatedFields = ShoeBodySchema.safeParse(req.body);
   if (!validatedFields.success) {
     const flattened = z.flattenError(validatedFields.error);
 
@@ -113,8 +127,26 @@ async function updateShoe(
     });
   }
 
+  const shoeData = validatedFields.data;
+  const { gender, categoryId, ...restShoeData } = shoeData;
+
+  const genderCategoryIdCombination = await getGenderCategoryId(
+    gender,
+    categoryId
+  );
+
+  if (!genderCategoryIdCombination) {
+    return res
+      .status(400)
+      .json({ message: "Invalid 'gender' and 'categoryId' combination" });
+  }
+
   try {
-    const newShoe = await updateShoeQuery(id, shoeData);
+    const { id: genderCategoryId } = genderCategoryIdCombination;
+    const newShoe = await updateShoeQuery(id, {
+      genderCategoryId,
+      ...restShoeData,
+    });
 
     if (!newShoe) {
       return res.status(404).json({ message: "Shoe not found" });

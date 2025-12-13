@@ -54,6 +54,10 @@ export interface ShoeDbWithRelations {
   color_name: string;
 }
 
+export type ShoeBodyMutation = Omit<ShoeBody, "gender" | "categoryId"> & {
+  genderCategoryId: number;
+};
+
 export interface CategoryParams {
   id: number;
 }
