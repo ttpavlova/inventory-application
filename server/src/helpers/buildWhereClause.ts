@@ -14,6 +14,15 @@ export const buildWhereClause = (filters: FilterParams) => {
     params.push(...filters.categories);
   }
 
+  if (filters.genders && filters.genders.length > 0) {
+    const placeholders = filters.genders
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .map((_, i) => `$${(paramCount += 1)}`)
+      .join(", ");
+    query += ` AND gender IN (${placeholders}) `;
+    params.push(...filters.genders);
+  }
+
   return { query, params };
 };
 

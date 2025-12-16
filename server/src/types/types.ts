@@ -115,7 +115,10 @@ export interface Filter {
 export interface Filters {
   genders: GenderOptions;
   seasons: SeasonOptions;
-  categories: Category[];
+  categoriesByGender: {
+    men: Category[];
+    women: Category[];
+  };
   brands: Filter[];
   materials: Filter[];
   colors: Filter[];

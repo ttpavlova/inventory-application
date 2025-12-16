@@ -1,10 +1,23 @@
+import { buildWhereClause } from "../helpers/buildWhereClause.js";
 import type { CategoryBody } from "../schemas/schemas.js";
-import type { Category, CategoryId } from "../types/types.js";
+import type { Category, CategoryId, FilterParams } from "../types/types.js";
 import { pool } from "./pool.js";
 
-async function getAllCategoriesQuery(): Promise<Category[]> {
-  const { rows } = await pool.query("SELECT * FROM categories");
+async function getAllCategoriesQuery(
+  filters: FilterParams
+): Promise<Category[]> {
+  const { query, params } = buildWhereClause(filters);
 
+  const { rows } = await pool.query(
+    `SELECT DISTINCT
+    c.id,
+    c.name
+    FROM categories c
+    LEFT JOIN category_gender c_g ON c_g.category_id = c.id
+    ${query}
+    ORDER BY id`,
+    [...params]
+  );
   return rows;
 }
 
