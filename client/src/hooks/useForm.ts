@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { FlattenedErrors, FormData } from "../types/form.types";
 import { ShoeBodySchema, type ShoeBody } from "../schemas/schemas";
 
@@ -37,13 +37,17 @@ export const useForm = (onSubmit: (body: ShoeBody) => Promise<void>) => {
 
   const updateSelectedOptions = <K extends keyof ShoeBody>(
     key: K,
-    value: ShoeBody[K]
+    value: ShoeBody[K] | null
   ) => {
     setSelectedOptions((prevState) => ({
       ...prevState,
       [key]: value,
     }));
   };
+
+  useEffect(() => {
+    updateSelectedOptions("categoryId", null);
+  }, [selectedOptions.gender]);
 
   return {
     selectedOptions,

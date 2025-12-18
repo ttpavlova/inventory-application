@@ -5,13 +5,13 @@ import {
   getAllColorsQuery,
   getAllMaterialsQuery,
 } from "../db/filtersQueries.js";
-import { type Filters, type GetResponse } from "../types/types.js";
+import { type FiltersResponse, type GetResponse } from "../types/types.js";
 import { buildErrorResponse } from "../helpers/buildErrorResponse.js";
 import { GENDER_OPTIONS, SEASON_OPTIONS } from "../constants/constants.js";
 
 async function getAllFilters(
   req: Request,
-  res: Response<GetResponse<Filters>>
+  res: Response<GetResponse<FiltersResponse>>
 ) {
   try {
     const [menCategories, womenCategories, brands, materials, colors] =

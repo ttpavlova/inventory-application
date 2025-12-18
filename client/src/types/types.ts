@@ -101,7 +101,20 @@ export interface Filters {
   colors: Filter[];
 }
 
-export type FilterOptions = Filters[keyof Filters];
+export interface FiltersResponse {
+  genders: GenderOptions;
+  seasons: SeasonOptions;
+  categoriesByGender: {
+    men: Category[];
+    women: Category[];
+  };
+  brands: Filter[];
+  materials: Filter[];
+  colors: Filter[];
+}
+
+// export type FilterOptions = Filters[keyof Filters];
+export type FilterOptions = GenderOptions | SeasonOptions | Filter[];
 
 export type FilterParams = {
   [k in keyof Filters]?: string | null;
