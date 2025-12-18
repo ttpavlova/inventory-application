@@ -1,25 +1,27 @@
 import type { Request, Response } from "express";
-import { getAllCategoriesQuery } from "~/db/categoriesQueries.js";
+import { getAllCategoriesQuery } from "../db/categoriesQueries.js";
 import {
   getAllBrandsQuery,
   getAllColorsQuery,
   getAllMaterialsQuery,
 } from "../db/filtersQueries.js";
-import { type Filters, type GetResponse } from "../types/types.js";
+import { type FiltersResponse, type GetResponse } from "../types/types.js";
 import { buildErrorResponse } from "../helpers/buildErrorResponse.js";
 import { GENDER_OPTIONS, SEASON_OPTIONS } from "../constants/constants.js";
 
 async function getAllFilters(
   req: Request,
-  res: Response<GetResponse<Filters>>
+  res: Response<GetResponse<FiltersResponse>>
 ) {
   try {
-    const [categories, brands, materials, colors] = await Promise.all([
-      getAllCategoriesQuery(),
-      getAllBrandsQuery(),
-      getAllMaterialsQuery(),
-      getAllColorsQuery(),
-    ]);
+    const [menCategories, womenCategories, brands, materials, colors] =
+      await Promise.all([
+        getAllCategoriesQuery({ genders: ["Men"] }),
+        getAllCategoriesQuery({ genders: ["Women"] }),
+        getAllBrandsQuery(),
+        getAllMaterialsQuery(),
+        getAllColorsQuery(),
+      ]);
 
     const genders = GENDER_OPTIONS;
     const seasons = SEASON_OPTIONS;
@@ -27,7 +29,10 @@ async function getAllFilters(
     const filters = {
       genders,
       seasons,
-      categories,
+      categoriesByGender: {
+        men: menCategories,
+        women: womenCategories,
+      },
       brands,
       materials,
       colors,

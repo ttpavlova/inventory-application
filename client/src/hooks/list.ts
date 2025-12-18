@@ -2,11 +2,11 @@ import { buildFilterParams } from "../helpers/buildFilterParams";
 import type { ShoeBody } from "../schemas/schemas";
 import type {
   Category,
-  Filters,
   List,
   Shoe,
   ShoeWithRelations,
   ShoeView,
+  FiltersResponse,
 } from "../types/types";
 import { useApiDelete } from "./useApiDelete";
 import { useApiMutation } from "./useApiMutation";
@@ -41,10 +41,12 @@ export const useDeleteShoe = (id: number) => {
   return useApiDelete(`/api/shoes/${id}`);
 };
 
-export const useGetAllCategories = () => {
-  return useApiQuery<Category[]>(`/api/categories`);
+export const useGetAllCategories = (gender?: string) => {
+  const param = gender ? `?gender=${gender}` : "";
+
+  return useApiQuery<Category[]>(`/api/categories${param}`);
 };
 
 export const useGetAllFilters = () => {
-  return useApiQuery<Filters>(`/api/filters`);
+  return useApiQuery<FiltersResponse>(`/api/filters`);
 };

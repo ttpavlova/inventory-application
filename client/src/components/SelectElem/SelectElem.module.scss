@@ -4,6 +4,10 @@
   display: grid;
   align-items: center;
   gap: 5px;
+
+  &.disabled {
+    pointer-events: none;
+  }
 }
 
 select {

@@ -1,10 +1,10 @@
 import { buildWhereClause } from "../helpers/buildWhereClause.js";
-import type { ShoeBody } from "../schemas/schemas.js";
 import type {
   FilterParams,
   Shoe,
   ShoeDbWithRelations,
   ShoeId,
+  ShoeBodyMutation,
   ShoeView,
 } from "../types/types.js";
 import { pool } from "./pool.js";
@@ -22,7 +22,7 @@ async function getShoesQuery(
   const { rows } = await pool.query(
     `SELECT
       s.id,
-      s.gender,
+      c_g.gender,
       s.season,
       c.name AS category,
       b.name AS brand,
@@ -30,10 +30,11 @@ async function getShoesQuery(
       col.name AS color,
       COUNT(*) OVER() AS count
     FROM shoes s
-    LEFT JOIN categories c ON s.category_id = c.id
-    LEFT JOIN brands b ON s.brand_id = b.id
-    LEFT JOIN materials m ON s.material_id = m.id
-    LEFT JOIN colors col ON s.color_id = col.id
+    JOIN category_gender c_g ON s.category_gender_id = c_g.id
+    JOIN categories c ON c_g.category_id = c.id
+    JOIN brands b ON s.brand_id = b.id
+    JOIN materials m ON s.material_id = m.id
+    JOIN colors col ON s.color_id = col.id
     ${query}
     ORDER BY id
     LIMIT ${limitParam} OFFSET ${offsetParam}`,
@@ -53,9 +54,9 @@ async function getShoeByIdQuery(id: ShoeId): Promise<ShoeDbWithRelations> {
   const { rows } = await pool.query(
     `SELECT
       s.id,
-      s.gender,
+      c_g.gender,
       s.season,
-      s.category_id,
+      c_g.category_id,
       c.name AS category_name,
       s.brand_id,
       b.name AS brand_name,
@@ -64,7 +65,8 @@ async function getShoeByIdQuery(id: ShoeId): Promise<ShoeDbWithRelations> {
       s.color_id,
       col.name AS color_name
     FROM shoes s
-    JOIN categories c ON s.category_id = c.id
+    JOIN category_gender c_g ON s.category_gender_id = c_g.id
+    JOIN categories c ON c_g.category_id = c.id
     JOIN brands b ON s.brand_id = b.id
     JOIN materials m ON s.material_id = m.id
     JOIN colors col ON s.color_id = col.id
@@ -75,39 +77,62 @@ async function getShoeByIdQuery(id: ShoeId): Promise<ShoeDbWithRelations> {
   return rows[0];
 }
 
+async function getGenderCategoryId(
+  gender: Shoe["gender"],
+  categoryId: Shoe["categoryId"]
+): Promise<{ id: number } | null> {
+  const { rows } = await pool.query(
+    `SELECT id
+    FROM category_gender
+    WHERE gender = $1 AND category_id = $2`,
+    [gender, categoryId]
+  );
+
+  return rows[0] ?? null;
+}
+
 async function createShoeQuery({
-  gender,
   season,
-  categoryId,
+  genderCategoryId,
   brandId,
   materialId,
   colorId,
-}: ShoeBody): Promise<Shoe> {
-  const { rows } = await pool.query(
-    `INSERT INTO shoes (gender, season, category_id, brand_id, material_id, color_id) 
-    VALUES ($1, $2, $3, $4, $5, $6)
-    RETURNING *;`,
-    [gender, season, categoryId, brandId, materialId, colorId]
+}: ShoeBodyMutation): Promise<ShoeView> {
+  const { rows: idColumn } = await pool.query(
+    `INSERT INTO shoes (season, category_gender_id, brand_id, material_id, color_id) 
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING id;`,
+    [season, genderCategoryId, brandId, materialId, colorId]
   );
+
+  const id = idColumn[0].id;
+  const { rows } = await pool.query(`SELECT * FROM view_shoes WHERE id = $1`, [
+    id,
+  ]);
 
   return rows[0];
 }
 
-async function updateShoeQuery(id: ShoeId, shoeData: ShoeBody): Promise<Shoe> {
-  const { gender, season, categoryId, brandId, materialId, colorId } = shoeData;
-  const { rows } = await pool.query(
+async function updateShoeQuery(
+  id: ShoeId,
+  shoeData: ShoeBodyMutation
+): Promise<ShoeView> {
+  const { season, genderCategoryId, brandId, materialId, colorId } = shoeData;
+  await pool.query(
     `UPDATE shoes 
-    SET 
-      gender = $1,
-      season = $2,
-      category_id = $3,
-      brand_id = $4,
-      material_id = $5,
-      color_id = $6
-    WHERE id = $7
-    RETURNING *;`,
-    [gender, season, categoryId, brandId, materialId, colorId, id]
+    SET
+      season = $1,
+      category_gender_id = $2,
+      brand_id = $3,
+      material_id = $4,
+      color_id = $5
+    WHERE id = $6;`,
+    [season, genderCategoryId, brandId, materialId, colorId, id]
   );
+
+  const { rows } = await pool.query(`SELECT * FROM view_shoes WHERE id = $1`, [
+    id,
+  ]);
 
   return rows[0];
 }
@@ -124,6 +149,7 @@ async function deleteShoeQuery(id: ShoeId): Promise<Shoe> {
 export {
   getShoesQuery,
   getShoeByIdQuery,
+  getGenderCategoryId,
   createShoeQuery,
   updateShoeQuery,
   deleteShoeQuery,

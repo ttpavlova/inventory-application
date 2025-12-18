@@ -6,6 +6,11 @@ export const GENDER_OPTIONS = [
   { id: "Women", name: "Women" },
 ] as const;
 
+export const GENDER_KEY_MAP: Record<"Men" | "Women", "men" | "women"> = {
+  Men: "men",
+  Women: "women",
+};
+
 export const SEASON_OPTIONS = [
   { id: "Summer", name: "Summer" },
   { id: "Winter", name: "Winter" },

@@ -23,8 +23,11 @@ async function getAllCategories(
   req: Request,
   res: Response<GetResponse<Category[]>>
 ) {
+  const { gender } = req.query;
+
   try {
-    const categories = await getAllCategoriesQuery();
+    const filters = { genders: gender?.toString().split(",") || [] };
+    const categories = await getAllCategoriesQuery(filters);
 
     res.status(200).json(categories);
   } catch (error) {

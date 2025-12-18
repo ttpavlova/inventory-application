@@ -54,6 +54,10 @@ export interface ShoeDbWithRelations {
   color_name: string;
 }
 
+export type ShoeBodyMutation = Omit<ShoeBody, "gender" | "categoryId"> & {
+  genderCategoryId: number;
+};
+
 export interface CategoryParams {
   id: number;
 }
@@ -112,6 +116,18 @@ export interface Filters {
   genders: GenderOptions;
   seasons: SeasonOptions;
   categories: Category[];
+  brands: Filter[];
+  materials: Filter[];
+  colors: Filter[];
+}
+
+export interface FiltersResponse {
+  genders: GenderOptions;
+  seasons: SeasonOptions;
+  categoriesByGender: {
+    men: Category[];
+    women: Category[];
+  };
   brands: Filter[];
   materials: Filter[];
   colors: Filter[];

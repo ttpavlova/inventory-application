@@ -25,12 +25,22 @@ CREATE TABLE IF NOT EXISTS colors (
   name VARCHAR (30) NOT NULL UNIQUE
 );
 
+CREATE TABLE IF NOT EXISTS category_gender (
+  id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  gender VARCHAR(10) NOT NULL CHECK (gender IN ('Men', 'Women')),
+
+  category_id INT NOT NULL REFERENCES categories(id)
+  ON UPDATE CASCADE
+  ON DELETE CASCADE,
+
+  UNIQUE (gender, category_id)
+);
+
 CREATE TABLE IF NOT EXISTS shoes (
   id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  gender VARCHAR (20) NOT NULL CHECK (gender IN ('Men', 'Women')),
   season VARCHAR (20) NOT NULL CHECK (season IN ('Summer', 'Winter', 'Demi-season')),
 
-  category_id INT NOT NULL REFERENCES categories(id),
+  category_gender_id INT NOT NULL REFERENCES category_gender(id),
   brand_id INT NOT NULL REFERENCES brands(id),
   material_id INT NOT NULL REFERENCES materials(id),
   color_id INT NOT NULL REFERENCES colors(id)
@@ -78,13 +88,36 @@ VALUES
   ('Beige'),
   ('White');
 
-INSERT INTO shoes (gender, season, category_id, brand_id, material_id, color_id) 
+INSERT INTO category_gender (gender, category_id)
 VALUES
-  ('Women', 'Summer', 3, 1, 1, 1),
-  ('Men', 'Summer', 3, 1, 1, 5),
-  ('Women', 'Demi-season', 1, 3, 1, 3),
-  ('Women', 'Summer', 2, 3, 2, 4),
-  ('Men', 'Demi-season', 3, 2, 1, 1);
+  ('Men', 1),
+  ('Women', 1),
+  ('Women', 2),
+  ('Men', 3),
+  ('Women', 3);
+
+INSERT INTO shoes (season, category_gender_id, brand_id, material_id, color_id) 
+VALUES
+  ('Summer', 5, 1, 1, 1),
+  ('Summer', 4, 1, 1, 5),
+  ('Demi-season', 2, 3, 1, 3),
+  ('Summer', 3, 3, 2, 4),
+  ('Demi-season', 4, 2, 1, 1),
+  ('Summer', 5, 1, 1, 2),
+  ('Summer', 4, 1, 1, 1),
+  ('Demi-season', 2, 3, 1, 4),
+  ('Summer', 3, 3, 2, 5),
+  ('Demi-season', 4, 2, 1, 2),
+  ('Summer', 5, 1, 1, 1),
+  ('Summer', 4, 1, 1, 5),
+  ('Demi-season', 2, 3, 1, 3),
+  ('Summer', 3, 3, 2, 4),
+  ('Demi-season', 4, 2, 1, 1),
+  ('Summer', 5, 1, 1, 2),
+  ('Summer', 4, 1, 1, 1),
+  ('Demi-season', 2, 3, 1, 4),
+  ('Summer', 3, 3, 2, 5),
+  ('Demi-season', 4, 2, 1, 2);
 
 INSERT INTO sizes (eu_size) 
 VALUES
@@ -110,22 +143,37 @@ VALUES
   (2, 2, 6),
   (1, 3, 4),
   (4, 4, 5),
-  (5, 5, 8);
+  (5, 5, 8),
+  (1, 6, 2),
+  (3, 6, 4),
+  (2, 7, 6),
+  (1, 8, 4),
+  (4, 9, 5),
+  (5, 10, 8);
+
+CREATE OR REPLACE VIEW view_category_gender AS
+SELECT 
+    c_g.id,
+    c_g.gender,
+    c.name AS category
+FROM category_gender c_g
+JOIN categories c ON c_g.category_id = c.id;
 
 CREATE OR REPLACE VIEW view_shoes AS
 SELECT 
     s.id,
-    s.gender,
+    c_g.gender,
     s.season,
     c.name AS category,
     b.name AS brand,
     m.name AS material,
     col.name AS color
 FROM shoes s
-LEFT JOIN categories c ON s.category_id = c.id
-LEFT JOIN brands b ON s.brand_id = b.id
-LEFT JOIN materials m ON s.material_id = m.id
-LEFT JOIN colors col ON s.color_id = col.id;
+JOIN category_gender c_g ON s.category_gender_id = c_g.id
+JOIN categories c ON c_g.category_id = c.id
+JOIN brands b ON s.brand_id = b.id
+JOIN materials m ON s.material_id = m.id
+JOIN colors col ON s.color_id = col.id;
 
 CREATE OR REPLACE VIEW view_quantity_in_stock AS
 SELECT 
@@ -140,8 +188,8 @@ SELECT
     v_s.color,
     sizes.eu_size AS eu_size
 FROM quantity_in_stock q
-LEFT JOIN view_shoes v_s ON q.shoe_id = v_s.id
-LEFT JOIN sizes ON q.size_id = sizes.id;
+JOIN view_shoes v_s ON q.shoe_id = v_s.id
+JOIN sizes ON q.size_id = sizes.id;
 `;
 
 const { roleName, rolePassword, dbHost, dbPort, dbName } = config.db;
