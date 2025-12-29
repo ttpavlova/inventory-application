@@ -25,8 +25,8 @@ export const UpdateForm = () => {
   const { data, loading, error } = useGetAllFilters();
   const {
     id,
-    // loading: loadingCreate,
-    error: errorCreate,
+    loading: loadingUpdate,
+    error: errorUpdate,
     request: updateShoe,
   } = useUpdateShoe(Number(paramId));
   const {
@@ -76,39 +76,45 @@ export const UpdateForm = () => {
   return (
     <div className={styles.container}>
       {data && (
-        <form onSubmit={(e) => handleSubmit(e)} className={styles.filters}>
-          {formFields.map(({ field, label, options }) => (
-            <SelectElem
-              key={label}
-              field={field}
-              label={label}
-              options={options}
-              value={selectedOptions[field]}
-              updateSelectedOptions={updateSelectedOptions}
-              error={validationErrors?.[field]?.toString() ?? null}
-            />
-          ))}
+        <>
+          <form onSubmit={(e) => handleSubmit(e)} className={styles.filters}>
+            {formFields.map(({ field, label, options }) => (
+              <SelectElem
+                key={label}
+                field={field}
+                label={label}
+                options={options}
+                value={selectedOptions[field]}
+                updateSelectedOptions={updateSelectedOptions}
+                error={validationErrors?.[field]?.toString() ?? null}
+              />
+            ))}
 
-          {errorCreate && <div>{errorCreate}</div>}
-          {id && (
             <div>
-              A shoe with ID: <Link to={`/shoes/${id}`}>{id}</Link> was updated
-              successfully
+              <button
+                type="submit"
+                className={`${styles.btn} ${styles.btnPrimary}`}
+                disabled={loadingUpdate}
+              >
+                {loadingUpdate ? `Saving...` : `Save`}
+              </button>
+              <button className={styles.btn} onClick={() => navigate(-1)}>
+                Cancel
+              </button>
+            </div>
+          </form>
+
+          {errorUpdate && <div>{errorUpdate}</div>}
+          {id && (
+            <div className={styles.message}>
+              A shoe with ID:{" "}
+              <Link to={`/shoes/${id}`} className={styles.id}>
+                {id}
+              </Link>{" "}
+              was updated successfully
             </div>
           )}
-
-          <div>
-            <button
-              type="submit"
-              className={`${styles.btn} ${styles.btnPrimary}`}
-            >
-              Save
-            </button>
-            <button className={styles.btn} onClick={() => navigate(-1)}>
-              Cancel
-            </button>
-          </div>
-        </form>
+        </>
       )}
     </div>
   );

@@ -4,10 +4,6 @@
   display: grid;
   align-items: center;
   gap: 5px;
-
-  &.disabled {
-    pointer-events: none;
-  }
 }
 
 select {
@@ -16,7 +12,7 @@ select {
   border-bottom: 2px solid variables.$secondary-color;
   transition: background-color 0.2s ease;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background-color: variables.$light-gray;
   }
 }

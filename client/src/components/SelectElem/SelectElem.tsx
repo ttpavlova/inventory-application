@@ -1,7 +1,6 @@
 import type { ChangeEvent } from "react";
 import type { FilterOptions } from "../../types/types";
 import styles from "./SelectElem.module.scss";
-import cls from "classnames";
 import type { ShoeBody } from "../../schemas/schemas";
 
 interface SelectElemProps {
@@ -39,7 +38,7 @@ export const SelectElem = ({
   };
 
   return (
-    <div className={cls(styles.row, { [styles.disabled]: isDisabled })}>
+    <div className={styles.row}>
       <label htmlFor={field}>Select a {label}:</label>
       <div>
         <select

@@ -24,3 +24,12 @@
 .btnPrimary {
   @include mixins.btn-primary;
 }
+
+.message {
+  margin-top: 16px;
+}
+
+.id {
+  font-weight: 500;
+  color: variables.$accent-color;
+}

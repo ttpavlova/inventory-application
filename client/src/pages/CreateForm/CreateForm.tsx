@@ -11,7 +11,7 @@ export const CreateForm = () => {
   const { data, loading, error } = useGetAllFilters();
   const {
     id,
-    // loading: loadingCreate,
+    loading: loadingCreate,
     error: errorCreate,
     request: createShoe,
   } = useCreateShoe();
@@ -48,39 +48,45 @@ export const CreateForm = () => {
   return (
     <div className={styles.container}>
       {data && (
-        <form onSubmit={(e) => handleSubmit(e)} className={styles.filters}>
-          {formFields.map(({ field, label, options }) => (
-            <SelectElem
-              key={label}
-              field={field}
-              label={label}
-              options={options}
-              value={selectedOptions[field]}
-              updateSelectedOptions={updateSelectedOptions}
-              error={validationErrors?.[field]?.toString() ?? null}
-            />
-          ))}
+        <>
+          <form onSubmit={(e) => handleSubmit(e)} className={styles.filters}>
+            {formFields.map(({ field, label, options }) => (
+              <SelectElem
+                key={label}
+                field={field}
+                label={label}
+                options={options}
+                value={selectedOptions[field]}
+                updateSelectedOptions={updateSelectedOptions}
+                error={validationErrors?.[field]?.toString() ?? null}
+              />
+            ))}
+
+            <div>
+              <button
+                type="submit"
+                className={`${styles.btn} ${styles.btnPrimary}`}
+                disabled={loadingCreate}
+              >
+                {loadingCreate ? `Saving...` : `Save`}
+              </button>
+              <button className={styles.btn} onClick={() => navigate(-1)}>
+                Cancel
+              </button>
+            </div>
+          </form>
 
           {errorCreate && <div>{errorCreate}</div>}
           {id && (
-            <div>
-              A shoe with ID: <Link to={`/shoes/${id}`}>{id}</Link> was created
-              successfully
+            <div className={styles.message}>
+              A shoe with ID:{" "}
+              <Link to={`/shoes/${id}`} className={styles.id}>
+                {id}
+              </Link>{" "}
+              was created successfully
             </div>
           )}
-
-          <div>
-            <button
-              type="submit"
-              className={`${styles.btn} ${styles.btnPrimary}`}
-            >
-              Save
-            </button>
-            <button className={styles.btn} onClick={() => navigate(-1)}>
-              Cancel
-            </button>
-          </div>
-        </form>
+        </>
       )}
     </div>
   );

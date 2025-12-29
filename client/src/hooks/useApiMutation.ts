@@ -16,6 +16,7 @@ export const useApiMutation = <Input, Output extends { id: number }>(
       setLoading(true);
     }
     setError(false);
+    setData(null);
 
     try {
       const options: RequestInit = {

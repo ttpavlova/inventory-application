@@ -10,6 +10,7 @@ export const useApiQuery = <Output>(url: string) => {
     const request = async () => {
       setLoading(true);
       setError(false);
+      setData(null);
 
       try {
         const data = await fetchData<Output>(url, {
