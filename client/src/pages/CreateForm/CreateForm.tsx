@@ -76,7 +76,7 @@ export const CreateForm = () => {
             </div>
           </form>
 
-          {errorCreate && <div>{errorCreate}</div>}
+          {errorCreate && <div className={styles.error}>{errorCreate}</div>}
           {id && (
             <div className={styles.message}>
               A shoe with ID:{" "}

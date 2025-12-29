@@ -25,7 +25,8 @@
   @include mixins.btn-primary;
 }
 
-.message {
+.message,
+.error {
   margin-top: 16px;
 }
 

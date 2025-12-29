@@ -104,7 +104,7 @@ export const UpdateForm = () => {
             </div>
           </form>
 
-          {errorUpdate && <div>{errorUpdate}</div>}
+          {errorUpdate && <div className={styles.error}>{errorUpdate}</div>}
           {id && (
             <div className={styles.message}>
               A shoe with ID:{" "}

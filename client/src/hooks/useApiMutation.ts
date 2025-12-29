@@ -9,13 +9,11 @@ export const useApiMutation = <Input, Output extends { id: number }>(
 ) => {
   const [data, setData] = useState<Output | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const request = async (body: Input) => {
-    if (!loading) {
-      setLoading(true);
-    }
-    setError(false);
+    setLoading(true);
+    setError(null);
     setData(null);
 
     try {
@@ -25,10 +23,9 @@ export const useApiMutation = <Input, Output extends { id: number }>(
       };
 
       const data = await fetchData<Output>(url, options);
-
       setData(data);
     } catch (error) {
-      setError(true);
+      setError(error instanceof Error ? error.message : "Something went wrong");
       console.log(error);
     } finally {
       setLoading(false);

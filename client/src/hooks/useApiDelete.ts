@@ -6,9 +6,7 @@ export const useApiDelete = (url: string) => {
   const [error, setError] = useState(false);
 
   const request = async () => {
-    if (!loading) {
-      setLoading(true);
-    }
+    setLoading(true);
     setError(false);
 
     try {

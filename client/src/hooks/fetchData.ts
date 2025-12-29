@@ -14,19 +14,19 @@ export const fetchData = async <Output>(
     ...options,
   });
 
+  const data = await response.json();
+
   if (!response.ok) {
     if (response.status === 404) {
       return null;
     }
 
-    throw new Error(
-      `Request failed: ${response.status} ${response.statusText}`
-    );
+    throw new Error(data.message);
   }
 
   if (response.status === 204) {
     return null;
   }
 
-  return await response.json();
+  return data;
 };
