@@ -25,7 +25,7 @@ export const useApiMutation = <Input, Output extends { id: number }>(
       const data = await fetchData<Output>(url, options);
       setData(data);
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Something went wrong");
+      setError(error instanceof Error ? error.message : "Request failed");
       console.log(error);
     } finally {
       setLoading(false);

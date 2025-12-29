@@ -20,6 +20,7 @@ export const CreateForm = () => {
     handleSubmit,
     updateSelectedOptions,
     validationErrors,
+    submitStatus,
   } = useForm(createShoe);
 
   const navigate = useNavigate();
@@ -76,8 +77,10 @@ export const CreateForm = () => {
             </div>
           </form>
 
-          {errorCreate && <div className={styles.error}>{errorCreate}</div>}
-          {id && (
+          {submitStatus === "saved" && errorCreate && (
+            <div className={styles.error}>{errorCreate}</div>
+          )}
+          {submitStatus === "saved" && id && (
             <div className={styles.message}>
               A shoe with ID:{" "}
               <Link to={`/shoes/${id}`} className={styles.id}>

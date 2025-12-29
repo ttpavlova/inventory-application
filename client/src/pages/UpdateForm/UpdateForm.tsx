@@ -35,6 +35,7 @@ export const UpdateForm = () => {
     handleSubmit,
     updateSelectedOptions,
     validationErrors,
+    submitStatus,
   } = useForm(updateShoe);
 
   useEffect(() => {
@@ -104,8 +105,10 @@ export const UpdateForm = () => {
             </div>
           </form>
 
-          {errorUpdate && <div className={styles.error}>{errorUpdate}</div>}
-          {id && (
+          {submitStatus === "saved" && errorUpdate && (
+            <div className={styles.error}>{errorUpdate}</div>
+          )}
+          {submitStatus === "saved" && id && (
             <div className={styles.message}>
               A shoe with ID:{" "}
               <Link to={`/shoes/${id}`} className={styles.id}>

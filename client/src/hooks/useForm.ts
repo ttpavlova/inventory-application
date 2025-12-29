@@ -12,15 +12,19 @@ const initialOptions: FormData = {
   colorId: null,
 };
 
+type SubmitStatus = "unsaved" | "saved";
+
 export const useForm = (onSubmit: (body: ShoeBody) => Promise<void>) => {
   const [selectedOptions, setSelectedOptions] =
     useState<FormData>(initialOptions);
   const [validationErrors, setValidationErrors] = useState<
     FlattenedErrors<ShoeBody>
   >({});
+  const [submitStatus, setSubmitStatus] = useState<SubmitStatus>("unsaved");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setSubmitStatus("saved");
 
     const result = ShoeBodySchema.safeParse(selectedOptions);
 
@@ -39,6 +43,10 @@ export const useForm = (onSubmit: (body: ShoeBody) => Promise<void>) => {
     key: K,
     value: ShoeBody[K] | null
   ) => {
+    if (submitStatus !== "unsaved") {
+      setSubmitStatus("unsaved");
+    }
+
     setSelectedOptions((prevState) => ({
       ...prevState,
       [key]: value,
@@ -55,5 +63,6 @@ export const useForm = (onSubmit: (body: ShoeBody) => Promise<void>) => {
     handleSubmit,
     updateSelectedOptions,
     validationErrors,
+    submitStatus,
   };
 };
