@@ -3,6 +3,7 @@ import styles from "./ShoeDetails.module.scss";
 import { useDeleteShoe, useGetShoeById } from "../../hooks/list";
 import { NotFound } from "../NotFound/NotFound";
 import { ShoeDetailsSkeleton } from "../../components/Skeletons/ShoeDetailsSkeleton/ShoeDetailsSkeleton";
+import { getImage } from "../../helpers/getImage";
 
 export const ShoeDetails = () => {
   const { id: paramId } = useParams();
@@ -68,7 +69,11 @@ export const ShoeDetails = () => {
         </div>
       </div>
       <div className={styles.coverContainer}>
-        <img alt="shoe cover" className={styles.cover} />
+        <img
+          src={getImage(shoe.gender, shoe.category.name, shoe.brand.name)}
+          alt={`${shoe.category} ${shoe.brand}`}
+          className={styles.cover}
+        />
       </div>
     </div>
   );
