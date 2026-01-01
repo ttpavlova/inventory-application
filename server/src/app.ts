@@ -8,8 +8,12 @@ import { indexRouter } from "./routes/indexRouter.js";
 import { filtersRouter } from "./routes/filtersRouter.js";
 
 const app = express();
+const allowedOrigins = (process.env.ALLOWED_ORIGINS ?? "http://localhost:5173")
+  .split(",")
+  .map((item) => item.trim())
+  .filter(Boolean);
 const corsOptions = {
-  origin: ["http://localhost:5173"],
+  origin: allowedOrigins,
 };
 
 app.use(cors(corsOptions));
