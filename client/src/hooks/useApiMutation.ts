@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { fetchData } from "./fetchData";
+import { API_BASE } from "../lib/apiBase";
 
 type Method = "POST" | "PUT";
 
@@ -22,7 +23,7 @@ export const useApiMutation = <Input, Output extends { id: number }>(
         body: JSON.stringify(body),
       };
 
-      const data = await fetchData<Output>(url, options);
+      const data = await fetchData<Output>(`${API_BASE}${url}`, options);
       setData(data);
     } catch (error) {
       setError(error instanceof Error ? error.message : "Request failed");

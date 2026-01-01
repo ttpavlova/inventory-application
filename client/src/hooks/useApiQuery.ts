@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchData } from "./fetchData";
+import { API_BASE } from "../lib/apiBase";
 
 export const useApiQuery = <Output>(url: string) => {
   const [data, setData] = useState<Output | null>(null);
@@ -13,7 +14,7 @@ export const useApiQuery = <Output>(url: string) => {
       setData(null);
 
       try {
-        const data = await fetchData<Output>(url, {
+        const data = await fetchData<Output>(`${API_BASE}${url}`, {
           method: "GET",
         });
 

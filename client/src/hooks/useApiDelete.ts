@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { fetchData } from "./fetchData";
+import { API_BASE } from "../lib/apiBase";
 
 export const useApiDelete = (url: string) => {
   const [loading, setLoading] = useState(false);
@@ -10,7 +11,7 @@ export const useApiDelete = (url: string) => {
     setError(false);
 
     try {
-      await fetchData(url, { method: "DELETE" });
+      await fetchData(`${API_BASE}${url}`, { method: "DELETE" });
     } catch (error) {
       setError(true);
       console.log(error);
