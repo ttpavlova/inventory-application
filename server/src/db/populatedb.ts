@@ -192,12 +192,12 @@ JOIN view_shoes v_s ON q.shoe_id = v_s.id
 JOIN sizes ON q.size_id = sizes.id;
 `;
 
-const { roleName, rolePassword, dbHost, dbPort, dbName } = config.db;
+const { dbUrl } = config.db;
 
 async function main() {
   console.log("seeding...");
   const client = new Client({
-    connectionString: `postgresql://${roleName}:${rolePassword}@${dbHost}:${dbPort}/${dbName}`,
+    connectionString: dbUrl,
   });
   await client.connect();
   await client.query(SQL);

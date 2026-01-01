@@ -9,11 +9,7 @@ interface AppConfig {
 }
 
 interface DatabaseConfig {
-  roleName: string;
-  rolePassword: string;
-  dbName: string;
-  dbPort: number;
-  dbHost: string;
+  dbUrl: string;
 }
 
 interface Config {
@@ -31,15 +27,11 @@ const getRequiredEnv = (key: string): string => {
 
 const config: Config = {
   app: {
-    port: Number(process.env.PORT) || 5000,
+    port: parseInt(process.env.PORT || "5000"),
     nodeEnv: (process.env.NODE_ENV as nodeEnvType) || "development",
   },
   db: {
-    roleName: getRequiredEnv("DB_USER"),
-    rolePassword: getRequiredEnv("DB_PASSWORD"),
-    dbName: getRequiredEnv("DB_NAME"),
-    dbPort: Number(getRequiredEnv("DB_PORT")),
-    dbHost: getRequiredEnv("DB_HOST"),
+    dbUrl: getRequiredEnv("DATABASE_URL"),
   },
 };
 
