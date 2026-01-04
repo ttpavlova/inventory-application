@@ -10,7 +10,7 @@ interface SelectElemProps {
   value: ShoeBody[keyof ShoeBody] | null;
   updateSelectedOptions: <K extends keyof ShoeBody>(
     key: K,
-    value: ShoeBody[K]
+    value: ShoeBody[K] | null
   ) => void;
   error: string | null;
 }
@@ -33,6 +33,10 @@ export const SelectElem = ({
     const id = isNaN(Number(e.target.value))
       ? (e.target.value as ShoeBody[keyof ShoeBody])
       : Number(e.target.value);
+
+    if (field === "gender") {
+      updateSelectedOptions("categoryId", null);
+    }
 
     updateSelectedOptions(field, id);
   };

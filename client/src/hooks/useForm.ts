@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { FlattenedErrors, FormData } from "../types/form.types";
 import { ShoeBodySchema, type ShoeBody } from "../schemas/schemas";
 
@@ -52,10 +52,6 @@ export const useForm = (onSubmit: (body: ShoeBody) => Promise<void>) => {
       [key]: value,
     }));
   };
-
-  useEffect(() => {
-    updateSelectedOptions("categoryId", null);
-  }, [selectedOptions.gender]);
 
   return {
     selectedOptions,
