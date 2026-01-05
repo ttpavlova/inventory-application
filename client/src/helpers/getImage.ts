@@ -7,12 +7,12 @@ import mSneakersBlue from "@/assets/m-sneakers-blue.jpg";
 import wSneakersPeach from "@/assets/w-sneakers-peach.jpg";
 import mSneakersGreen from "@/assets/m-sneakers-green.jpg";
 import wSneakersLemon from "@/assets/w-sneakers-lemon.jpg";
-import type { ShoeView } from "../types/types";
+import type { ShoeListItemDto } from "../types/types";
 
 export const getImage = (
-  gender: ShoeView["gender"],
-  category: ShoeView["category"],
-  brand: ShoeView["brand"]
+  gender: ShoeListItemDto["gender"],
+  category: ShoeListItemDto["category"],
+  brand: ShoeListItemDto["brand"]
 ) => {
   const bootsImages = {
     Men: mBoots,

@@ -3,10 +3,9 @@ import type { ShoeBody } from "../schemas/schemas";
 import type {
   Category,
   List,
-  Shoe,
-  ShoeWithRelations,
-  ShoeView,
-  FiltersResponse,
+  ShoeDetailsDto,
+  ShoeListItemDto,
+  FiltersDto,
 } from "../types/types";
 import { useApiDelete } from "./useApiDelete";
 import { useApiMutation } from "./useApiMutation";
@@ -20,21 +19,21 @@ export const useGetAllShoes = (
   const filters = { categories };
   const filtersQuery = buildFilterParams(filters);
 
-  return useApiQuery<List<ShoeView[]>>(
+  return useApiQuery<List<ShoeListItemDto>>(
     `/api/shoes/?page=${page}&limit=${limit}${filtersQuery}`
   );
 };
 
 export const useGetShoeById = (id: number) => {
-  return useApiQuery<ShoeWithRelations>(`/api/shoes/${id}`);
+  return useApiQuery<ShoeDetailsDto>(`/api/shoes/${id}`);
 };
 
 export const useCreateShoe = () => {
-  return useApiMutation<ShoeBody, Shoe>("/api/shoes", "POST");
+  return useApiMutation<ShoeBody, ShoeListItemDto>("/api/shoes", "POST");
 };
 
 export const useUpdateShoe = (id: number) => {
-  return useApiMutation<ShoeBody, Shoe>(`/api/shoes/${id}`, "PUT");
+  return useApiMutation<ShoeBody, ShoeListItemDto>(`/api/shoes/${id}`, "PUT");
 };
 
 export const useDeleteShoe = (id: number) => {
@@ -48,5 +47,5 @@ export const useGetAllCategories = (gender?: string) => {
 };
 
 export const useGetAllFilters = () => {
-  return useApiQuery<FiltersResponse>(`/api/filters`);
+  return useApiQuery<FiltersDto>(`/api/filters`);
 };

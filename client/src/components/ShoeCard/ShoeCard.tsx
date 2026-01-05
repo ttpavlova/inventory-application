@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import type { ShoeView } from "../../types/types";
+import type { ShoeListItemDto } from "../../types/types";
 import styles from "./ShoeCard.module.scss";
 import { getImage } from "../../helpers/getImage";
 
 interface ShoeCardProps {
-  shoe: ShoeView;
+  shoe: ShoeListItemDto;
 }
 
 const ShoeCard = ({ shoe }: ShoeCardProps) => {
