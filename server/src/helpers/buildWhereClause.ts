@@ -1,6 +1,6 @@
-import type { FilterParams } from "../types/types.js";
+import type { ParsedFilterParams } from "../types/types.js";
 
-export const buildWhereClause = (filters: FilterParams) => {
+export const buildWhereClause = (filters: ParsedFilterParams) => {
   let paramCount = 0;
   let query = "WHERE 1=1"; // a common way to define a query so that it's easier to add parts starting with 'AND ...' conditionally
   const params: string[] = [];

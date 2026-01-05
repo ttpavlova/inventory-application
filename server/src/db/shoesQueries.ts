@@ -1,19 +1,19 @@
 import { buildWhereClause } from "../helpers/buildWhereClause.js";
 import type {
-  FilterParams,
+  ParsedFilterParams,
   Shoe,
   ShoeDbWithRelations,
   ShoeId,
   ShoeBodyMutation,
-  ShoeView,
+  ShoeListItemDto,
 } from "../types/types.js";
 import { pool } from "./pool.js";
 
 async function getShoesQuery(
   page = 1,
   limit = 10,
-  filters: FilterParams
-): Promise<{ rows: ShoeView[]; totalCount: number }> {
+  filters: ParsedFilterParams
+): Promise<{ rows: ShoeListItemDto[]; totalCount: number }> {
   const offset = (page - 1) * limit;
   const { query, params } = buildWhereClause(filters);
   const limitParam = `$${params.length + 1}`;
@@ -97,7 +97,7 @@ async function createShoeQuery({
   brandId,
   materialId,
   colorId,
-}: ShoeBodyMutation): Promise<ShoeView> {
+}: ShoeBodyMutation): Promise<ShoeListItemDto> {
   const { rows: idColumn } = await pool.query(
     `INSERT INTO shoes (season, category_gender_id, brand_id, material_id, color_id) 
     VALUES ($1, $2, $3, $4, $5)
@@ -116,7 +116,7 @@ async function createShoeQuery({
 async function updateShoeQuery(
   id: ShoeId,
   shoeData: ShoeBodyMutation
-): Promise<ShoeView> {
+): Promise<ShoeListItemDto> {
   const { season, genderCategoryId, brandId, materialId, colorId } = shoeData;
   await pool.query(
     `UPDATE shoes 

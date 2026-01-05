@@ -4,19 +4,19 @@ import {
   SEASON_OPTIONS,
   SEASONS,
 } from "../constants/constants.js";
-import type { ShoeBody, CategoryBody } from "../schemas/schemas.js"; // shapes for data mutation
-
-export interface ShoeParams {
-  id: number;
-}
+import type { ShoeBody, CategoryBody } from "../schemas/schemas.js";
 
 export type Gender = (typeof GENDERS)[number];
 export type Season = (typeof SEASONS)[number];
 export type GenderOptions = typeof GENDER_OPTIONS;
 export type SeasonOptions = typeof SEASON_OPTIONS;
 
-// shape for returning a list of data
-export interface ShoeBodyView {
+export interface Shoe extends ShoeBody {
+  id: number;
+}
+
+export interface ShoeListItemDto {
+  id: number;
   gender: Gender;
   season: Season;
   category: string;
@@ -25,12 +25,9 @@ export interface ShoeBodyView {
   color: string;
 }
 
-export type Shoe = ShoeParams & ShoeBody;
-export type ShoeView = ShoeParams & ShoeBodyView;
+export type ShoeId = Shoe["id"];
 
-export type ShoeId = ShoeParams["id"];
-
-export type ShoeWithRelations = {
+export interface ShoeDetailsDto {
   id: number;
   gender: Gender;
   season: Season;
@@ -38,7 +35,7 @@ export type ShoeWithRelations = {
   brand: Filter;
   material: Filter;
   color: Filter;
-};
+}
 
 export interface ShoeDbWithRelations {
   id: number;
@@ -58,20 +55,21 @@ export type ShoeBodyMutation = Omit<ShoeBody, "gender" | "categoryId"> & {
   genderCategoryId: number;
 };
 
-export interface CategoryParams {
+export interface Category extends CategoryBody {
   id: number;
 }
 
-export type Category = CategoryParams & CategoryBody;
+export type CategoryId = Category["id"];
 
-export type CategoryId = CategoryParams["id"];
+interface ParamsWithId {
+  id: number;
+}
 
-export type CategoryName = CategoryBody["name"];
+export type ShoeParams = ParamsWithId;
+export type CategoryParams = ParamsWithId;
 
-export type NoParams = Record<string, never>;
-
-export interface List<T> {
-  items: T;
+interface List<T> {
+  items: T[];
   totalCount: number;
 }
 
@@ -94,8 +92,6 @@ interface ValidationErrors<TBody> {
 
 export type GetListResponse<T> = List<T> | ErrorResponse; // for lists with pagination
 export type GetResponse<T> = T | ErrorResponse | NotFoundError; // for lists where pagination isn't needed and items
-// export type GetResponse<T> = T | ErrorResponse; // for lists where pagination isn't needed
-// export type GetItemResponse<T> = T | ErrorResponse | NotFoundError; // for items
 export type PostResponse<T, TBody> =
   | T
   | ErrorResponse
@@ -121,18 +117,13 @@ export interface Filters {
   colors: Filter[];
 }
 
-export interface FiltersResponse {
-  genders: GenderOptions;
-  seasons: SeasonOptions;
+export type FiltersDto = Omit<Filters, "categories"> & {
   categoriesByGender: {
     men: Category[];
     women: Category[];
   };
-  brands: Filter[];
-  materials: Filter[];
-  colors: Filter[];
-}
+};
 
-export type FilterParams = {
-  [k in keyof Filters]?: string[] | null;
+export type ParsedFilterParams = {
+  [k in keyof Filters]?: string[];
 };

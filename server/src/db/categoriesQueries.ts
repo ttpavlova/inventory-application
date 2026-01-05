@@ -1,10 +1,14 @@
 import { buildWhereClause } from "../helpers/buildWhereClause.js";
 import type { CategoryBody } from "../schemas/schemas.js";
-import type { Category, CategoryId, FilterParams } from "../types/types.js";
+import type {
+  Category,
+  CategoryId,
+  ParsedFilterParams,
+} from "../types/types.js";
 import { pool } from "./pool.js";
 
 async function getAllCategoriesQuery(
-  filters: FilterParams
+  filters: ParsedFilterParams
 ): Promise<Category[]> {
   const { query, params } = buildWhereClause(filters);
 

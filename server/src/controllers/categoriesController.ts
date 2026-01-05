@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import type { ParamsDictionary } from "express-serve-static-core";
 import { z } from "zod";
 import {
   createCategoryQuery,
@@ -12,7 +13,6 @@ import type {
   CategoryParams,
   DeleteResponse,
   GetResponse,
-  NoParams,
   PostResponse,
   PutResponse,
 } from "../types/types.js";
@@ -40,7 +40,11 @@ async function getAllCategories(
 }
 
 async function createCategory(
-  req: Request<NoParams, PostResponse<Category, CategoryBody>, CategoryBody>,
+  req: Request<
+    ParamsDictionary,
+    PostResponse<Category, CategoryBody>,
+    CategoryBody
+  >,
   res: Response<PostResponse<Category, CategoryBody>>
 ) {
   const { ...categoryData } = req.body;

@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import type { ParamsDictionary } from "express-serve-static-core";
 import { z } from "zod";
 import {
   getShoesQuery,
@@ -12,12 +13,11 @@ import {
   type DeleteResponse,
   type GetListResponse,
   type GetResponse,
-  type NoParams,
   type PostResponse,
   type PutResponse,
-  type ShoeWithRelations,
+  type ShoeDetailsDto,
   type ShoeParams,
-  type ShoeView,
+  type ShoeListItemDto,
 } from "../types/types.js";
 import { buildErrorResponse } from "../helpers/buildErrorResponse.js";
 import { ShoeBodySchema, type ShoeBody } from "../schemas/schemas.js";
@@ -25,7 +25,7 @@ import { transformShoe } from "../helpers/mapShoes.js";
 
 async function getShoes(
   req: Request,
-  res: Response<GetListResponse<ShoeView[]>>
+  res: Response<GetListResponse<ShoeListItemDto>>
 ) {
   const { page = 1, limit = 10, categories } = req.query;
 
@@ -50,7 +50,7 @@ async function getShoes(
 
 async function getShoeById(
   req: Request<ShoeParams>,
-  res: Response<GetResponse<ShoeWithRelations>>
+  res: Response<GetResponse<ShoeDetailsDto>>
 ) {
   const { id } = req.params;
 
@@ -72,8 +72,12 @@ async function getShoeById(
 }
 
 async function createShoe(
-  req: Request<NoParams, PostResponse<ShoeView, ShoeBody>, ShoeBody>,
-  res: Response<PostResponse<ShoeView, ShoeBody>>
+  req: Request<
+    ParamsDictionary,
+    PostResponse<ShoeListItemDto, ShoeBody>,
+    ShoeBody
+  >,
+  res: Response<PostResponse<ShoeListItemDto, ShoeBody>>
 ) {
   const validatedFields = ShoeBodySchema.safeParse(req.body);
   if (!validatedFields.success) {
@@ -114,8 +118,8 @@ async function createShoe(
 }
 
 async function updateShoe(
-  req: Request<ShoeParams, PutResponse<ShoeView, ShoeBody>, ShoeBody>,
-  res: Response<PutResponse<ShoeView, ShoeBody>>
+  req: Request<ShoeParams, PutResponse<ShoeListItemDto, ShoeBody>, ShoeBody>,
+  res: Response<PutResponse<ShoeListItemDto, ShoeBody>>
 ) {
   const { id } = req.params;
   const validatedFields = ShoeBodySchema.safeParse(req.body);

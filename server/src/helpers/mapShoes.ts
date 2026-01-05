@@ -1,6 +1,6 @@
-import type { ShoeDbWithRelations, ShoeWithRelations } from "../types/types.js";
+import type { ShoeDbWithRelations, ShoeDetailsDto } from "../types/types.js";
 
-export const transformShoe = (shoe: ShoeDbWithRelations): ShoeWithRelations => {
+export const transformShoe = (shoe: ShoeDbWithRelations): ShoeDetailsDto => {
   return {
     id: shoe.id,
     gender: shoe.gender,
