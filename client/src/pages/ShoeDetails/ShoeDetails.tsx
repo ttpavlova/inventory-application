@@ -1,31 +1,30 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import styles from "./ShoeDetails.module.scss";
-import { useDeleteShoe, useGetShoeById } from "../../hooks/list";
+import { useDeleteShoe, useGetShoeById } from "../../hooks/useShoesApi";
+import { Error } from "../Error/Error";
 import { NotFound } from "../NotFound/NotFound";
 import { ShoeDetailsSkeleton } from "../../components/Skeletons/ShoeDetailsSkeleton/ShoeDetailsSkeleton";
 import { getImage } from "../../helpers/getImage";
 
 export const ShoeDetails = () => {
-  const { id: paramId } = useParams();
+  const { id } = useParams();
+  const paramId = Number(id);
   const navigate = useNavigate();
-  const { data: shoe, loading, error } = useGetShoeById(Number(paramId));
+
+  const { data: shoe, loading, error } = useGetShoeById(paramId);
   const {
     // loading: loadingDelete,
     // error: errorDelete,
     request: deleteShoe,
-  } = useDeleteShoe(Number(paramId));
+  } = useDeleteShoe(paramId);
 
-  if (loading) {
-    return <ShoeDetailsSkeleton />;
-  }
+  if (Number.isNaN(paramId)) return <NotFound />;
 
-  if (error) {
-    return <span>Something went wrong. Try again later</span>;
-  }
+  if (loading) return <ShoeDetailsSkeleton />;
 
-  if (!shoe) {
-    return <NotFound />;
-  }
+  if (error) return <Error />;
+
+  if (!shoe) return <NotFound />;
 
   const fieldsToShow = [
     "id",

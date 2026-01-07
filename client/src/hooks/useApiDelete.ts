@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { fetchData } from "./fetchData";
+import { fetchData } from "../helpers/fetchData";
 import { API_BASE } from "../lib/apiBase";
 
 export const useApiDelete = (url: string) => {

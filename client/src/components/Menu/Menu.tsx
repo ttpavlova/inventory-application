@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router-dom";
-import { useGetAllCategories } from "../../hooks/list";
+import { useGetAllCategories } from "../../hooks/useShoesApi";
 import styles from "./Menu.module.scss";
 import { MenuSkeleton } from "../Skeletons/MenuSkeleton/MenuSkeleton";
 
@@ -10,13 +10,9 @@ export const Menu = () => {
 
   const { loading, error, data } = useGetAllCategories();
 
-  if (loading) {
-    return <MenuSkeleton />;
-  }
+  if (loading) return <MenuSkeleton />;
 
-  if (error) {
-    return <div>Something went wrong. Try again later</div>;
-  }
+  if (error) return <div>Something went wrong. Try again later</div>;
 
   const toggleCategory = (id: string, prevIds: string[]) => {
     const ids = new Set(prevIds);

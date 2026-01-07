@@ -5,7 +5,7 @@ import {
   useGetAllFilters,
   useGetShoeById,
   useUpdateShoe,
-} from "../../hooks/list";
+} from "../../hooks/useShoesApi";
 import { NotFound } from "../NotFound/NotFound";
 import { Error } from "../Error/Error";
 import { FormSkeleton } from "../../components/Skeletons/FormSkeleton/FormSkeleton";
@@ -15,21 +15,22 @@ import { useForm } from "../../hooks/useForm";
 import styles from "./UpdateForm.module.scss";
 
 export const UpdateForm = () => {
-  const { id: paramId } = useParams();
+  const { id } = useParams();
+  const paramId = Number(id);
   const navigate = useNavigate();
 
   const {
     data: shoe,
     loading: loadingShoe,
     error: errorShoe,
-  } = useGetShoeById(Number(paramId));
-  const { data, loading, error } = useGetAllFilters();
+  } = useGetShoeById(paramId);
+  const { data: filters, loading, error } = useGetAllFilters();
   const {
-    id,
+    id: shoeId,
     loading: loadingUpdate,
     error: errorUpdate,
     request: updateShoe,
-  } = useUpdateShoe(Number(paramId));
+  } = useUpdateShoe(paramId);
   const {
     selectedOptions,
     setSelectedOptions,
@@ -50,34 +51,32 @@ export const UpdateForm = () => {
     });
   }, [shoe]);
 
-  if (loading || loadingShoe) {
-    return <FormSkeleton />;
-  }
+  if (Number.isNaN(shoeId)) return <NotFound />;
 
-  if (error || errorShoe || !data) {
-    return <Error />;
-  }
+  if (loading || loadingShoe) return <FormSkeleton />;
 
-  if (!shoe) {
-    return <NotFound />;
-  }
+  if (error || errorShoe) return <Error />;
+
+  if (!shoe) return <NotFound />;
+
+  if (!filters) return <Error />;
 
   const categories = selectedOptions.gender
-    ? data.categoriesByGender[GENDER_KEY_MAP[selectedOptions.gender]]
+    ? filters.categoriesByGender[GENDER_KEY_MAP[selectedOptions.gender]]
     : [];
 
   const formFields: FormFields[] = [
-    { field: "gender", label: "gender", options: data.genders },
-    { field: "season", label: "season", options: data.seasons },
+    { field: "gender", label: "gender", options: filters.genders },
+    { field: "season", label: "season", options: filters.seasons },
     { field: "categoryId", label: "category", options: categories },
-    { field: "brandId", label: "brand", options: data.brands },
-    { field: "materialId", label: "material", options: data.materials },
-    { field: "colorId", label: "color", options: data.colors },
+    { field: "brandId", label: "brand", options: filters.brands },
+    { field: "materialId", label: "material", options: filters.materials },
+    { field: "colorId", label: "color", options: filters.colors },
   ];
 
   return (
     <div className={styles.container}>
-      {data && (
+      {filters && (
         <>
           <form onSubmit={(e) => handleSubmit(e)} className={styles.filters}>
             {formFields.map(({ field, label, options }) => (
@@ -109,11 +108,11 @@ export const UpdateForm = () => {
           {submitStatus === "saved" && errorUpdate && (
             <div className={styles.error}>{errorUpdate}</div>
           )}
-          {submitStatus === "saved" && id && (
+          {submitStatus === "saved" && shoeId && (
             <div className={styles.message}>
               A shoe with ID:{" "}
-              <Link to={`/shoes/${id}`} className={styles.id}>
-                {id}
+              <Link to={`/shoes/${shoeId}`} className={styles.id}>
+                {shoeId}
               </Link>{" "}
               was updated successfully
             </div>

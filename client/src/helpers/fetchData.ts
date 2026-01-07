@@ -1,4 +1,4 @@
-import { delay } from "../helpers/delay";
+import { delay } from "./delay";
 
 export const fetchData = async <Output>(
   url: string,

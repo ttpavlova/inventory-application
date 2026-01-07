@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { SelectElem } from "../../components/SelectElem/SelectElem";
-import { useCreateShoe, useGetAllFilters } from "../../hooks/list";
+import { useCreateShoe, useGetAllFilters } from "../../hooks/useShoesApi";
 import { FormSkeleton } from "../../components/Skeletons/FormSkeleton/FormSkeleton";
 import { Error } from "../Error/Error";
 import type { FormFields } from "../../types/form.types";
@@ -11,7 +11,7 @@ import styles from "./CreateForm.module.scss";
 export const CreateForm = () => {
   const { data, loading, error } = useGetAllFilters();
   const {
-    id,
+    id: shoeId,
     loading: loadingCreate,
     error: errorCreate,
     request: createShoe,
@@ -26,13 +26,9 @@ export const CreateForm = () => {
 
   const navigate = useNavigate();
 
-  if (loading) {
-    return <FormSkeleton />;
-  }
+  if (loading) return <FormSkeleton />;
 
-  if (error || !data) {
-    return <Error />;
-  }
+  if (error || !data) return <Error />;
 
   const categories = selectedOptions.gender
     ? data.categoriesByGender[GENDER_KEY_MAP[selectedOptions.gender]]
@@ -81,11 +77,11 @@ export const CreateForm = () => {
           {submitStatus === "saved" && errorCreate && (
             <div className={styles.error}>{errorCreate}</div>
           )}
-          {submitStatus === "saved" && id && (
+          {submitStatus === "saved" && shoeId && (
             <div className={styles.message}>
               A shoe with ID:{" "}
-              <Link to={`/shoes/${id}`} className={styles.id}>
-                {id}
+              <Link to={`/shoes/${shoeId}`} className={styles.id}>
+                {shoeId}
               </Link>{" "}
               was created successfully
             </div>

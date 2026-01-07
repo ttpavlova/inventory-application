@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router-dom";
-import { useGetAllShoes } from "../../hooks/list";
+import { useGetAllShoes } from "../../hooks/useShoesApi";
 import ShoeCard from "../ShoeCard/ShoeCard";
 import { Pagination } from "../Pagination/Pagination";
 import styles from "./ShoeList.module.scss";
