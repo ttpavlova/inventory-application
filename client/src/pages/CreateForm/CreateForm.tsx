@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { SelectElem } from "../../components/SelectElem/SelectElem";
 import { useCreateShoe, useGetAllFilters } from "../../hooks/list";
 import { FormSkeleton } from "../../components/Skeletons/FormSkeleton/FormSkeleton";
+import { Error } from "../Error/Error";
 import type { FormFields } from "../../types/form.types";
 import { GENDER_KEY_MAP } from "../../constants/constants";
 import { useForm } from "../../hooks/useForm";
@@ -30,7 +31,7 @@ export const CreateForm = () => {
   }
 
   if (error || !data) {
-    return <span>Something went wrong. Try again later</span>;
+    return <Error />;
   }
 
   const categories = selectedOptions.gender

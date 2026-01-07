@@ -9,11 +9,11 @@
   color: variables.$accent-color;
   background-color: #fff;
   border: 1px solid variables.$accent-color;
+  transition: color 0.2s ease, border 0.2s ease;
 
   &:hover:not(:disabled) {
     color: variables.$accent-color-hover;
     border: 1px solid variables.$accent-color-hover;
-    transition: 0.1s ease;
     cursor: pointer;
   }
 
@@ -25,11 +25,11 @@
 @mixin btn-primary {
   color: #fff;
   background-color: variables.$accent-color;
+  transition: background-color 0.2s ease, border 0.2s ease;
 
   &:hover:not(:disabled) {
     color: #fff;
     background-color: variables.$accent-color-hover;
-    transition: 0.1s ease;
   }
 }
 

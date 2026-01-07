@@ -7,6 +7,7 @@ import {
   useUpdateShoe,
 } from "../../hooks/list";
 import { NotFound } from "../NotFound/NotFound";
+import { Error } from "../Error/Error";
 import { FormSkeleton } from "../../components/Skeletons/FormSkeleton/FormSkeleton";
 import type { FormFields } from "../../types/form.types";
 import { GENDER_KEY_MAP } from "../../constants/constants";
@@ -54,7 +55,7 @@ export const UpdateForm = () => {
   }
 
   if (error || errorShoe || !data) {
-    return <span>Something went wrong. Try again later</span>;
+    return <Error />;
   }
 
   if (!shoe) {
