@@ -27,7 +27,7 @@ option {
 
 .error {
   font-size: 1.2rem;
-  color: #8d0505;
+  color: variables.$error-color;
 }
 
 @media screen and (min-width: 768px) {

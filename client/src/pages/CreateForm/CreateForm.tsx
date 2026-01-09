@@ -28,7 +28,9 @@ export const CreateForm = () => {
 
   if (loading) return <FormSkeleton />;
 
-  if (error || !data) return <Error />;
+  if (error) return <Error />;
+
+  if (!data) return null;
 
   const categories = selectedOptions.gender
     ? data.categoriesByGender[GENDER_KEY_MAP[selectedOptions.gender]]
@@ -75,10 +77,12 @@ export const CreateForm = () => {
           </form>
 
           {submitStatus === "saved" && errorCreate && (
-            <div className={styles.error}>{errorCreate}</div>
+            <div className={styles.error} role="alert">
+              {errorCreate}
+            </div>
           )}
           {submitStatus === "saved" && shoeId && (
-            <div className={styles.message}>
+            <div className={styles.message} role="status">
               A shoe with ID:{" "}
               <Link to={`/shoes/${shoeId}`} className={styles.id}>
                 {shoeId}

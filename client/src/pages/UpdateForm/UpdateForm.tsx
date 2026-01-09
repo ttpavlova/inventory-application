@@ -24,7 +24,11 @@ export const UpdateForm = () => {
     loading: loadingShoe,
     error: errorShoe,
   } = useGetShoeById(paramId);
-  const { data: filters, loading, error } = useGetAllFilters();
+  const {
+    data: filters,
+    loading: loadingFilters,
+    error: errorFilters,
+  } = useGetAllFilters();
   const {
     id: shoeId,
     loading: loadingUpdate,
@@ -53,13 +57,13 @@ export const UpdateForm = () => {
 
   if (Number.isNaN(shoeId)) return <NotFound />;
 
-  if (loading || loadingShoe) return <FormSkeleton />;
+  if (loadingFilters || loadingShoe) return <FormSkeleton />;
 
-  if (error || errorShoe) return <Error />;
+  if (errorFilters || errorShoe) return <Error />;
 
   if (!shoe) return <NotFound />;
 
-  if (!filters) return <Error />;
+  if (!filters) return null;
 
   const categories = selectedOptions.gender
     ? filters.categoriesByGender[GENDER_KEY_MAP[selectedOptions.gender]]
@@ -106,10 +110,12 @@ export const UpdateForm = () => {
           </form>
 
           {submitStatus === "saved" && errorUpdate && (
-            <div className={styles.error}>{errorUpdate}</div>
+            <div className={styles.error} role="alert">
+              {errorUpdate}
+            </div>
           )}
           {submitStatus === "saved" && shoeId && (
-            <div className={styles.message}>
+            <div className={styles.message} role="status">
               A shoe with ID:{" "}
               <Link to={`/shoes/${shoeId}`} className={styles.id}>
                 {shoeId}

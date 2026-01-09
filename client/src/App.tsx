@@ -1,35 +1,51 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { ErrorBoundary } from "react-error-boundary";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Home } from "./pages/Home/Home";
 import { Shoes } from "./pages/Shoes/Shoes";
-import { Header } from "./components/Header/Header";
-import { Footer } from "./components/Footer/Footer";
 import { ShoeDetails } from "./pages/ShoeDetails/ShoeDetails";
 import { CreateForm } from "./pages/CreateForm/CreateForm";
 import { UpdateForm } from "./pages/UpdateForm/UpdateForm";
 import { NotFound } from "./pages/NotFound/NotFound";
 import { Error } from "./pages/Error/Error";
+import { Layout } from "./pages/Layout/Layout";
+import { LayoutWrapper } from "./pages/LayoutWrapper/LayoutWrapper";
 import "./App.scss";
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    errorElement: <LayoutWrapper children={<Error />} />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
+      {
+        path: "shoes",
+        element: <Shoes />,
+      },
+      {
+        path: "shoes/:id",
+        element: <ShoeDetails />,
+      },
+      {
+        path: "shoes/create",
+        element: <CreateForm />,
+      },
+      {
+        path: "shoes/update/:id",
+        element: <UpdateForm />,
+      },
+      {
+        path: "*",
+        element: <NotFound />,
+      },
+    ],
+  },
+]);
+
 function App() {
-  return (
-    <BrowserRouter>
-      <div className="container">
-        <Header />
-        <ErrorBoundary fallback={<Error />}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="shoes" element={<Shoes />} />
-            <Route path="shoes/:id" element={<ShoeDetails />} />
-            <Route path="shoes/create" element={<CreateForm />} />
-            <Route path="shoes/update/:id" element={<UpdateForm />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </ErrorBoundary>
-        <Footer />
-      </div>
-    </BrowserRouter>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;

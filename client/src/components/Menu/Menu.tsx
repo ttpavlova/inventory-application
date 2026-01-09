@@ -3,7 +3,11 @@ import { useGetAllCategories } from "../../hooks/useShoesApi";
 import styles from "./Menu.module.scss";
 import { MenuSkeleton } from "../Skeletons/MenuSkeleton/MenuSkeleton";
 
-export const Menu = () => {
+interface MenuProps {
+  onError: () => void;
+}
+
+export const Menu = ({ onError }: MenuProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const categoriesIds = searchParams.get("categories")?.split(",") || [];
@@ -12,7 +16,9 @@ export const Menu = () => {
 
   if (loading) return <MenuSkeleton />;
 
-  if (error) return <div>Something went wrong. Try again later</div>;
+  if (error) {
+    onError();
+  }
 
   const toggleCategory = (id: string, prevIds: string[]) => {
     const ids = new Set(prevIds);

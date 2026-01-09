@@ -2,10 +2,14 @@ import { useSearchParams } from "react-router-dom";
 import { useGetAllShoes } from "../../hooks/useShoesApi";
 import ShoeCard from "../ShoeCard/ShoeCard";
 import { Pagination } from "../Pagination/Pagination";
-import styles from "./ShoeList.module.scss";
 import { ShoeListSkeleton } from "../Skeletons/ShoeListSkeleton/ShoeListSkeleton";
+import styles from "./ShoeList.module.scss";
 
-export const ShoeList = () => {
+interface ShoeListProps {
+  onError: () => void;
+}
+
+export const ShoeList = ({ onError }: ShoeListProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const page =
     searchParams.get("page") == null ? 1 : Number(searchParams.get("page"));
@@ -31,7 +35,7 @@ export const ShoeList = () => {
   }
 
   if (error) {
-    return <span>Something went wrong. Try again later</span>;
+    onError();
   }
 
   if (data && data.items.length === 0) {
