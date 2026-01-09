@@ -15,3 +15,15 @@
   margin: 0 auto;
   padding: 20px;
 }
+
+@media screen and (min-width: 768px) {
+  .text {
+    max-width: 80%;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .text {
+    max-width: 70%;
+  }
+}
