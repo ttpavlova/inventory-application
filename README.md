@@ -44,6 +44,16 @@ Technologies: TypeScript, React, Express, PostgreSQL.
 
 - ESLint, Prettier, Vite
 
+## Showcase
+
+![editing-item.gif](https://github.com/ttpavlova/inventory-application/blob/main/showcase/gif/editing-item.gif)
+
+<p align="center">Editing an item</p>
+
+![filtering.gif](https://github.com/ttpavlova/inventory-application/blob/main/showcase/gif/filtering.gif)
+
+<p align="center">Filtering items</p>
+
 ## Build
 
 ```
